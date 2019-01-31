@@ -1,1 +1,6 @@
 
+The File Felix3_DietChange_v15.mdl is the model file, that requires Vensim DSS (https://vensim.com/vensim-software/) to run. If you do not have a Vensim DSS license, you can contact (eker@iiasa.ac.at) for a read-only version of the model.
+
+The model reads the input data from InitialValues.xls and New_DietData.xls, therefore they have to be in the same directory as the model file.
+
+HistoricalData.vdf and GLOBIOM.vdf are datafiles linked to the model for comparison of the model output.
