@@ -1,0 +1,1 @@
+The current version of the FeliX model includes an extension for enhanced weathering (EW), a land-based negative emissions technology. The model is used to explore the carbon sequestration potential and agricultural co-benefits of EW, and to derive EW deployment pathways for reaching the 1.5 C target.    
