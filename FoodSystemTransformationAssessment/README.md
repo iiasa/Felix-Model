@@ -1,1 +1,0 @@
-This version of the FeliX model was used in a research paper ("Assessing environmental impacts of response strategies for sustainable food system transformation") submitted to Sustainable Development.

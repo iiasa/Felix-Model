@@ -1,1 +1,0 @@
-The version **FeliX3_v17_PlanetaryBoundaries_Gao_2020.mdl** is used in Gao et al. to assess the implications of food system uncertainties for keeping the Earth system within planetray boundaries. The file includes structures to perturb these uncertainties from 2020 on.
