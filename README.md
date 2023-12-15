@@ -7,7 +7,7 @@ This repository contains different versions of the FeliX model used in various p
 
 A full documentation of the model can be seen [here](/Documentation).
 
-If you are using the FeliX model in your work or studies, please feel free to [get in touch](eker@iiasa.ac.at) to join our collaboration network.
+If you are using the FeliX model in your work or studies, please feel free to [get in touch](mailto:eker@iiasa.ac.at) to join our collaboration network.
 
 Below is a list of recent scientific publications that used the FeliX model. Further information can be seen in the method description and supplementary information of these articles. The full list of FeliX publications is [here](/Publications/).
 
