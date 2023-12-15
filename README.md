@@ -7,6 +7,8 @@ This repository contains different versions of the FeliX model used in various p
 
 A full documentation of the model can be seen [here](/Documentation).
 
+If you are using the FeliX model in your work or studies, please feel free to [get in touch](eker@iiasa.ac.at) to join our collaboration network.
+
 Below is a list of recent scientific publications that used the FeliX model. Further information can be seen in the method description and supplementary information of these articles. The full list of FeliX publications is [here](/Publications/).
 
 - Kuhn M, Eker S, Reiter C, & Liu Q. (2023). “Global systems analysis for understanding the drivers of sustainable wellbeing”. In Lutz W & Pachauri S (Eds.), [Systems Analysis for Sustainable Wellbeing. 50 years of IIASA research, 40 years after the Brundtland Commission, contributing to the post-2030 Global Agenda](https://pure.iiasa.ac.at/id/eprint/18965/) (pp. 61-76). IIASA.
