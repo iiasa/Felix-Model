@@ -5,7 +5,7 @@ FeliX (Functional Enviro-economic Linkages Integrated neXus) is a system dynamic
 
 This repository contains different versions of the FeliX model used in various publications. The model is developed on the modelling software [Vensim](https://vensim.com/), therefore the users should have Vensim installed to be able to display and simulate the model. While the previous versions can be displayed and simulated by the free version of Vensim ([Vensim PLE](https://vensim.com/vensim-personal-learning-edition/)), the current version requires features that are available only in the licensed version, which is [Vensim DSS or PRO](https://vensim.com/vensim-software/#professional-amp-dss). The users who have no access to Vensim DSS can still display the model by using the [Vensim Model Reader](https://vensim.com/vensim-model-reader/). Packaged versions of the model to be used by the Model Reader are under [Current Version](/Current_Version).   
 
-A full documentation of the model can be seen [here](/Documentation).
+An [online documentation](https://iiasa.github.io/felix_docs/) of the model is available, and detailed documentation reports can be seen [here](/Documentation).
 
 If you are using the FeliX model in your work or studies, please feel free to [get in touch](mailto:eker@iiasa.ac.at) to join our collaboration network.
 
