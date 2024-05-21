@@ -1,0 +1,64 @@
+Capital Elasticity Output Variation;0.425
+Effect of GDP on Urban Land Requirement l Variation;1.25
+Effect of GDP on Urban Land Requirement x0 Variation;5
+Max Energy Demand per Capita Variation;4.80E-06
+Price Elasticity of Demand Oil Variation;0.6
+Price Elasticity of Demand Gas Variation;0.54
+Price Elasticity of Demand Coal Variation;0.89
+Price Elasticity of Demand Wind and Solar Variation;1
+Price Elasticity of Demand Biomass Variation;0.8
+Reference Change in Fossil Fuel Market Share Variation;1
+Reference Change in Market Share Solar Variation;8
+Reference Change in Market Share Wind Variation;6
+Reference Change in Market Share Biomass Variation;3.25
+Relative Productivity of Investment in Fossil Fuel Production Compared to Exploration Variation;10
+Relative Productivity of Investment in Oil Exploration Variation;1
+Relative Productivity of Investment in Gas Exploration Variation;1.25
+Relative Productivity of Investment in Coal Exploration Variation;0.15
+Effectiveness of Investment in Oil Recovery Technology Variation;2.80E-11
+Effectiveness of Investment in Gas Recovery Technology Variation;3.00E-11
+Effectiveness of Investment in Coal Recovery Technology Variation;1.30E-12
+Solar Conversion Efficiency Factor Final Change Rate Variation;2
+Fraction for Wind and Solar Learning Curve Strength Variation;0.2
+Renewable Cost Reduction and Technology Improvement Ramp Period Variation;50
+Fraction of Oil Revenues Invested in Technology Variation;0.04
+Fraction of Gas Revenues Invested in Technology Variation;0.04
+Fraction of Coal Revenues Invested in Technology Variation;0.35
+Investment in Fossil Fuel Exploration and Production Delay Variation;5
+Undiscovered Coal Resources Variation;900000
+Annual Change in Oil Reserves Variation;21000000000
+Annual Growth in Gas Reserves Variation;5000
+Reference Cost of Solar Energy Production Final Change Rate Variation;10
+Reference Cost of Biomass Energy Production Final Change Rate Variation;30000000
+Desired Total C Emission from Fossil Fuels Variation;7500000000
+CCS Scenario Variation;0
+Fraction of Agricultural Land Conversion from Forest Variation;0.95
+Forest to Agriculture Land Allocation Time Variation;5
+Reference meat yield Variation;0.07
+Reference Input Neutral TC in Agriculture Variation;0.3
+Feed Share of Grains Variation;1
+Waste Fraction PasMeat CropMeat Variation;1
+Waste Fraction EggsDairy Variation;1
+Waste Fraction PlantFood Variation;1
+Reference Daily Caloric Intake Variation;1655.8
+Normal Shift Fraction from Vegetarianism to Meat Variation;0.01
+Normal Shift Fraction from Meat to Vegetarianism Variation;0.003
+Normal Fraction Intended to Change Diet Variation;0.04
+Self Efficacy Multiplier Female Variation;1.2
+Diet Composition Variation;0
+SSP Demographic Variation Time;5
+SSP Economic Variation Time;5
+SSP Energy Demand Variation Time;5
+SSP Energy Technology Variation Time;5
+SSP Energy Production Variation Time;5
+SSP Land Use Change Variation Time;5
+SSP Food and Diet Variation Time;5
+RCP Scenario;3
+Climate Policy Scenario;0
+Carbon Price Slope;5
+Climate Action Year;2020
+Land Mitigation Policy Multiplier;0.5
+Reference CO2 Removal Rate;37000000
+Reference Other Technology Variation;1
+CLIMATE MORTALITY SWITCH;0
+Climate Damage Function SWITCH;4
