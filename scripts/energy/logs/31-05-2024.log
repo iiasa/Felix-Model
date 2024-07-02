@@ -1,0 +1,578 @@
+31-May-24 14:27:30 - root - INFO - Start script to aggregate final energy consumption data from IEA
+31-May-24 14:27:30 - root - INFO - Read raw final energy consumption data by Commercial
+31-May-24 14:27:30 - root - INFO - Read raw data of Argentina in LAC
+31-May-24 14:27:30 - root - INFO - Read raw data of Bolivarian Republic of Venezuela in LAC
+31-May-24 14:27:30 - root - INFO - Read raw data of Brazil in LAC
+31-May-24 14:27:30 - root - INFO - Read raw data of Chile in LAC
+31-May-24 14:27:30 - root - INFO - Read raw data of Colombia in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Costa Rica in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Cuba in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Dominican Republic in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Ecuador in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of El Salvador in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Guatemala in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Haiti in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Honduras in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Jamaica in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Mexico in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Nicaragua in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Panama in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Paraguay in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Peru in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Plurinational State of Bolivia in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Suriname in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Trinidad and Tobago in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Uruguay in LAC
+31-May-24 14:27:31 - root - INFO - Read raw data of Australia in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Austria in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Belgium in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Canada in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Denmark in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Finland in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of France in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Germany in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Greece in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Iceland in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Ireland in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Israel in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Italy in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Luxembourg in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Malta in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Netherlands in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of New Zealand in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Norway in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Portugal in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Spain in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Sweden in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Switzerland in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of United Kingdom in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of United States in WestEu
+31-May-24 14:27:31 - root - INFO - Read raw data of Algeria in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Angola in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Benin in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Botswana in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Cameroon in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Congo in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Cote d_Ivoire in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Democratic Republic of the Congo in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Egypt in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Equatorial Guinea in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Ethiopia in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Gabon in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Ghana in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Kenya in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Libya in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Madagascar in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Mauritius in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Morocco in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Mozambique in Africa
+31-May-24 14:27:31 - root - INFO - Read raw data of Niger in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Nigeria in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Rwanda in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Senegal in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of South Africa in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of South Sudan in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Sudan in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Togo in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Tunisia in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Uganda in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of United Republic of Tanzania in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Zambia in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Zimbabwe in Africa
+31-May-24 14:27:32 - root - INFO - Read raw data of Bangladesh in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Brunei Darussalam in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Cambodia in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of China (P.R. of China and Hong Kong, China) in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Cyprus in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Democratic People_s Republic of Korea in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of India in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Indonesia in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Iraq in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Islamic Republic of Iran in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Japan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Jordan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Kazakhstan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Kuwait in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Kyrgyzstan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Lao People_s Democratic Republic in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Lebanon in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Malaysia in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Mongolia in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Myanmar in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Nepal in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Oman in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Pakistan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of People_s Republic of China in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Philippines in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Qatar in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Republic of Turkiye in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Saudi Arabia in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Singapore in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Sri Lanka in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Syrian Arab Republic in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Tajikistan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Thailand in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Turkmenistan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of United Arab Emirates in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Uzbekistan in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Viet Nam in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Yemen in AsiaPacific
+31-May-24 14:27:32 - root - INFO - Read raw data of Albania in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Armenia in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Azerbaijan in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Belarus in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Bosnia and Herzegovina in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Bulgaria in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Croatia in EastEu
+31-May-24 14:27:32 - root - INFO - Read raw data of Estonia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Georgia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Hungary in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Latvia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Lithuania in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Moldova in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Montenegro in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of North Macedonia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Poland in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Romania in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Russian Federation in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Serbia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Slovak Republic in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Slovenia in EastEu
+31-May-24 14:27:33 - root - INFO - Read raw data of Ukraine in EastEu
+31-May-24 14:27:33 - root - INFO - Finish reading raw data
+31-May-24 14:27:33 - root - INFO - Read raw final energy consumption data by Industry
+31-May-24 14:27:33 - root - INFO - Read raw data of Algeria in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Angola in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Benin in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Botswana in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Cameroon in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Congo in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Cote d_Ivoire in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Democratic Republic of the Congo in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Egypt in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Equatorial Guinea in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Ethiopia in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Gabon in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Ghana in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Kenya in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Libya in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Madagascar in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Mauritius in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Morocco in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Mozambique in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Niger in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Nigeria in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Rwanda in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Senegal in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of South Africa in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of South Sudan in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Sudan in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Togo in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Tunisia in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Uganda in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of United Republic of Tanzania in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Zambia in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Zimbabwe in Africa
+31-May-24 14:27:33 - root - INFO - Read raw data of Bangladesh in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Brunei Darussalam in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Cambodia in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of China (P.R. of China and Hong Kong, China) in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Cyprus in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Democratic People_s Republic of Korea in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of India in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Indonesia in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Iraq in AsiaPacific
+31-May-24 14:27:33 - root - INFO - Read raw data of Islamic Republic of Iran in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Japan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Jordan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Kazakhstan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Kuwait in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Kyrgyzstan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Lao People_s Democratic Republic in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Lebanon in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Malaysia in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Mongolia in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Myanmar in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Nepal in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Oman in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Pakistan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of People_s Republic of China in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Philippines in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Qatar in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Republic of Turkiye in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Saudi Arabia in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Singapore in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Sri Lanka in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Syrian Arab Republic in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Tajikistan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Thailand in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Turkmenistan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of United Arab Emirates in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Uzbekistan in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Viet Nam in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Yemen in AsiaPacific
+31-May-24 14:27:34 - root - INFO - Read raw data of Albania in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Armenia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Azerbaijan in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Belarus in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Bosnia and Herzegovina in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Bulgaria in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Croatia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Estonia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Georgia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Hungary in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Latvia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Lithuania in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Moldova in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Montenegro in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of North Macedonia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Poland in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Romania in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Russian Federation in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Serbia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Slovak Republic in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Slovenia in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Ukraine in EastEu
+31-May-24 14:27:34 - root - INFO - Read raw data of Argentina in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Bolivarian Republic of Venezuela in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Brazil in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Chile in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Colombia in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Costa Rica in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Cuba in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Dominican Republic in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Ecuador in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of El Salvador in LAC
+31-May-24 14:27:34 - root - INFO - Read raw data of Guatemala in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Haiti in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Honduras in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Jamaica in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Mexico in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Nicaragua in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Panama in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Paraguay in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Peru in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Plurinational State of Bolivia in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Suriname in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Trinidad and Tobago in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Uruguay in LAC
+31-May-24 14:27:35 - root - INFO - Read raw data of Australia in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Austria in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Belgium in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Canada in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Denmark in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Finland in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of France in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Germany in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Greece in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Iceland in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Ireland in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Israel in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Italy in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Luxembourg in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Malta in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Netherlands in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of New Zealand in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Norway in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Portugal in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Spain in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Sweden in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of Switzerland in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of United Kingdom in WestEu
+31-May-24 14:27:35 - root - INFO - Read raw data of United States in WestEu
+31-May-24 14:27:35 - root - INFO - Finish reading raw data
+31-May-24 14:27:35 - root - INFO - Read raw final energy consumption data by Residential
+31-May-24 14:27:35 - root - INFO - Read raw data of Africa (IEA statistical region) in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Algeria in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Angola in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Benin in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Botswana in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Cameroon in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Congo in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Cote d_Ivoire in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Democratic Republic of the Congo in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Egypt in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Equatorial Guinea in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Ethiopia in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Gabon in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Ghana in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Kenya in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Libya in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Madagascar in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Mauritius in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Morocco in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Mozambique in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Niger in Africa
+31-May-24 14:27:35 - root - INFO - Read raw data of Nigeria in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Rwanda in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Senegal in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of South Africa in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of South Sudan in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Sudan in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Togo in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Tunisia in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Uganda in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of United Republic of Tanzania in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Zambia in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Zimbabwe in Africa
+31-May-24 14:27:36 - root - INFO - Read raw data of Bangladesh in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Brunei Darussalam in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Cambodia in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of China (P.R. of China and Hong Kong, China) in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Cyprus in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Democratic People_s Republic of Korea in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of India in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Indonesia in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Iraq in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Islamic Republic of Iran in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Japan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Jordan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Kazakhstan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Kuwait in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Kyrgyzstan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Lao People_s Democratic Republic in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Lebanon in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Malaysia in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Mongolia in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Myanmar in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Nepal in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Oman in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Pakistan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of People_s Republic of China in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Philippines in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Qatar in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Republic of Turkiye in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Saudi Arabia in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Singapore in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Sri Lanka in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Syrian Arab Republic in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Tajikistan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Thailand in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Turkmenistan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of United Arab Emirates in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Uzbekistan in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Viet Nam in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Yemen in AsiaPacific
+31-May-24 14:27:36 - root - INFO - Read raw data of Albania in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Armenia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Azerbaijan in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Belarus in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Bosnia and Herzegovina in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Bulgaria in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Croatia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Estonia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Georgia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Hungary in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Latvia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Lithuania in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Moldova in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Montenegro in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of North Macedonia in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Poland in EastEu
+31-May-24 14:27:36 - root - INFO - Read raw data of Romania in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Russian Federation in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Serbia in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Slovak Republic in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Slovenia in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Ukraine in EastEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Argentina in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Bolivarian Republic of Venezuela in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Brazil in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Chile in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Colombia in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Costa Rica in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Cuba in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Dominican Republic in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Ecuador in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of El Salvador in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Guatemala in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Haiti in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Honduras in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Jamaica in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Mexico in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Nicaragua in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Panama in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Paraguay in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Peru in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Plurinational State of Bolivia in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Suriname in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Trinidad and Tobago in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Uruguay in LAC
+31-May-24 14:27:37 - root - INFO - Read raw data of Australia in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Austria in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Belgium in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Canada in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Denmark in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Finland in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of France in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Germany in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Greece in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Iceland in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Ireland in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Israel in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Italy in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Luxembourg in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Malta in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Netherlands in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of New Zealand in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Norway in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Portugal in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Spain in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Sweden in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of Switzerland in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of United Kingdom in WestEu
+31-May-24 14:27:37 - root - INFO - Read raw data of United States in WestEu
+31-May-24 14:27:37 - root - INFO - Finish reading raw data
+31-May-24 14:27:37 - root - INFO - Read raw final energy consumption data by Transport
+31-May-24 14:27:37 - root - INFO - Read raw data of Africa (IEA statistical region) in Africa
+31-May-24 14:27:37 - root - INFO - Read raw data of Algeria in Africa
+31-May-24 14:27:37 - root - INFO - Read raw data of Angola in Africa
+31-May-24 14:27:37 - root - INFO - Read raw data of Benin in Africa
+31-May-24 14:27:37 - root - INFO - Read raw data of Botswana in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Cameroon in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Congo in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Cote d_Ivoire in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Democratic Republic of the Congo in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Egypt in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Equatorial Guinea in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Ethiopia in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Gabon in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Ghana in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Kenya in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Libya in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Madagascar in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Mauritius in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Morocco in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Mozambique in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Niger in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Nigeria in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Rwanda in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Senegal in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of South Africa in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of South Sudan in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Sudan in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Togo in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Tunisia in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Uganda in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of United Republic of Tanzania in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Zambia in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Zimbabwe in Africa
+31-May-24 14:27:38 - root - INFO - Read raw data of Bangladesh in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Brunei Darussalam in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Cambodia in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of China (P.R. of China and Hong Kong, China) in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Cyprus in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Democratic People_s Republic of Korea in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of India in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Indonesia in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Iraq in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Islamic Republic of Iran in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Japan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Jordan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Kazakhstan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Kuwait in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Kyrgyzstan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Lao People_s Democratic Republic in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Lebanon in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Malaysia in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Mongolia in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Myanmar in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Nepal in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Oman in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Pakistan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of People_s Republic of China in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Philippines in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Qatar in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Republic of Turkiye in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Saudi Arabia in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Singapore in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Sri Lanka in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Syrian Arab Republic in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Tajikistan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Thailand in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Turkmenistan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of United Arab Emirates in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Uzbekistan in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Viet Nam in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Yemen in AsiaPacific
+31-May-24 14:27:38 - root - INFO - Read raw data of Albania in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Armenia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Azerbaijan in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Belarus in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Bosnia and Herzegovina in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Bulgaria in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Croatia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Estonia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Georgia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Hungary in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Latvia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Lithuania in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Moldova in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Montenegro in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of North Macedonia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Poland in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Romania in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Russian Federation in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Serbia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Slovak Republic in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Slovenia in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Ukraine in EastEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Argentina in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Bolivarian Republic of Venezuela in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Brazil in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Chile in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Colombia in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Costa Rica in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Cuba in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Dominican Republic in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Ecuador in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of El Salvador in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Guatemala in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Haiti in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Honduras in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Jamaica in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Mexico in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Nicaragua in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Panama in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Paraguay in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Peru in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Plurinational State of Bolivia in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Suriname in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Trinidad and Tobago in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Uruguay in LAC
+31-May-24 14:27:39 - root - INFO - Read raw data of Australia in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Austria in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Belgium in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Canada in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Denmark in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Finland in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of France in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Germany in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Greece in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Iceland in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Ireland in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Israel in WestEu
+31-May-24 14:27:39 - root - INFO - Read raw data of Italy in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Luxembourg in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Malta in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Netherlands in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of New Zealand in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Norway in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Portugal in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Spain in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Sweden in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of Switzerland in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of United Kingdom in WestEu
+31-May-24 14:27:40 - root - INFO - Read raw data of United States in WestEu
+31-May-24 14:27:40 - root - INFO - Finish reading raw data
+31-May-24 14:27:40 - root - INFO - Start cleaning the raw data
+31-May-24 14:27:40 - root - INFO - Specify energy sources
+31-May-24 14:27:40 - root - INFO - Specify available years
+31-May-24 14:27:40 - root - INFO - Finish data cleaning
+31-May-24 14:27:40 - root - INFO - Start restructuring the cleaned data
+31-May-24 14:27:40 - root - INFO - Specify sector categories and available years
+31-May-24 14:27:40 - root - INFO - Restructure cleaned data
+31-May-24 14:27:41 - root - INFO - Finish data cleaning
+31-May-24 14:27:41 - root - INFO - Write clean data into a .csv file
+31-May-24 14:27:41 - root - INFO - Finish writing clean data
+31-May-24 14:27:41 - root - INFO - Clean procedure is done!

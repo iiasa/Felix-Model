@@ -1,0 +1,34 @@
+version: nov2023
+module: life_expectancy_at_birth
+overwrite: True
+create_path: True
+data_input:
+  - datasource: unpd
+    root_path: data_regionalization_raw
+    variable: life_expectancy_at_birth
+    download_via: api
+    data_file: 
+      - e0_fact.csv
+    concordance: unpd_regions_to_5_un_regions.csv
+    dependency: True
+    dependency_module: population
+    dependency_file: 
+      - popbyage5andsex_fact.csv
+
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+  sex:
+    - female
+    - male
+
+
+
+

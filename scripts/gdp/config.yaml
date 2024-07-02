@@ -1,0 +1,44 @@
+version: nov2023
+module: gdp
+overwrite: True
+create_path: True
+data_input:
+  - datasource: world_bank
+    variable: gdp_2015usd
+    text: GDP (constant 2015 US$)
+    unit: constant 2015 US$
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NY_GDP_MKTP_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: gdp_ppp
+    text: GDP, PPP (constant 2017 international $)
+    unit: constant 2017 international $
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NY_GDP_MKTP_PP_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: gdp_per_capita_ppp
+    text: GDP per capita, PPP (constant 2017 international $)
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NY_GDP_PCAP_PP_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+

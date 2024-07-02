@@ -1,0 +1,173 @@
+version: nov2023
+module: calibration
+overwrite: True
+create_path: True
+data_path: version_oct_2023
+data_file: Reg_FeliX_HistoricalData.xlsx
+data_sheet: Reg_Data
+data_input:
+  - variable: mortality_fraction
+    text: Mortality fraction # exactly the name in the historic data file
+    parameter:
+      - L0
+      - L
+      - k
+      - x0
+    dependency: True
+    dependency_variable: 
+      - dep_variable: life_expectancy_at_birth
+        dep_text: Life Expectancy at Birth
+        dep_ref:
+          Africa: 15
+          AsiaPacific: 20
+          EastEu: 34
+          LAC: 26
+          WestEu: 50
+          World: 28.785
+  - variable: total_fertility
+    text: Total Fertility
+    parameter:
+      - L0_gdp
+      - L_gdp
+      - k_gdp
+      - x0_gdp
+      - L0_mys
+      - L_mys
+      - k_mys
+      - x0_mys
+    dependency: True
+    dependency_variable: 
+      - dep_variable: gdp_per_cap
+        dep_text: GWP per Capita # exactly the name in the historic data file
+        dep_ref:
+          Africa: 1273.36
+          AsiaPacific: 2677.24
+          EastEu: 4220.4
+          LAC: 5514.78
+          WestEu: 34356.4
+          World: 6584.47
+      - dep_variable: mys
+        dep_text: Mean Years of Schooling
+        dep_ref:
+          Africa: 4.74735
+          AsiaPacific: 6.69995
+          EastEu: 9.83956
+          LAC: 7.25129
+          WestEu: 11.2275
+          World: 7.38
+  - variable: age_specific_fertility
+    text: Age Specific Fertility Rate # exactly the name in the historic data file
+    parameter:
+      - L0
+      - L
+      - k
+      - x0
+    dependency: True
+    dependency_variable: 
+      - dep_variable: total_fertility
+        dep_text: Total Fertility
+        dep_ref:
+          Africa: 1
+          AsiaPacific: 1
+          EastEu: 1
+          LAC: 1
+          WestEu: 1
+          World: 1
+  - variable: age_specific_fertility_new
+    text: Age Specific Fertility Rate # exactly the name in the historic data file
+    parameter:
+      - L0
+      - L
+      - k
+      - p_tfr
+      - p_mys
+    dependency: True
+    dependency_variable: 
+      - dep_variable: total_fertility
+        dep_text: Total Fertility
+        dep_ref:
+          Africa: 1
+          AsiaPacific: 1
+          EastEu: 1
+          LAC: 1
+          WestEu: 1
+      - dep_variable: mys
+        dep_text: Mean Years of Schooling
+        dep_ref:
+          Africa: 1
+          AsiaPacific: 1
+          EastEu: 1
+          LAC: 1
+          WestEu: 1
+          World: 1
+  - variable: net_enroll_primary
+    text: Net enrollment primary # exactly the name in the historic data file
+    parameter:
+      - L0
+      - L
+      - k
+      - x0
+    ref:
+      Africa: 
+        female: 0.648978
+        male: 0.599286
+      AsiaPacific: 
+        female: 0.885647
+        male: 0.871376
+      EastEu: 
+        female: 0.904087
+        male: 0.888968
+      LAC: 
+        female: 0.939516
+        male: 0.938349
+      WestEu: 
+        female: 0.939796
+        male: 0.956048
+    dependency: True
+    dependency_variable: 
+      - dep_variable: gwp_per_cap
+        dep_text: GWP per Capita
+        dep_ref:
+          Africa: 1273.35737871524
+          AsiaPacific: 2677.23529280267
+          EastEu: 4220.40456644884
+          LAC: 5514.78354912169
+          WestEu: 34356.4429130738
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+  gender:
+    - female
+    - male
+  age:
+    - 0--4
+    - 5--9
+    - 10--14
+    - 15--19
+    - 20--24
+    - 25--29
+    - 30--34
+    - 35--39
+    - 40--44
+    - 45--49
+    - 50--54
+    - 55--59
+    - 60--64
+    - 65--69
+    - 70--74
+    - 75--79
+    - 80--84
+    - 85--89
+    - 90--94
+    - 95--99
+    - 100+
+
+
+

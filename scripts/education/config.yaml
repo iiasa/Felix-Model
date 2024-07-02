@@ -1,0 +1,145 @@
+version: nov2023
+module: education
+overwrite: True
+create_path: True
+data_input:
+  - datasource: wittgenstein
+    variable: mys
+    text: mean year of schooling
+    unit: year
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - wcde_mys_1950_2100.csv
+    concordance: wittgenstein_regions_to_5_un_regions.csv
+    dependency: True
+    dependency_module: population
+    dependency_file: 
+      - wcde_population_1950_2100.csv
+  - datasource: world_bank
+    variable: sec_dur
+    text: duration of secondary education
+    unit: year
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_SEC_DURS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_datasource: wittgenstein
+    dependency_module: education
+    dependency_file: 
+      - wcde_population_by_education_level_1950_2100.csv
+  - datasource: world_bank
+    variable: prim_dur
+    text: duration of primary education
+    unit: year
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_PRM_DURS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_datasource: wittgenstein
+    dependency_module: education
+    dependency_file: 
+      - wcde_population_by_education_level_1950_2100.csv
+  - datasource: world_bank
+    variable: persistence_prim
+    text: persistence of primary education
+    unit: percentage
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_PRM_PRSL_FE_ZS_fact.json
+      - SE_PRM_PRSL_MA_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: wittgenstein
+    variable: pop_by_edu
+    text: population by education level
+    unit: person
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - wcde_population_by_education_level_1950_2100.csv
+    concordance: wittgenstein_regions_to_5_un_regions.csv
+    dependency: False
+  - datasource: world_bank
+    variable: net_enroll_primary
+    text: Net enrollment primary
+    unit: percent (%)
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_PRM_NENR_FE_fact.json
+      - SE_PRM_NENR_MA_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: world_bank
+    variable: net_enroll_secondary
+    text: Net enrollment secondary
+    unit: percent (%)
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_SEC_NENR_FE_fact.json
+      - SE_SEC_NENR_MA_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: world_bank
+    variable: gross_enroll_tertiary
+    text: Gross enrollment tertiary
+    unit: percent (%)
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - SE_TER_ENRR_FE_fact.json
+      - SE_TER_ENRR_MA_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: False
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+  gender:
+    - male
+    - female
+  age:
+    - 0--4
+    - 5--9
+    - 10--14
+    - 15--19
+    - 20--24
+    - 25--29
+    - 30--34
+    - 35--39
+    - 40--44
+    - 45--49
+    - 50--54
+    - 55--59
+    - 60--64
+    - 65--69
+    - 70--74
+    - 75--79
+    - 80--84
+    - 85--89
+    - 90--94
+    - 95--99
+    - 100+
+  edu_level:
+    - noEd
+    - primary
+    - secondary
+    - tertiary
+    - total
+
+
+
+

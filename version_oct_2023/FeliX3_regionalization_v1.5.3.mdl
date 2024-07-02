@@ -1,0 +1,4306 @@
+{UTF-8}
+GWP per Capita[Regions]=
+	Gross World Product[Regions]/Population[Regions]
+	~	$/(Year*Person)
+	~		|
+
+L0 gdp Fer[Africa]=
+	0.900986 ~~|
+L0 gdp Fer[AsiaPacific]=
+	0.895473 ~~|
+L0 gdp Fer[EastEu]=
+	1.11387 ~~|
+L0 gdp Fer[LAC]=
+	1.14395 ~~|
+L0 gdp Fer[WestEu]=
+	1.01662
+	~	Dmnl [-1,1,0.05]
+	~	+ RAMP(Future fertility GDP[Africa]/78, 2022, 2100)
+	|
+
+Effect Edu[Regions,Fertile]=
+	Mean Years of Schooling[Regions]^p mys[Regions,Fertile]
+	~	
+	~		|
+
+Impact of Education on Fertility[Regions]=
+	L0 edu Fer[Regions] + (L edu fer[Regions] / (1 + EXP(-k edu fer[Regions]*(Mean Years of Schooling\
+		[Regions]/MYS2000[
+	Regions]-x0 edu fer[Regions]))))
+	~	Dmnl
+	~	Decreasong logistic function of which parameters are estimated from the \
+		global average MYS - Total Fertility relationship, also considering the \
+		impact of GDP.
+	|
+
+Tertiary Education Enrollment Fraction[Regions,Gender,"15-19"]=
+	MIN(Effect of GWP per capita on tertiary enrollment[Regions,Gender]*Reference tertiary education enrollment fraction\
+		[Regions,Gender,"15-19"],1) ~~|
+Tertiary Education Enrollment Fraction[Regions,Gender,"20-24"]=
+	MIN(Effect of GWP per capita on tertiary enrollment[Regions,Gender]*Reference tertiary education enrollment fraction\
+		[Regions,Gender,"20-24"],1) ~~|
+Tertiary Education Enrollment Fraction[Regions,Gender,"25-29"]=
+	MIN(Effect of GWP per capita on tertiary enrollment[Regions,Gender]*Reference tertiary education enrollment fraction\
+		[Regions,Gender,"25-29"],1)
+	~	1/Year
+	~	MIN(Effect of GWP per capita on tertiary \
+		enrollment[Regions,Gender]*Reference tertiary education enrollment \
+		fraction[Regions,Gender,"15-19"]*Tertiary age \
+		distribution[Regions,"15-19"],1)
+	|
+
+Reference tertiary education enrollment fraction[Regions,Gender,"15-19"]=
+	Reference tertiary education enrollment fraction Init[Regions,Gender,"15-19"] ~~|
+Reference tertiary education enrollment fraction[Regions,Gender,"20-24"]=
+	Reference tertiary education enrollment fraction Init[Regions,Gender,"20-24"] ~~|
+Reference tertiary education enrollment fraction[Regions,Gender,"25-29"]=
+	Reference tertiary education enrollment fraction Init[Regions,Gender,"25-29"]
+	~	Dmnl
+	~	Corresponding to 2000 values of the fraction of seondary education graduates aged \
+		15-19 enrolling at tertiary education
+		
+		+ 
+		SMOOTH3(STEP(Tertiary education enrollment \
+		Variation[Regions,Gender]-Reference tertiary education enrollment fraction \
+		Init[Regions,Gender,"20-24"],Current year),SSP Demographic Variation Time)
+	|
+
+Graduation Rate from Tertiary Education[Regions,Gender,"20-24"]=
+	MIN(
+	DELAY1(
+	Enrollment Rate to Tertiary Education[Regions,Gender,"15-19"]*(Average Tertiary Education Duration\
+		)/Interval duration+
+	Enrollment Rate to Tertiary Education[Regions,Gender,"20-24"]*(Interval duration-Average Tertiary Education Duration\
+		)/Interval duration,
+	Average Tertiary Education Duration),
+	Maturation Rate[Regions,Gender,"20-24"]
+	) ~~|
+Graduation Rate from Tertiary Education[Regions,Gender,"25-29"]=
+	MIN(
+	DELAY1(Enrollment Rate to Tertiary Education[Regions,Gender,"20-24"]*Average Tertiary Education Duration\
+		/Interval duration+
+	Enrollment Rate to Tertiary Education[Regions,Gender,"25-29"]*(Interval duration-Average Tertiary Education Duration\
+		)/Interval duration, 
+	Average Tertiary Education Duration),
+	Maturation Rate[Regions,Gender,"25-29"]
+	) ~~|
+Graduation Rate from Tertiary Education[Regions,Gender,"30-34"]=
+	MIN(
+	DELAY1(
+	Enrollment Rate to Tertiary Education[Regions,Gender,"25-29"]*Average Tertiary Education Duration\
+		/Interval duration+
+	Enrollment Rate to Tertiary Education[Regions,Gender,"30-34"]*(Interval duration-Average Tertiary Education Duration\
+		)/Interval duration,
+	Average Tertiary Education Duration),
+	Maturation Rate[Regions,Gender,"30-34"]
+	) ~~|
+Graduation Rate from Tertiary Education[Regions,Gender,"15-19"]=
+	MIN(
+	DELAY1(
+	Enrollment Rate to Tertiary Education[Regions,Gender,"15-19"]*(Interval duration-Average Tertiary Education Duration\
+		)/Interval duration,
+	Average Tertiary Education Duration),
+	Maturation Rate[Regions,Gender,"15-19"]
+	)
+	~	People/Year
+	~		|
+
+Persistence tertiary[Regions,Gender]=
+	Persistence[Regions,Gender] + SMOOTH3(STEP(Persistence Tertiary Variation[Regions,Gender\
+		]-Persistence Tertiary Init[Regions,Gender],Current year),SSP Demographic Variation Time\
+		)
+	~	Dmnl
+	~		|
+
+Age Specific Fertility Rate[Regions,Fertile]=
+	MAX(L0 asfr[Regions,Fertile]+L asfr[Regions,Fertile]/(1+EXP(-k asfr[Regions,Fertile]\
+		)/(Effect Edu[Regions,Fertile]*Effect TFR[Regions,Fertile])),0)
+	~	Dmnl
+	~	Age-specific fertility rate is formulated as a LOGISTIC function, derived from the \
+		Total Fertility - Age-Specific Fertility Rate relationship observed in the \
+		data from Wittgenstein Center for Population and Human Capital.
+		
+		MAX(Ramp for fertility variation[Regions,Fertile]+L age fertility[Regions,Fertile] / \
+		(1 + EXP(-k age fertility[Regions,
+		Fertile] * (Total Fertility[Regions] - x0 age \
+		fertility[Regions,Fertile]))),0)
+	|
+
+L0 asfr[Africa,Fertile]=
+	551.158,
+	1.9e-16,
+	0.234914,
+	0.459415,
+	0.263133,
+	1.79663,
+	0.490005 ~~|
+L0 asfr[AsiaPacific,Fertile]=
+	0,
+	1.93e-19,
+	0.304615,
+	1.27672,
+	0.977146,
+	0.68476,
+	0.170745 ~~|
+L0 asfr[EastEu,Fertile]=
+	0,
+	0.833964,
+	474.314,
+	0.665317,
+	0.377712,
+	0,
+	0.69846 ~~|
+L0 asfr[LAC,Fertile]=
+	0.230543,
+	4.31e-17,
+	0.266766,
+	0.417397,
+	0.934672,
+	0.459986,
+	0.123834 ~~|
+L0 asfr[WestEu,Fertile]=
+	0.00109738,
+	0.880357,
+	1.25653,
+	0.607906,
+	0.360597,
+	0.445935,
+	0.510013
+	~	
+	~		|
+
+L asfr[Africa,Fertile]=
+	-580.97,
+	1.43947,
+	3.6465,
+	1.20576,
+	0.728232,
+	-1.33147,
+	-0.483745 ~~|
+L asfr[AsiaPacific,Fertile]=
+	-0.475437,
+	1.36742,
+	2.02205,
+	-0.801789,
+	-0.751272,
+	-0.633767,
+	-0.173847 ~~|
+L asfr[EastEu,Fertile]=
+	0.26222,
+	-0.729457,
+	-473.988,
+	-0.507716,
+	-0.326822,
+	-736.102,
+	-0.556292 ~~|
+L asfr[LAC,Fertile]=
+	3336.06,
+	1.5586,
+	4.05509,
+	0.973687,
+	-0.683284,
+	-815.882,
+	-311.612 ~~|
+L asfr[WestEu,Fertile]=
+	-20,
+	-0.975849,
+	-2862.7,
+	-0.479792,
+	-0.316928,
+	0.46375,
+	-349.864
+	~	
+	~		|
+
+p tfr[Africa,Fertile]=
+	-0.213878,
+	1.10042,
+	1.29659,
+	3.0795,
+	1.97862,
+	-2.74382,
+	-3.04438 ~~|
+p tfr[AsiaPacific,Fertile]=
+	1.77605,
+	1.44041,
+	2.11362,
+	-8.10888,
+	-6.22881,
+	-3.37762,
+	-1.99297 ~~|
+p tfr[EastEu,Fertile]=
+	-9.65239,
+	-3.86428,
+	-2.27714,
+	-8.3891,
+	-9.6455,
+	16.6479,
+	10.132 ~~|
+p tfr[LAC,Fertile]=
+	-0.576317,
+	0.567698,
+	1.90699,
+	5.40657,
+	-5.98236,
+	-5.03274,
+	-3.4655 ~~|
+p tfr[WestEu,Fertile]=
+	-7.90708,
+	-3.4078,
+	-0.865774,
+	-9.27054,
+	-11.0705,
+	-33.1319,
+	-3.83619
+	~	Dmnl
+	~		|
+
+p mys[Africa,Fertile]=
+	0.0205728,
+	-1.41328,
+	-0.0116258,
+	-0.0588624,
+	-2.26204,
+	-0.0782913,
+	-0.0113573 ~~|
+p mys[AsiaPacific,Fertile]=
+	6.57085,
+	-1.7799,
+	0.29343,
+	-0.320038,
+	0.524878,
+	0.559415,
+	0.300004 ~~|
+p mys[EastEu,Fertile]=
+	29.9034,
+	13.4327,
+	0.0230738,
+	-6.14072,
+	-7.09073,
+	34.3383,
+	21.8208 ~~|
+p mys[LAC,Fertile]=
+	1.53897,
+	-2.19173,
+	0.1973,
+	0.351722,
+	-0.11807,
+	-0.319491,
+	0.00121153 ~~|
+p mys[WestEu,Fertile]=
+	10.1808,
+	4.88061,
+	0.438116,
+	-13.1349,
+	-16.4227,
+	-38.1769,
+	29.5356
+	~	Dmnl
+	~		|
+
+k asfr[Africa,Fertile]=
+	5.89318,
+	1.73107,
+	-3.17631,
+	-5.07602,
+	1.21995,
+	5.18061,
+	188.413 ~~|
+k asfr[AsiaPacific,Fertile]=
+	-14.0813,
+	2.41519,
+	-3.80763,
+	12.7373,
+	8.92653,
+	5.04025,
+	3.03678 ~~|
+k asfr[EastEu,Fertile]=
+	-67.1486,
+	-29.7644,
+	9.1501,
+	18.715,
+	21.6075,
+	-75.5729,
+	-47.299 ~~|
+k asfr[LAC,Fertile]=
+	-13.3003,
+	3.6035,
+	-4.52703,
+	-8.79227,
+	9.13492,
+	7.92127,
+	5.14634 ~~|
+k asfr[WestEu,Fertile]=
+	-20.6536,
+	-9.83402,
+	-8.85319,
+	35.908,
+	45.3459,
+	110.578,
+	-56.6077
+	~	
+	~		|
+
+Effect TFR[Regions,Fertile]=
+	Total Fertility[Regions]^p tfr[Regions,Fertile]
+	~	
+	~		|
+
+Primary enrollment rate previous[Regions,Gender]=
+	0
+	~	People/Year
+	~	DELAY1I( Enrollment rate to primary education[Regions,Gender], 1 ,0)
+	|
+
+Enrollment rate to primary education[Regions,Gender]=
+	Primary education enrollment fraction[Regions,Gender]*(Population Cohorts[Regions,Gender\
+		,"5-9"])
+	~	People/Year
+	~	Primary education enrollment fraction[Gender]*Maturation Rate[Gender,"0-4"]
+		Primary education enrollment fraction[Regions,Gender]*(Population \
+		Cohorts[Regions,Gender,"5-9"]-Primary enrollment rate \
+		previous[Regions,Gender])
+	|
+
+Lookup primary education duration[Africa](
+	[(0,0)-(10,10)],(1900,0.5),(1950,4),(1980,6)) ~~|
+Lookup primary education duration[AsiaPacific](
+	[(0,0)-(10,10)],(1900,1),(1950,5),(1960,6)) ~~|
+Lookup primary education duration[EastEu](
+	[(0,0)-(10,10)],(1900,1),(1950,4.5),(2000,5)) ~~|
+Lookup primary education duration[LAC](
+	[(0,0)-(10,10)],(1900,0.5),(1940,1.5),(1950,2),(2000,5.5)) ~~|
+Lookup primary education duration[WestEu](
+	[(0,0)-(10,10)],(1900,3.5),(1920,4.5),(1940,5.5),(1980,5))
+	~	
+	~	This is an estimate aligned with Mean Years of Schooling, and rough information such \
+		as a school year was less than 150 days in the US in 1905. More \
+		information is needed for the historucal educaion duration!!!
+		
+		Africa: [(0,0)-(10,10)],(1900,0.5),(1950,4),(1980,7.5),(2000,7),(2020,6.5),(2100,6)
+		AsiaPacific: \
+		[(0,0)-(10,10)],(1900,1),(1950,2.5),(1970,4),(2000,5.5),(2020,6),(2100,5.5)
+		EastEu: [(0,0)-(10,10)],(1900,1),(1920,2.5),(1940,5),(1950,5),(2000,5.5),(2050,5)
+		LAC: \
+		[(0,0)-(10,10)],(1900,2),(1950,4),(1960,4),(1970,4.5),(1990,6),(2000,5.5),(\
+		2030,6),(2080,5)
+		WestEu: [(0,0)-(10,10)],(1900,2),(1950,5.5),(1980,5.5),(2010,5),(2100,4.5)
+	|
+
+Average duration of tertiary education[Regions]=
+	Lookup tertiary education duration[Regions](Time)
+	~	Year
+	~	In current International Standard Classification of Education (ISCED), \
+		this is considered 5 years, but assumed to have changed over time, \
+		starting from 2 years at the beginning of the century.
+	|
+
+Mean Years of Schooling[Regions]=
+	(Average duration of primary education[Regions]*sum(Primary Education Graduates[Regions\
+		,Gender!,MYS!])
+	+(Average duration of secondary education[Regions]+Average duration of primary education\
+		[Regions])*sum(Secondary Education Graduates[Regions,Gender!,MYS!])
+	+(Average duration of tertiary education[Regions]+Average duration of secondary education\
+		[Regions]+Average duration of primary education[Regions])*sum(Tertiary Education Graduates\
+		[Regions,Gender!,MYS!]))/sum(Population Cohorts[Regions,Gender!,MYS!])
+	~	Year
+	~		|
+
+Average duration of primary education[Regions]=
+	SMOOTH(Lookup primary education duration[Regions](Time),1)
+	~	Year
+	~	In current International Standard Classification of Education (ISCED), \
+		this is considered 6 years, but assumed to have changed over time, \
+		starting from 2 years at the beginning of the century. Smoothed to avoid \
+		sharpe changes.
+	|
+
+Average duration of secondary education[Regions]=
+	SMOOTH(Lookup secondary education duration[Regions](Time),1)
+	~	Year
+	~	In current International Standard Classification of Education (ISCED), \
+		this is considered 6 years, but assumed to have changed over time, \
+		starting from 2 years at the beginning of the century. Smoothed to avoid \
+		sharpe changes. More information is needed!!!
+	|
+
+L0 edu Fer[Africa]=
+	0.218107 ~~|
+L0 edu Fer[AsiaPacific]=
+	0.762785 ~~|
+L0 edu Fer[EastEu]=
+	0.00136207 ~~|
+L0 edu Fer[LAC]=
+	0.542209 ~~|
+L0 edu Fer[WestEu]=
+	0.940461
+	~	Dmnl
+	~	 + RAMP( Future fertility MYS[Regions] /78, 2022 , 2100 )
+	|
+
+Effect of GWP per capita on primary enrollment[Regions,Gender]=
+	P1[Regions,Gender]/(1+EXP(-P2[Regions,Gender]*(GWP per capita ratio for enrollment[Regions\
+		]-P0[Regions
+	,Gender])))
+	~	Dmnl
+	~	Based on Net enrollment rate (noramlzied wrt max) vs. GWP per capita (normalized wrt \
+		2000 value) data. Needs regression!
+		IF THEN ELSE function is used to ensure the value of the primary education \
+		enrollment fraction <=1
+	|
+
+Effect of GWP per capita on secondary enrollment[Regions,Gender]=
+	S1[Regions,Gender]/(1+EXP(-S2[Regions,Gender]*(GWP per capita ratio for enrollment[Regions\
+		]-S0[Regions
+	,Gender])))
+	~	Dmnl
+	~	Based on gross enrollment rate (noramlzied wrt max) vs. GWP per capita (normalized \
+		wrt 2000 value) data. Needs regression!
+		IF THEN ELSE function is used to ensure the value of the secondary \
+		education enrollment fraction is during [0,1]
+	|
+
+Effect of GWP per capita on tertiary enrollment[Regions,Gender]=
+	T1[Regions,Gender]/(1+EXP(-T2[Regions,Gender]*(GWP per capita ratio for enrollment[Regions\
+		]-T0[Regions
+	,Gender])))
+	~	Dmnl
+	~	Based on gross enrollment rate (noramlzied wrt max) vs. GWP per capita (normalized \
+		wrt 2000 value) data. Needs regression! 
+		IF THEN ELSE function is used to ensure the value of the tertiary \
+		education enrollment fraction is during [0,1]
+	|
+
+Reference secondary education enrollment fraction[Regions,Gender,"10-14"]=
+	Reference secondary education enrollment fraction Init[Regions,Gender,"10-14"] +
+	SMOOTH3(STEP(Secondary education enrollment Variation[Gender,"10-14"]-Reference secondary education enrollment fraction Init\
+		[Regions,Gender,"10-14"],Current year),SSP Demographic Variation Time) ~~|
+Reference secondary education enrollment fraction[Regions,Gender,"15-19"]=
+	Reference secondary education enrollment fraction Init[Regions,Gender,"15-19"] + 
+	SMOOTH3(STEP(Secondary education enrollment Variation[Gender,"15-19"]-Reference secondary education enrollment fraction Init\
+		[Regions,Gender,"15-19"],Current year),SSP Demographic Variation Time)
+	~	Dmnl
+	~	Corresponding to 2000 values
+	|
+
+Net enrollment primary cal[Regions,Gender]=
+	Enrollment rate to primary education[Regions,Gender]/Population Cohorts[Regions,Gender\
+		,"5-9"]
+	~	Dmnl
+	~		|
+
+Net enrollment primary[Regions,Gender]:INTERPOLATE:
+	~	
+	~		|
+
+Ramp for fertility variation[Regions,Fertile]=
+	L0 age fertility[Regions,Fertile]+RAMP(L Fertility Variation[Regions,Fertile], 2022 \
+		, 2100 )
+	~	Dmnl
+	~		|
+
+L0 age fertility[Africa,Fertile]=
+	1.31993,
+	2.02833,
+	3.00491,
+	1.51095,
+	1.15953,
+	0.75578,
+	0.313343 ~~|
+L0 age fertility[AsiaPacific,Fertile]=
+	0.499488,
+	2.16e-27,
+	0.106992,
+	1.22031,
+	0.917122,
+	0.552919,
+	0.145133 ~~|
+L0 age fertility[EastEu,Fertile]=
+	0.0719006,
+	0.831261,
+	2.91952,
+	0.47535,
+	5.28559,
+	0.213226,
+	23.5752 ~~|
+L0 age fertility[LAC,Fertile]=
+	0.3526,
+	6.65e-19,
+	0.0429484,
+	1.25366,
+	0.868796,
+	0.411049,
+	0.104656 ~~|
+L0 age fertility[WestEu,Fertile]=
+	0.262187,
+	0.872152,
+	0.897727,
+	0.5694,
+	0.335292,
+	0.141027,
+	0.803378
+	~	
+	~	EE:
+		0.189362,
+		0.831261,
+		2.91957,
+		0.482511,
+		0.263867,
+		0.214559,
+		32.6348
+	|
+
+Total Fertility[Regions]=
+	Normal Fertility[Regions]*Impact of Education on Fertility[Regions]*Impact of GDP on Fertility\
+		[Regions]
+	~	Dmnl
+	~	Total fertility of mature reproductive population. Source of historical data: \
+		http://esa.un.org/unpp
+		
+		original equation: Normal Fertility[Regions]*Impact of Education on \
+		Fertility[Regions]*Impact of GDP on Fertility[Regions]
+	|
+
+Life Expectancy at Birth[Africa]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,15),(1950,38),(1951,38.2),(1952,38.69),(1953,39.15),(1954,39.55\
+		),(1955,40.1),(1956,40.45),(1957,40.38),(1958,40.69),(1959,41.63),(1960,41.9),(1961\
+		,42.31),(1962,42.74),(1963,43.19),(1964,43.67),(1965,43.9),(1966,43.94),(1967,44.2)\
+		,(1968,44.63),(1969,44.86),(1970,45.31),(1971,45.8),(1972,46),(1973,46.65),(1974,46.99\
+		),(1975,47.45),(1976,48.16),(1977,48.7),(1978,49.12),(1979,49.67),(1980,50.14),(1981\
+		,50.61),(1982,51.01),(1983,50.54),(1984,50.78),(1985,51.17),(1986,51.66),(1987,52.08\
+		),(1988,51.98),(1989,52.74),(1990,52.78),(1991,52.75),(1992,52.61),(1993,52.85),(1994\
+		,53.11),(1995,53.25),(1996,53.29),(1997,53.48),(1998,53.29),(1999,53.9),(2000,54.43\
+		),(2001,54.68),(2002,55),(2003,55.37),(2004,55.79),(2005,56.32),(2006,56.96),(2007,\
+		57.5),(2008,58.03),(2009,58.7),(2010,59.24),(2011,59.84),(2012,60.36),(2013,60.81),\
+		(2014,61.25),(2015,61.63),(2016,62.08),(2017,62.46),(2018,62.8),(2019,63.13),(2020,\
+		62.68),(2021,62.14),(2022,62.61),(2023,63.4),(2024,64.11),(2025,64.3),(2026,64.49),\
+		(2027,64.67),(2028,64.85),(2029,65.03),(2030,65.2),(2031,65.37),(2032,65.54),(2033,\
+		65.71),(2034,65.88),(2035,66.04),(2036,66.21),(2037,66.37),(2038,66.53),(2039,66.69\
+		),(2040,66.85),(2041,67.01),(2042,67.16),(2043,67.32),(2044,67.47),(2045,67.62),(2046\
+		,67.77),(2047,67.92),(2048,68.07),(2049,68.22),(2050,68.37),(2051,68.51),(2052,68.66\
+		),(2053,68.8),(2054,68.95),(2055,69.09),(2056,69.23),(2057,69.37),(2058,69.52),(2059\
+		,69.65),(2060,69.79),(2061,69.93),(2062,70.07),(2063,70.21),(2064,70.34),(2065,70.48\
+		),(2066,70.62),(2067,70.76),(2068,70.89),(2069,71.02),(2070,71.16),(2071,71.29),(2072\
+		,71.42),(2073,71.56),(2074,71.69),(2075,71.83),(2076,71.96),(2077,72.09),(2078,72.22\
+		),(2079,72.36),(2080,72.49),(2081,72.62),(2082,72.75),(2083,72.89),(2084,73.02),(2085\
+		,73.16),(2086,73.29),(2087,73.42),(2088,73.55),(2089,73.68),(2090,73.82),(2091,73.95\
+		),(2092,74.08),(2093,74.21),(2094,74.34),(2095,74.48),(2096,74.61),(2097,74.74),(2098\
+		,74.87),(2099,75),(2100,75.14) )) ~~|
+Life Expectancy at Birth[AsiaPacific]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,20),(1950,43.3),(1951,44),(1952,44.96),(1953,45.53),(1954,46.44\
+		),(1955,47.1),(1956,47.57),(1957,48.03),(1958,48.59),(1959,45.38),(1960,43.21),(1961\
+		,46.32),(1962,50.52),(1963,50.99),(1964,51.57),(1965,51.29),(1966,52.16),(1967,52.83\
+		),(1968,53.64),(1969,54.21),(1970,54.57),(1971,54.61),(1972,55.93),(1973,56.62),(1974\
+		,57.19),(1975,57.84),(1976,58.47),(1977,59.1),(1978,59.64),(1979,60.21),(1980,60.66\
+		),(1981,61.14),(1982,61.58),(1983,62.04),(1984,62.49),(1985,62.87),(1986,63.27),(1987\
+		,63.63),(1988,63.93),(1989,64.3),(1990,64.58),(1991,64.82),(1992,65.33),(1993,65.69\
+		),(1994,65.97),(1995,66.25),(1996,66.53),(1997,66.93),(1998,67.37),(1999,67.71),(2000\
+		,68.07),(2001,68.55),(2002,68.92),(2003,69.29),(2004,69.49),(2005,69.9),(2006,70.28\
+		),(2007,70.53),(2008,70.65),(2009,71.07),(2010,71.39),(2011,71.68),(2012,71.99),(2013\
+		,72.32),(2014,72.67),(2015,73),(2016,73.29),(2017,73.52),(2018,73.83),(2019,74.03),\
+		(2020,73.58),(2021,72.51),(2022,73.1),(2023,74.76),(2024,74.98),(2025,75.16),(2026,\
+		75.34),(2027,75.51),(2028,75.68),(2029,75.85),(2030,76.02),(2031,76.19),(2032,76.36\
+		),(2033,76.52),(2034,76.69),(2035,76.85),(2036,77.01),(2037,77.16),(2038,77.32),(2039\
+		,77.48),(2040,77.63),(2041,77.78),(2042,77.94),(2043,78.08),(2044,78.23),(2045,78.38\
+		),(2046,78.53),(2047,78.67),(2048,78.82),(2049,78.96),(2050,79.1),(2051,79.24),(2052\
+		,79.38),(2053,79.51),(2054,79.65),(2055,79.78),(2056,79.91),(2057,80.05),(2058,80.18\
+		),(2059,80.31),(2060,80.44),(2061,80.57),(2062,80.7),(2063,80.82),(2064,80.95),(2065\
+		,81.08),(2066,81.21),(2067,81.33),(2068,81.46),(2069,81.58),(2070,81.71),(2071,81.84\
+		),(2072,81.96),(2073,82.09),(2074,82.21),(2075,82.34),(2076,82.46),(2077,82.59),(2078\
+		,82.71),(2079,82.83),(2080,82.96),(2081,83.08),(2082,83.2),(2083,83.32),(2084,83.44\
+		),(2085,83.56),(2086,83.68),(2087,83.8),(2088,83.92),(2089,84.04),(2090,84.16),(2091\
+		,84.28),(2092,84.39),(2093,84.51),(2094,84.63),(2095,84.75),(2096,84.87),(2097,84.99\
+		),(2098,85.1),(2099,85.22),(2100,85.34) )) ~~|
+Life Expectancy at Birth[EastEu]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,34),(1950,59.2),(1951,59.32),(1952,60.57),(1953,61.54),(1954\
+		,62.37),(1955,63.5),(1956,65.31),(1957,65.17),(1958,66.76),(1959,66.45),(1960,67.64\
+		),(1961,67.87),(1962,67.55),(1963,68.16),(1964,68.67),(1965,68.5),(1966,68.7),(1967\
+		,68.42),(1968,68.48),(1969,68.02),(1970,68.14),(1971,68.25),(1972,68.46),(1973,68.49\
+		),(1974,68.65),(1975,68.44),(1976,68.41),(1977,68.4),(1978,68.36),(1979,68.23),(1980\
+		,68.06),(1981,68.39),(1982,68.65),(1983,68.54),(1984,68.36),(1985,68.56),(1986,69.7\
+		),(1987,69.68),(1988,69.59),(1989,69.78),(1990,69.58),(1991,69.41),(1992,68.87),(1993\
+		,67.9),(1994,67.7),(1995,67.79),(1996,68.42),(1997,68.9),(1998,69.3),(1999,68.93),(\
+		2000,69.05),(2001,69.3),(2002,69.25),(2003,69.34),(2004,69.75),(2005,69.89),(2006,70.59\
+		),(2007,71.08),(2008,71.44),(2009,71.97),(2010,72.19),(2011,72.84),(2012,73.08),(2013\
+		,73.46),(2014,73.8),(2015,74.11),(2016,74.62),(2017,75.01),(2018,75.09),(2019,75.38\
+		),(2020,73.45),(2021,72.3),(2022,72.58),(2023,75.51),(2024,76.2),(2025,76.35),(2026\
+		,76.5),(2027,76.66),(2028,76.81),(2029,76.97),(2030,77.13),(2031,77.29),(2032,77.44\
+		),(2033,77.6),(2034,77.76),(2035,77.91),(2036,78.07),(2037,78.23),(2038,78.38),(2039\
+		,78.54),(2040,78.69),(2041,78.85),(2042,79),(2043,79.15),(2044,79.3),(2045,79.46),(\
+		2046,79.61),(2047,79.76),(2048,79.92),(2049,80.07),(2050,80.22),(2051,80.37),(2052,\
+		80.52),(2053,80.66),(2054,80.81),(2055,80.96),(2056,81.11),(2057,81.25),(2058,81.4)\
+		,(2059,81.54),(2060,81.69),(2061,81.83),(2062,81.96),(2063,82.1),(2064,82.24),(2065\
+		,82.38),(2066,82.51),(2067,82.65),(2068,82.78),(2069,82.91),(2070,83.04),(2071,83.17\
+		),(2072,83.3),(2073,83.43),(2074,83.55),(2075,83.68),(2076,83.8),(2077,83.93),(2078\
+		,84.05),(2079,84.17),(2080,84.29),(2081,84.41),(2082,84.53),(2083,84.65),(2084,84.76\
+		),(2085,84.88),(2086,85),(2087,85.12),(2088,85.24),(2089,85.35),(2090,85.47),(2091,\
+		85.59),(2092,85.71),(2093,85.82),(2094,85.94),(2095,86.05),(2096,86.17),(2097,86.29\
+		),(2098,86.4),(2099,86.52),(2100,86.63) )) ~~|
+Life Expectancy at Birth[LAC]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,26),(1950,49.5),(1951,49.93),(1952,50.6),(1953,51.19),(1954\
+		,51.85),(1955,52.4),(1956,53.03),(1957,53.54),(1958,54.18),(1959,54.7),(1960,55.26)\
+		,(1961,55.8),(1962,56.25),(1963,56.67),(1964,57.17),(1965,57.57),(1966,57.98),(1967\
+		,58.37),(1968,58.75),(1969,59.1),(1970,59.17),(1971,59.98),(1972,60.35),(1973,60.89\
+		),(1974,61.31),(1975,61.85),(1976,62.09),(1977,62.66),(1978,63.03),(1979,63.39),(1980\
+		,63.81),(1981,64.31),(1982,64.64),(1983,65.18),(1984,65.58),(1985,65.89),(1986,66.48\
+		),(1987,66.9),(1988,67.31),(1989,67.65),(1990,67.94),(1991,68.29),(1992,68.62),(1993\
+		,68.95),(1994,69.32),(1995,69.63),(1996,70),(1997,70.36),(1998,70.61),(1999,71.01),\
+		(2000,71.34),(2001,71.6),(2002,71.95),(2003,72.12),(2004,72.44),(2005,72.8),(2006,73.01\
+		),(2007,73.15),(2008,73.37),(2009,73.57),(2010,73.47),(2011,73.95),(2012,74.18),(2013\
+		,74.42),(2014,74.62),(2015,74.69),(2016,74.66),(2017,74.81),(2018,74.93),(2019,75.12\
+		),(2020,73.19),(2021,72.31),(2022,73.84),(2023,75.79),(2024,76.08),(2025,76.26),(2026\
+		,76.45),(2027,76.63),(2028,76.81),(2029,76.99),(2030,77.17),(2031,77.35),(2032,77.53\
+		),(2033,77.71),(2034,77.88),(2035,78.06),(2036,78.23),(2037,78.41),(2038,78.58),(2039\
+		,78.75),(2040,78.92),(2041,79.09),(2042,79.26),(2043,79.43),(2044,79.6),(2045,79.76\
+		),(2046,79.93),(2047,80.1),(2048,80.26),(2049,80.43),(2050,80.59),(2051,80.75),(2052\
+		,80.91),(2053,81.07),(2054,81.23),(2055,81.39),(2056,81.54),(2057,81.69),(2058,81.84\
+		),(2059,82),(2060,82.14),(2061,82.29),(2062,82.44),(2063,82.58),(2064,82.73),(2065,\
+		82.87),(2066,83.01),(2067,83.15),(2068,83.29),(2069,83.42),(2070,83.56),(2071,83.69\
+		),(2072,83.83),(2073,83.96),(2074,84.09),(2075,84.22),(2076,84.35),(2077,84.48),(2078\
+		,84.61),(2079,84.73),(2080,84.85),(2081,84.98),(2082,85.11),(2083,85.23),(2084,85.35\
+		),(2085,85.48),(2086,85.6),(2087,85.72),(2088,85.84),(2089,85.96),(2090,86.08),(2091\
+		,86.2),(2092,86.32),(2093,86.44),(2094,86.56),(2095,86.67),(2096,86.79),(2097,86.91\
+		),(2098,87.03),(2099,87.15),(2100,87.26) )) ~~|
+Life Expectancy at Birth[WestEu]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,50),(1950,67.2),(1951,67.16),(1952,67.91),(1953,68.25),(1954\
+		,68.94),(1955,69.1),(1956,69.13),(1957,69.13),(1958,69.81),(1959,69.96),(1960,70.03\
+		),(1961,70.4),(1962,70.3),(1963,70.28),(1964,70.79),(1965,70.84),(1966,70.96),(1967\
+		,71.22),(1968,71.03),(1969,71.06),(1970,71.44),(1971,71.67),(1972,71.87),(1973,72.03\
+		),(1974,72.42),(1975,72.7),(1976,72.96),(1977,73.42),(1978,73.57),(1979,73.92),(1980\
+		,74.01),(1981,74.32),(1982,74.63),(1983,74.74),(1984,75.05),(1985,75.07),(1986,75.26\
+		),(1987,75.53),(1988,75.63),(1989,75.84),(1990,76.04),(1991,76.19),(1992,76.49),(1993\
+		,76.46),(1994,76.74),(1995,76.84),(1996,77.09),(1997,77.41),(1998,77.59),(1999,77.7\
+		),(2000,77.95),(2001,78.17),(2002,78.28),(2003,78.4),(2004,78.92),(2005,78.99),(2006\
+		,79.32),(2007,79.5),(2008,79.64),(2009,79.93),(2010,80.17),(2011,80.34),(2012,80.42\
+		),(2013,80.56),(2014,80.75),(2015,80.58),(2016,80.73),(2017,80.74),(2018,80.9),(2019\
+		,81.14),(2020,80.11),(2021,80.15),(2022,80.93),(2023,81.74),(2024,81.89),(2025,82.04\
+		),(2026,82.18),(2027,82.33),(2028,82.47),(2029,82.61),(2030,82.75),(2031,82.89),(2032\
+		,83.03),(2033,83.17),(2034,83.31),(2035,83.44),(2036,83.58),(2037,83.71),(2038,83.85\
+		),(2039,83.98),(2040,84.12),(2041,84.25),(2042,84.38),(2043,84.51),(2044,84.64),(2045\
+		,84.77),(2046,84.9),(2047,85.02),(2048,85.15),(2049,85.28),(2050,85.4),(2051,85.52)\
+		,(2052,85.64),(2053,85.77),(2054,85.89),(2055,86),(2056,86.13),(2057,86.25),(2058,86.36\
+		),(2059,86.48),(2060,86.6),(2061,86.72),(2062,86.83),(2063,86.95),(2064,87.07),(2065\
+		,87.18),(2066,87.3),(2067,87.41),(2068,87.53),(2069,87.64),(2070,87.76),(2071,87.87\
+		),(2072,87.99),(2073,88.1),(2074,88.21),(2075,88.32),(2076,88.44),(2077,88.56),(2078\
+		,88.67),(2079,88.78),(2080,88.9),(2081,89.01),(2082,89.13),(2083,89.24),(2084,89.35\
+		),(2085,89.47),(2086,89.58),(2087,89.69),(2088,89.81),(2089,89.92),(2090,90.03),(2091\
+		,90.15),(2092,90.26),(2093,90.37),(2094,90.49),(2095,90.6),(2096,90.72),(2097,90.83\
+		),(2098,90.94),(2099,91.06),(2100,91.17) ))
+	~	Year
+	~	The global average life expectancy at birth. Source of historical data: World Bank
+		
+		origin function:
+		Reference Life Expectancy at Birth[Regions]*Impact of Wealth on \
+		Health[Regions]*Impact of Education on Life Expectancy[
+		Regions]*Lifetime Multiplier from Food[Regions]*Lifetime Multiplier from \
+		Climate Risk[Regions]
+	|
+
+"0 to 19":
+	"0-4","5-9","10-14", "15-19"
+	~	
+	~		|
+
+"100 percent"=
+	100
+	~	percent
+	~		|
+
+"15 to 24":
+	"15-19","20-24"
+	~	
+	~		|
+
+"20 to 39":
+	"20-24","25-29","30-34","35-39"
+	~	
+	~		|
+
+"25 to 54":
+	"25-29","30-34","35-39","40-44","45-49","50-54"
+	~	
+	~		|
+
+"40 to 64":
+	"40-44","45-49","50-54","55-59","60-64"
+	~	
+	~		|
+
+"55 to 64":
+	"55-59","60-64"
+	~	
+	~		|
+
+"65+":
+	"65-69","70-74","75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+Age Specific Fertility Rate LOOKUP[Regions,"15-19"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.00231122),(0.5,0.00680381),(1,0.0195977),(1.5,0.0531867),(2,0.125327\
+		),(2.5,0.230181),(3,0.320135
+		),(3.5,0.368499),(4,0.388196),(4.5,0.395292),(5,0.397733),(5.5,0.39856),(6,0.398839\
+		),(6.5,0.398932),(7,0.398964) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"20-24"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.0266555),(0.5,0.0594449),(1,0.12812),(1.5,0.258001),(2,0.46215\
+		),(2.5,0.705352),(3,0.915218),(3.5
+		,1.05155),(4,1.12455),(4.5,1.15962),(5,1.1756),(5.5,1.1827),(6,1.18583),(6.5,1.18719\
+		),(7,1.18779) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"25-29"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.210634),(0.5,0.279671),(1,0.365239),(1.5,0.467472),(2,0.584396\
+		),(2.5,0.711621),(3,0.842765),(3.5
+		,0.970622),(4,1.08868),(4.5,1.19234),(5,1.27942),(5.5,1.34989),(6,1.40521),(6.5,1.44762\
+		),(7,1.47953) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"30-34"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.273372),(0.5,0.312879),(1,0.357669),(1.5,0.408321),(2,0.465437\
+		),(2.5,0.529636),(3,0.601533),(3.5
+		,0.681725),(4,0.770763),(4.5,0.869128),(5,0.977194),(5.5,1.09519),(6,1.22319),(6.5,\
+		1.36101),(7,1.50829) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"35-39"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.113701),(0.5,0.13669),(1,0.164174),(1.5,0.196963),(2,0.235986\
+		),(2.5,0.282292),(3,0.337053),(3.5,
+		0.401546),(4,0.477137),(4.5,0.565236),(5,0.667241),(5.5,0.784453),(6,0.917966),(6.5\
+		,1.06854),(7,1.23647) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"40-44"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.0203251),(0.5,0.0275252),(1,0.0371859),(1.5,0.0500752),(2,0.0671434\
+		),(2.5,0.0895213),(3,0.118481
+		),(3.5,0.155333),(4,0.201238),(4.5,0.25692),(5,0.322328),(5.5,0.396327),(6,0.476563\
+		),(6.5,0.559657),(7,0.641715) )) ~~|
+Age Specific Fertility Rate LOOKUP[Regions,"45-49"]= WITH LOOKUP (
+	Total Fertility[Regions],
+		([(0,0)-(10,10)],(0,0.00157971),(0.5,0.00275537),(1,0.00475806),(1.5,0.00807914),(2\
+		,0.0133486),(2.5,0.0211505),(3,0.0315942
+		),(3.5,0.043836),(4,0.0561379),(4.5,0.0667288),(5,0.0746992),(5.5,0.0801109),(6,0.0835335\
+		),(6.5,0.0856019),(7,0.0868177
+		)
+		 ))
+	~	Dmnl
+	~	Age-specific fertility rate is formulated as a lookup function, derived \
+		from the Total Fertility - Age-Specific Fertility Rate relationship \
+		observed in the data from Wittgenstein Center for Population and Human \
+		Capital.
+	|
+
+AllButOldest:
+	"0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49"\
+		, "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", \
+		"95-99"
+	~	
+	~		|
+
+AllButYoungest:
+	"5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54"\
+		, "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", "95-99", \
+		"100+"
+	~	
+	~		|
+
+Average Primary Education Duration=
+	6
+	~	Year
+	~	https://data.worldbank.org/indicator/SE.PRM.DURS
+	|
+
+Average Primary Education Ratio[Regions,Gender,PrimaryEdCohorts]=
+	Primary Education Graduates[Regions,Gender,PrimaryEdCohorts]/Population Cohorts[Regions\
+		,Gender,PrimaryEdCohorts]
+	~	Dmnl
+	~		|
+
+Average Secondary Education Duration[Regions]=
+	6,
+	6,
+	7,
+	6,
+	7
+	~	Year
+	~	https://data.worldbank.org/indicator/SE.SEC.DURS
+	|
+
+Average Secondary Education Level[Regions,Gender,SecondaryEdCohorts]=
+	Secondary Education Graduates[Regions,Gender,SecondaryEdCohorts]/Population Cohorts[\
+		Regions,Gender,SecondaryEdCohorts]
+	~	Dmnl
+	~		|
+
+Average Tertiary Education Duration=
+	4
+	~	Year
+	~		|
+
+Average Tertiary Education Level[Regions,Gender,TertiaryEdCohorts]=
+	Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts]/Population Cohorts[Regions\
+		,Gender,TertiaryEdCohorts]
+	~	Dmnl
+	~		|
+
+b fertility=
+	0.129381
+	~	Dmnl
+	~	Calibrated according to Total Fertility and Population data
+		0.0648 + STEP(SA b fertility-0.0648, 2020)
+	|
+
+Birth Gender Fraction[Regions,male]=
+	Birth Gender Fraction Init[Regions] + SMOOTH3(STEP(Birth Gender Fraction Variation[Regions\
+		]-Birth Gender Fraction Init[Regions],Current year),SSP Demographic Variation Time)\
+		 ~~|
+Birth Gender Fraction[Regions,female]=
+	1-Birth Gender Fraction[Regions,male]
+	~	Dmnl
+	~		|
+
+Birth Gender Fraction Init[Regions]=
+	0.50942,
+	0.518048,
+	0.514732,
+	0.510768,
+	0.513116
+	~	Dmnl
+	~	Birth Gender Fraction for male
+	|
+
+Birth Gender Fraction Variation[Regions]=
+	0.508817,
+	0.517793,
+	0.514948,
+	0.510758,
+	0.512673
+	~	Dmnl
+	~		|
+
+Birth Rate[Regions,Gender]=
+	Birth Gender Fraction[Regions,Gender]*sum(Age Specific Fertility Rate[Regions,Fertile\
+		!]*Population Cohorts[Regions,female,Fertile!])/Interval duration
+	~	People/Year
+	~	Formulation with total fertility: Birth Gender Fraction[Gender]*Total \
+		Fertility*Fertile Population/Reproductive Lifetime
+	|
+
+Change in Labor Force[Regions,Gender,WorkingAge,Labor force type]=
+	Labor Force[Regions,Gender,WorkingAge,Labor force type]/Initial Labor Force[Regions,\
+		Gender,WorkingAge,Labor force type]
+	~	Dmnl
+	~		|
+
+Climate mortality inflection=
+	Climate mortality inflection 0 + STEP(Climate mortality inflection SA-Climate mortality inflection 0\
+		,Current year)
+	~	DegreesC
+	~	The parameter that defines the inflection of the logistic function \
+		representing temperature-mortality relation. "..0" is the value that \
+		defines the original function calibrated to Bressler et al. 2021, "... SA" \
+		is the value that can be user-set to cover the uncertainty range after  \
+		the current year.
+	|
+
+Climate mortality inflection 0=
+	7.75615
+	~	DegreesC
+	~		|
+
+Climate mortality inflection SA=
+	7.75615
+	~	DegreesC
+	~		|
+
+Climate mortality saturation[Regions]=
+	Climate mortality saturation 0[Regions] + STEP(Climate mortality saturation SA[Regions\
+		]-Climate mortality saturation 0[Regions], Current year)
+	~	percent
+	~	The parameter that defines the saturation level of the logistic function \
+		representing temperature-mortality relation. "..0" is the value that \
+		defines the original function calibrated to Bressler et al. 2021, "... SA" \
+		is the value that can be user-set to cover the uncertainty range after  \
+		the current year.
+	|
+
+Climate mortality saturation 0[Regions]=
+	0.684457,
+	0.684457,
+	0.684457,
+	0.684457,
+	0.684457
+	~	Dmnl
+	~	The parameter that defines the saturation level of the logistic function \
+		representing temperature-mortality relation. Calibrated to Bressler et al. \
+		2021.
+	|
+
+Climate mortality saturation SA[Regions]=
+	0.684457,
+	0.684457,
+	0.684457,
+	0.684457,
+	0.684457
+	~	Dmnl
+	~		|
+
+Climate mortality steepness[Regions]=
+	IF THEN ELSE(SWITCH Impact of Education on Climate Mortality=0, Climate mortality steepness 0\
+		[Regions],
+	             IF THEN ELSE(SWITCH Impact of Education on Climate Mortality=1,
+	                          Lookup for the Impact of MYS on Climate Mortality(Mean Years of Schooling\
+		[Regions]),
+	                          Lookup for the Impact of Female Education on Climate Mortality\
+		("Share of females aged 20-39 with sec+ education"[Regions])))
+	~	Dmnl
+	~	The parameter that defines the steepness of the logistic function \
+		representing temperature-mortality relation. It is assumed to depend on \
+		education, as education is a mediating factor for the climate impacts on \
+		mortality. Imapct of education can be driven by two alternative \
+		indicators, MYS or the female education.
+	|
+
+Climate mortality steepness 0[Regions]=
+	0.257497,
+	0.257497,
+	0.257497,
+	0.257497,
+	0.257497
+	~	Dmnl
+	~	The parameter that defines the steepness of the logistic function \
+		representing temperature-mortality relation. Calibrated to Bressler et al. \
+		2021.
+	|
+
+Climate mortality steepness SA=
+	0.257497
+	~	Dmnl
+	~		|
+
+CLIMATE MORTALITY SWITCH=
+	0
+	~	Dmnl
+	~	0: Only temperature-dependent impact
+		1: Education mediated temperature impact - based on MYS
+		2: Education mediated temperature impact - based on female secondary
+		3: No impact
+	|
+
+Cohorts:
+	"0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49"\
+		, "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", \
+		"95-99", "100+"
+	~	
+	~		|
+
+Current year=
+	2023
+	~	Year
+	~		|
+
+Death Rate[Regions,Gender,Cohorts]=
+	Population Cohorts[Regions,Gender,Cohorts]*Mortality fraction[Regions,Gender,Cohorts\
+		]
+	~	People/Year
+	~		|
+
+Death Rate of Primary Education Graduates[Regions,Gender,PrimaryEdCohorts]=
+	Primary Education Graduates[Regions,Gender,PrimaryEdCohorts]*Mortality fraction[Regions\
+		,Gender,PrimaryEdCohorts]
+	~	People/Year
+	~	Death Rate[Gender,PrimaryEdCohorts]*Average Primary Education \
+		Ratio[Gender,PrimaryEdCohorts]
+	|
+
+Death Rate of Secondary Education Graduates[Regions,Gender,SecondaryEdCohorts]=
+	Secondary Education Graduates[Regions,Gender,SecondaryEdCohorts]*Mortality fraction[\
+		Regions,Gender,SecondaryEdCohorts]
+	~	People/Year
+	~	Death Rate[Gender,SecondaryEdCohorts]*Average Secondary Education \
+		Level[Gender,SecondaryEdCohorts]
+	|
+
+Death Rate of Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts]=
+	Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts]*Mortality fraction[Regions\
+		,Gender,TertiaryEdCohorts]
+	~	People/Year
+	~	Death Rate[Gender,TertiaryEdCohorts]*Average Tertiary Education \
+		Level[Gender,TertiaryEdCohorts]
+	|
+
+DemoFeliX target year=
+	2030
+	~	Year
+	~		|
+
+Education:
+	noEd, primary, secondary, tertiary
+	~	
+	~		|
+
+Enrollment Rate to Secondary Education[Regions,Gender,"10-14"]=
+	Primary Education Graduates[Regions,Gender,"10-14"]*Secondary Education Enrollment Fraction\
+		[Regions,Gender,"10-14"] ~~|
+Enrollment Rate to Secondary Education[Regions,Gender,PrimaryEdButYoungest]=
+	0 ~~|
+Enrollment Rate to Secondary Education[Regions,Gender,"15-19"]=
+	Primary Education Graduates[Regions,Gender,"15-19"]*Secondary Education Enrollment Fraction\
+		[Regions,Gender,"15-19"]
+	~	People/Year
+	~	A fraction of total population rather than primary graduates at 10-14 and \
+		15-19 enroll to secondary education.
+	|
+
+Enrollment Rate to Tertiary Education[Regions,Gender,"15-19"]=
+	Secondary Education Graduates[Regions,Gender,"15-19"]*Tertiary Education Enrollment Fraction\
+		[Regions,Gender,"15-19"] ~~|
+Enrollment Rate to Tertiary Education[Regions,Gender,SecondaryEdButYoungest]=
+	0 ~~|
+Enrollment Rate to Tertiary Education[Regions,Gender,"20-24"]=
+	Tertiary Education Enrollment Fraction[Regions,Gender,"20-24"]*Secondary Education Graduates\
+		[Regions,Gender,"20-24"] ~~|
+Enrollment Rate to Tertiary Education[Regions,Gender,"25-29"]=
+	Tertiary Education Enrollment Fraction[Regions,Gender,"25-29"]*Secondary Education Graduates\
+		[Regions,Gender,"25-29"]
+	~	People/Year
+	~		|
+
+Fertile:
+	"15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49"
+	~	
+	~		|
+
+Fertile Population[Regions]=
+	sum(Population Cohorts[Regions,female,Fertile!])
+	~	People
+	~		|
+
+Food Ratio[Regions]=
+	Total Daily Calorie Supply per Capita/Subsistence Food per Capita[Regions]
+	~	Dmnl
+	~	Available food to subsistence food per capita ratio.
+	|
+
+Fraction of skilled secondary education graduates=
+	0.5
+	~	Dmnl
+	~		|
+
+Fractional1[Regions]=
+	1
+	~	Dmnl
+	~		|
+
+Future fertility GDP[Regions]=
+	0
+	~	Dmnl
+	~		|
+
+Future fertility MYS[Regions]=
+	0,
+	0,
+	0,
+	0,
+	0
+	~	Dmnl [-1,1,0.05]
+	~		|
+
+GDP per Capita 2000[Regions]=
+	1273.36,
+	2677.24,
+	4220.4,
+	5514.78,
+	34356.4
+	~	$/(Year*Person)
+	~		|
+
+Gender:
+	male, female
+	~	
+	~		|
+
+Graduation Rate from Primary Education[Regions,Gender,"10-14"]=
+	MIN(
+	DELAY1(
+	Enrollment rate to primary education[Regions,Gender],Average Primary Education Duration\
+		)*(Interval duration+Interval duration
+	-Average Primary Education Duration)/Interval duration, 
+	Maturation Rate[Regions,Gender,"10-14"]
+	) ~~|
+Graduation Rate from Primary Education[Regions,Gender,"15-19"]=
+	MIN(DELAY1(Enrollment rate to primary education[Regions,Gender],Average Primary Education Duration\
+		)*(Average Primary Education Duration
+	-Interval duration)/Interval duration,Maturation Rate[Regions,Gender,"15-19"])
+	~	People/Year
+	~		|
+
+Graduation Rate from Secondary Education[Regions,Gender,"15-19"]=
+	MIN(
+	DELAY1(
+	Enrollment Rate to Secondary Education[Regions,Gender,"10-14"]*
+	(Interval duration+Interval duration-Average Secondary Education Duration[Regions])/\
+		Interval duration,
+	Average Secondary Education Duration[Regions]),
+	Maturation Rate[Regions,Gender,"15-19"]) ~~|
+Graduation Rate from Secondary Education[Regions,Gender,"20-24"]=
+	MIN(
+	DELAY1(
+	Enrollment Rate to Secondary Education[Regions,Gender,"15-19"]*
+	(Interval duration+Interval duration-Average Secondary Education Duration[Regions])/\
+		Interval duration+
+	Enrollment Rate to Secondary Education[Regions,Gender,"10-14"]*(Average Secondary Education Duration\
+		[Regions]-Interval duration)/Interval duration
+	,Average Secondary Education Duration[Regions]),
+	Maturation Rate[Regions,Gender,"20-24"]) ~~|
+Graduation Rate from Secondary Education[Regions,Gender,"25-29"]=
+	MIN(
+	DELAY1(Enrollment Rate to Secondary Education[Regions,Gender,"15-19"]*
+	(Average Secondary Education Duration[Regions]-Interval duration)/Interval duration,
+	Average Secondary Education Duration[Regions]),
+	Maturation Rate[Regions,Gender,"25-29"])
+	~	People/Year
+	~	Conidering that the average secondary education duration is 6 yrs, 4/5 of the \
+		students enrolled when aged 10-14 graduate when they are 15-19. 1/5 of thm \
+		graduate at the 20-24 interval.
+		The same goes for the students enrolled when 15-19.
+	|
+
+Gross enrollment tertiary[Regions,Gender]=
+	sum(Enrollment Rate to Tertiary Education[Regions,Gender,SecondaryGraduation!])/sum(\
+		Population Cohorts[Regions,Gender,SecondaryGraduation!])
+	~	Dmnl
+	~		|
+
+Gross enrolment primary historical[female]:INTERPOLATE::=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B2' ) ~~|
+Gross enrolment primary historical[male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B3' )
+	~	Dmnl
+	~	Gross enrollment ratio is the ratio of total enrollment, regardless of \
+		age, to the population of the age group that officially corresponds to the \
+		level of education shown.
+	|
+
+Gross enrolment secondary historical[female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B4' ) ~~|
+Gross enrolment secondary historical[male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B5' )
+	~	1/Year
+	~		|
+
+Gross enrolment tertiary historical[female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B6' ) ~~|
+Gross enrolment tertiary historical[male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B7' )
+	~	Dmnl
+	~		|
+
+Gross World Product[Africa]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,1.90488e+10),(1901,1.98182e+10),(1902,2.06188e+10),(1903,2.14517e+10\
+		),(1904,2.23182e+10),(1905,2.32197e+10),(1906,2.41577e+10),(1907,2.51335e+10),(1908\
+		,2.61488e+10),(1909,2.7205e+10),(1910,2.8304e+10),(1911,2.94473e+10),(1912,3.06368e+10\
+		),(1913,3.18744e+10),(1914,3.31619e+10),(1915,3.45015e+10),(1916,3.58951e+10),(1917\
+		,3.73451e+10),(1918,3.88537e+10),(1919,4.04231e+10),(1920,4.2056e+10),(1921,4.37548e+10\
+		),(1922,4.55223e+10),(1923,4.73611e+10),(1924,4.92743e+10),(1925,5.12647e+10),(1926\
+		,5.33355e+10),(1927,5.549e+10),(1928,5.77315e+10),(1929,6.00635e+10),(1930,6.24897e+10\
+		),(1931,6.5014e+10),(1932,6.76402e+10),(1933,7.03725e+10),(1934,7.32151e+10),(1935,\
+		7.61726e+10),(1936,7.92496e+10),(1937,8.24508e+10),(1938,8.57814e+10),(1939,8.92465e+10\
+		),(1940,9.28516e+10),(1941,9.66023e+10),(1942,1.00504e+11),(1943,1.04564e+11),(1944\
+		,1.08788e+11),(1945,1.13183e+11),(1946,1.17755e+11),(1947,1.22511e+11),(1948,1.2746e+11\
+		),(1949,1.32609e+11),(1950,1.37965e+11),(1951,1.43538e+11),(1952,1.49337e+11),(1953\
+		,1.55369e+11),(1954,1.61645e+11),(1955,1.68175e+11),(1956,1.74968e+11),(1957,1.82036e+11\
+		),(1958,1.89389e+11),(1959,1.97039e+11),(1960,2.04999e+11),(1961,2.13279e+11),(1962\
+		,2.21895e+11),(1963,2.30858e+11),(1964,2.40183e+11),(1965,2.49885e+11),(1966,2.59979e+11\
+		),(1967,2.70481e+11),(1968,2.81407e+11),(1969,2.92775e+11),(1970,3.04601e+11),(1971\
+		,3.16905e+11),(1972,3.29706e+11),(1973,3.43025e+11),(1974,3.56881e+11),(1975,3.71297e+11\
+		),(1976,3.86296e+11),(1977,4.019e+11),(1978,4.18134e+11),(1979,4.35025e+11),(1980,4.52597e+11\
+		),(1981,4.7088e+11),(1982,4.89901e+11),(1983,5.0969e+11),(1984,5.30279e+11),(1985,5.51699e+11\
+		),(1986,5.73985e+11),(1987,5.97171e+11),(1988,6.21293e+11),(1989,6.4639e+11),(1990,\
+		6.72501e+11),(1991,6.99666e+11),(1992,7.27929e+11),(1993,7.57333e+11),(1994,7.87925e+11\
+		),(1995,8.19753e+11),(1996,8.64195e+11),(1997,8.98605e+11),(1998,9.29413e+11),(1999\
+		,1.00228e+12),(2000,1.04282e+12),(2001,1.08348e+12),(2002,1.13917e+12),(2003,1.19291e+12\
+		),(2004,1.26285e+12),(2005,1.33701e+12),(2006,1.41614e+12),(2007,1.50084e+12),(2008\
+		,1.57549e+12),(2009,1.61975e+12),(2010,1.70865e+12),(2011,1.73451e+12),(2012,1.81994e+12\
+		),(2013,1.89074e+12),(2014,1.95948e+12),(2015,2.02085e+12),(2016,2.0581e+12),(2017,\
+		2.12711e+12),(2018,2.1934e+12),(2019,2.24958e+12),(2020,2.19656e+12),(2021,2.29825e+12\
+		),(2022,2.38798e+12),(2025,2.5126e+12),(2030,2.8792e+12),(2035,3.5803e+12),(2040,4.4414e+12\
+		),(2045,5.4556e+12),(2050,6.6526e+12),(2055,8.041e+12),(2060,9.6191e+12),(2065,1.1365e+13\
+		),(2070,1.3279e+13),(2075,1.5358e+13),(2080,1.7591e+13),(2085,1.9959e+13),(2090,2.2479e+13\
+		),(2095,2.5125e+13),(2100,2.7845e+13) )) ~~|
+Gross World Product[AsiaPacific]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,9.91214e+10),(1901,1.03837e+11),(1902,1.08778e+11),(1903,1.13953e+11\
+		),(1904,1.19375e+11),(1905,1.25054e+11),(1906,1.31004e+11),(1907,1.37237e+11),(1908\
+		,1.43767e+11),(1909,1.50607e+11),(1910,1.57772e+11),(1911,1.65279e+11),(1912,1.73143e+11\
+		),(1913,1.8138e+11),(1914,1.9001e+11),(1915,1.9905e+11),(1916,2.08521e+11),(1917,2.18442e+11\
+		),(1918,2.28835e+11),(1919,2.39722e+11),(1920,2.51128e+11),(1921,2.63076e+11),(1922\
+		,2.75592e+11),(1923,2.88705e+11),(1924,3.02441e+11),(1925,3.1683e+11),(1926,3.31904e+11\
+		),(1927,3.47696e+11),(1928,3.64238e+11),(1929,3.81568e+11),(1930,3.99722e+11),(1931\
+		,4.1874e+11),(1932,4.38663e+11),(1933,4.59534e+11),(1934,4.81397e+11),(1935,5.04301e+11\
+		),(1936,5.28295e+11),(1937,5.5343e+11),(1938,5.79761e+11),(1939,6.07345e+11),(1940,\
+		6.36241e+11),(1941,6.66512e+11),(1942,6.98224e+11),(1943,7.31444e+11),(1944,7.66244e+11\
+		),(1945,8.02701e+11),(1946,8.40892e+11),(1947,8.809e+11),(1948,9.22811e+11),(1949,9.66716e+11\
+		),(1950,1.01271e+12),(1951,1.06089e+12),(1952,1.11137e+12),(1953,1.16425e+12),(1954\
+		,1.21964e+12),(1955,1.27767e+12),(1956,1.33845e+12),(1957,1.40214e+12),(1958,1.46885e+12\
+		),(1959,1.53873e+12),(1960,1.61194e+12),(1961,1.68863e+12),(1962,1.76898e+12),(1963\
+		,1.85314e+12),(1964,1.94131e+12),(1965,2.03367e+12),(1966,2.13043e+12),(1967,2.23179e+12\
+		),(1968,2.33798e+12),(1969,2.44921e+12),(1970,2.56574e+12),(1971,2.68781e+12),(1972\
+		,2.81569e+12),(1973,2.94966e+12),(1974,3.09e+12),(1975,3.23701e+12),(1976,3.39102e+12\
+		),(1977,3.55236e+12),(1978,3.72138e+12),(1979,3.89843e+12),(1980,4.08391e+12),(1981\
+		,4.27822e+12),(1982,4.48176e+12),(1983,4.695e+12),(1984,4.91838e+12),(1985,5.15238e+12\
+		),(1986,5.39752e+12),(1987,5.65433e+12),(1988,5.92335e+12),(1989,6.20517e+12),(1990\
+		,6.5004e+12),(1991,6.80967e+12),(1992,7.13366e+12),(1993,7.47307e+12),(1994,7.82862e+12\
+		),(1995,8.20109e+12),(1996,8.67572e+12),(1997,9.03045e+12),(1998,9.11592e+12),(1999\
+		,9.41345e+12),(2000,9.9664e+12),(2001,1.02784e+13),(2002,1.07062e+13),(2003,1.12855e+13\
+		),(2004,1.20384e+13),(2005,1.28027e+13),(2006,1.36846e+13),(2007,1.47031e+13),(2008\
+		,1.53471e+13),(2009,1.57557e+13),(2010,1.69748e+13),(2011,1.79858e+13),(2012,1.89056e+13\
+		),(2013,1.99294e+13),(2014,2.09267e+13),(2015,2.1976e+13),(2016,2.30979e+13),(2017,\
+		2.4268e+13),(2018,2.54166e+13),(2019,2.63383e+13),(2020,2.60988e+13),(2021,2.78076e+13\
+		),(2022,2.87676e+13),(2025,2.948e+13),(2030,3.2018e+13),(2035,3.5878e+13),(2040,3.9962e+13\
+		),(2045,4.5398e+13),(2050,5.1144e+13),(2055,5.684e+13),(2060,6.2028e+13),(2065,6.8072e+13\
+		),(2070,7.4065e+13),(2075,7.9588e+13),(2080,8.4483e+13),(2085,8.8897e+13),(2090,9.3143e+13\
+		),(2095,9.7455e+13),(2100,1.0121e+14) )) ~~|
+Gross World Product[EastEu]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,8.27315e+10),(1901,8.51826e+10),(1902,8.77064e+10),(1903,9.03049e+10\
+		),(1904,9.29804e+10),(1905,9.57352e+10),(1906,9.85716e+10),(1907,1.01492e+11),(1908\
+		,1.04499e+11),(1909,1.07595e+11),(1910,1.10783e+11),(1911,1.14065e+11),(1912,1.17445e+11\
+		),(1913,1.20924e+11),(1914,1.24507e+11),(1915,1.28196e+11),(1916,1.31994e+11),(1917\
+		,1.35904e+11),(1918,1.39931e+11),(1919,1.44077e+11),(1920,1.48345e+11),(1921,1.5274e+11\
+		),(1922,1.57266e+11),(1923,1.61925e+11),(1924,1.66723e+11),(1925,1.71662e+11),(1926\
+		,1.76748e+11),(1927,1.81985e+11),(1928,1.87377e+11),(1929,1.92928e+11),(1930,1.98644e+11\
+		),(1931,2.04529e+11),(1932,2.10589e+11),(1933,2.16828e+11),(1934,2.23252e+11),(1935\
+		,2.29867e+11),(1936,2.36677e+11),(1937,2.43689e+11),(1938,2.50909e+11),(1939,2.58343e+11\
+		),(1940,2.65997e+11),(1941,2.73878e+11),(1942,2.81992e+11),(1943,2.90347e+11),(1944\
+		,2.98949e+11),(1945,3.07806e+11),(1946,3.16926e+11),(1947,3.26316e+11),(1948,3.35984e+11\
+		),(1949,3.45938e+11),(1950,3.56187e+11),(1951,3.6674e+11),(1952,3.77606e+11),(1953,\
+		3.88793e+11),(1954,4.00312e+11),(1955,4.12173e+11),(1956,4.24384e+11),(1957,4.36958e+11\
+		),(1958,4.49904e+11),(1959,4.63233e+11),(1960,4.76958e+11),(1961,4.91089e+11),(1962\
+		,5.05639e+11),(1963,5.2062e+11),(1964,5.36044e+11),(1965,5.51926e+11),(1966,5.68278e+11\
+		),(1967,5.85115e+11),(1968,6.0245e+11),(1969,6.20299e+11),(1970,6.38677e+11),(1971,\
+		6.576e+11),(1972,6.77083e+11),(1973,6.97143e+11),(1974,7.17798e+11),(1975,7.39064e+11\
+		),(1976,7.60961e+11),(1977,7.83506e+11),(1978,8.0672e+11),(1979,8.30621e+11),(1980,\
+		8.5523e+11),(1981,8.80569e+11),(1982,9.06658e+11),(1983,9.3352e+11),(1984,9.61178e+11\
+		),(1985,9.89655e+11),(1986,1.01898e+12),(1987,1.04917e+12),(1988,1.08025e+12),(1989\
+		,1.11226e+12),(1990,1.14521e+12),(1991,1.17914e+12),(1992,1.21407e+12),(1993,1.25004e+12\
+		),(1994,1.28708e+12),(1995,1.32521e+12),(1996,1.32723e+12),(1997,1.35579e+12),(1998\
+		,1.34477e+12),(1999,1.39237e+12),(2000,1.48593e+12),(2001,1.55011e+12),(2002,1.61703e+12\
+		),(2003,1.71264e+12),(2004,1.83087e+12),(2005,1.93839e+12),(2006,2.08748e+12),(2007\
+		,2.24981e+12),(2008,2.35936e+12),(2009,2.22399e+12),(2010,2.29511e+12),(2011,2.38495e+12\
+		),(2012,2.43995e+12),(2013,2.47254e+12),(2014,2.50803e+12),(2015,2.51957e+12),(2016\
+		,2.55446e+12),(2017,2.63968e+12),(2018,2.74055e+12),(2019,2.82617e+12),(2020,2.73981e+12\
+		),(2021,2.90418e+12),(2022,2.91507e+12),(2025,3.0162e+12),(2030,3.0066e+12),(2035,3.116e+12\
+		),(2040,3.2139e+12),(2045,3.3856e+12),(2050,3.5402e+12),(2055,3.701e+12),(2060,3.8291e+12\
+		),(2065,4.0038e+12),(2070,4.1565e+12),(2075,4.2711e+12),(2080,4.371e+12),(2085,4.4756e+12\
+		),(2090,4.5905e+12),(2095,4.7108e+12),(2100,4.8209e+12) )) ~~|
+Gross World Product[LAC]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,2.45842e+11),(1901,2.51864e+11),(1902,2.58034e+11),(1903,2.64355e+11\
+		),(1904,2.70831e+11),(1905,2.77465e+11),(1906,2.84262e+11),(1907,2.91225e+11),(1908\
+		,2.98359e+11),(1909,3.05668e+11),(1910,3.13156e+11),(1911,3.20827e+11),(1912,3.28686e+11\
+		),(1913,3.36738e+11),(1914,3.44987e+11),(1915,3.53438e+11),(1916,3.62096e+11),(1917\
+		,3.70966e+11),(1918,3.80053e+11),(1919,3.89363e+11),(1920,3.98901e+11),(1921,4.08673e+11\
+		),(1922,4.18684e+11),(1923,4.2894e+11),(1924,4.39448e+11),(1925,4.50213e+11),(1926,\
+		4.61241e+11),(1927,4.7254e+11),(1928,4.84116e+11),(1929,4.95975e+11),(1930,5.08124e+11\
+		),(1931,5.20572e+11),(1932,5.33324e+11),(1933,5.46388e+11),(1934,5.59773e+11),(1935\
+		,5.73486e+11),(1936,5.87534e+11),(1937,6.01926e+11),(1938,6.16672e+11),(1939,6.31778e+11\
+		),(1940,6.47254e+11),(1941,6.6311e+11),(1942,6.79354e+11),(1943,6.95995e+11),(1944,\
+		7.13045e+11),(1945,7.30512e+11),(1946,7.48407e+11),(1947,7.6674e+11),(1948,7.85523e+11\
+		),(1949,8.04765e+11),(1950,8.24479e+11),(1951,8.44676e+11),(1952,8.65368e+11),(1953\
+		,8.86566e+11),(1954,9.08284e+11),(1955,9.30534e+11),(1956,9.53328e+11),(1957,9.76682e+11\
+		),(1958,1.00061e+12),(1959,1.02512e+12),(1960,1.05023e+12),(1961,1.07596e+12),(1962\
+		,1.10231e+12),(1963,1.12932e+12),(1964,1.15698e+12),(1965,1.18532e+12),(1966,1.21436e+12\
+		),(1967,1.24411e+12),(1968,1.27458e+12),(1969,1.30581e+12),(1970,1.33779e+12),(1971\
+		,1.37057e+12),(1972,1.40414e+12),(1973,1.43854e+12),(1974,1.47377e+12),(1975,1.50988e+12\
+		),(1976,1.54686e+12),(1977,1.58476e+12),(1978,1.62358e+12),(1979,1.66335e+12),(1980\
+		,1.7041e+12),(1981,1.74584e+12),(1982,1.78861e+12),(1983,1.83242e+12),(1984,1.87731e+12\
+		),(1985,1.9233e+12),(1986,1.97041e+12),(1987,2.01868e+12),(1988,2.06813e+12),(1989,\
+		2.11879e+12),(1990,2.17069e+12),(1991,2.22387e+12),(1992,2.27835e+12),(1993,2.33416e+12\
+		),(1994,2.39134e+12),(1995,2.44992e+12),(1996,2.54743e+12),(1997,2.68484e+12),(1998\
+		,2.76513e+12),(1999,2.78094e+12),(2000,2.88154e+12),(2001,2.89395e+12),(2002,2.90721e+12\
+		),(2003,2.97885e+12),(2004,3.14212e+12),(2005,3.26597e+12),(2006,3.43744e+12),(2007\
+		,3.61621e+12),(2008,3.74735e+12),(2009,3.66297e+12),(2010,3.89822e+12),(2011,4.07041e+12\
+		),(2012,4.17478e+12),(2013,4.2882e+12),(2014,4.34576e+12),(2015,4.36252e+12),(2016,\
+		4.34752e+12),(2017,4.42669e+12),(2018,4.49621e+12),(2019,4.53042e+12),(2020,4.23213e+12\
+		),(2021,4.52949e+12),(2022,4.70906e+12),(2025,4.7724e+12),(2030,5.2636e+12),(2035,5.9636e+12\
+		),(2040,6.7217e+12),(2045,7.5115e+12),(2050,8.3264e+12),(2055,9.1555e+12),(2060,9.9683e+12\
+		),(2065,1.0766e+13),(2070,1.1529e+13),(2075,1.2258e+13),(2080,1.293e+13),(2085,1.3531e+13\
+		),(2090,1.4074e+13),(2095,1.457e+13),(2100,1.5008e+13) )) ~~|
+Gross World Product[WestEu]= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,3.01977e+12),(1901,3.08203e+12),(1902,3.14558e+12),(1903,3.21043e+12\
+		),(1904,3.27662e+12),(1905,3.34418e+12),(1906,3.41313e+12),(1907,3.4835e+12),(1908,\
+		3.55532e+12),(1909,3.62862e+12),(1910,3.70344e+12),(1911,3.77979e+12),(1912,3.85772e+12\
+		),(1913,3.93726e+12),(1914,4.01844e+12),(1915,4.10129e+12),(1916,4.18585e+12),(1917\
+		,4.27215e+12),(1918,4.36023e+12),(1919,4.45013e+12),(1920,4.54188e+12),(1921,4.63552e+12\
+		),(1922,4.73109e+12),(1923,4.82864e+12),(1924,4.92819e+12),(1925,5.0298e+12),(1926,\
+		5.1335e+12),(1927,5.23934e+12),(1928,5.34737e+12),(1929,5.45762e+12),(1930,5.57014e+12\
+		),(1931,5.68498e+12),(1932,5.80219e+12),(1933,5.92182e+12),(1934,6.04392e+12),(1935\
+		,6.16853e+12),(1936,6.29571e+12),(1937,6.42551e+12),(1938,6.55799e+12),(1939,6.6932e+12\
+		),(1940,6.8312e+12),(1941,6.97204e+12),(1942,7.11579e+12),(1943,7.2625e+12),(1944,7.41223e+12\
+		),(1945,7.56506e+12),(1946,7.72103e+12),(1947,7.88022e+12),(1948,8.04269e+12),(1949\
+		,8.20851e+12),(1950,8.37775e+12),(1951,8.55048e+12),(1952,8.72677e+12),(1953,8.9067e+12\
+		),(1954,9.09033e+12),(1955,9.27775e+12),(1956,9.46904e+12),(1957,9.66427e+12),(1958\
+		,9.86352e+12),(1959,1.00669e+13),(1960,1.02744e+13),(1961,1.04863e+13),(1962,1.07025e+13\
+		),(1963,1.09231e+13),(1964,1.11483e+13),(1965,1.13782e+13),(1966,1.16128e+13),(1967\
+		,1.18522e+13),(1968,1.20966e+13),(1969,1.2346e+13),(1970,1.26005e+13),(1971,1.28603e+13\
+		),(1972,1.31255e+13),(1973,1.33961e+13),(1974,1.36723e+13),(1975,1.39542e+13),(1976\
+		,1.42419e+13),(1977,1.45355e+13),(1978,1.48352e+13),(1979,1.51411e+13),(1980,1.54532e+13\
+		),(1981,1.57718e+13),(1982,1.6097e+13),(1983,1.64289e+13),(1984,1.67676e+13),(1985,\
+		1.71133e+13),(1986,1.74662e+13),(1987,1.78263e+13),(1988,1.81938e+13),(1989,1.85689e+13\
+		),(1990,1.89518e+13),(1991,1.93425e+13),(1992,1.97413e+13),(1993,2.01483e+13),(1994\
+		,2.05637e+13),(1995,2.09877e+13),(1996,2.15774e+13),(1997,2.23943e+13),(1998,2.32476e+13\
+		),(1999,2.41436e+13),(2000,2.51105e+13),(2001,2.55014e+13),(2002,2.58874e+13),(2003\
+		,2.63993e+13),(2004,2.72431e+13),(2005,2.7997e+13),(2006,2.88174e+13),(2007,2.95367e+13\
+		),(2008,2.96425e+13),(2009,2.86905e+13),(2010,2.94284e+13),(2011,2.99309e+13),(2012\
+		,3.028e+13),(2013,3.06526e+13),(2014,3.13101e+13),(2015,3.20453e+13),(2016,3.26194e+13\
+		),(2017,3.34124e+13),(2018,3.42186e+13),(2019,3.49099e+13),(2020,3.34149e+13),(2021\
+		,3.54025e+13),(2022,3.6414e+13),(2025,3.733e+13),(2030,3.9777e+13),(2035,4.2326e+13\
+		),(2040,4.4904e+13),(2045,4.7572e+13),(2050,5.0462e+13),(2055,5.3538e+13),(2060,5.6591e+13\
+		),(2065,5.9993e+13),(2070,6.3471e+13),(2075,6.6851e+13),(2080,7.0302e+13),(2085,7.3956e+13\
+		),(2090,7.7682e+13),(2095,8.1382e+13),(2100,8.4873e+13) ))
+	~	$/Year
+	~		|
+
+GWP per Capita 2000[Regions]=
+	1273.36,
+	2677.24,
+	4220.4,
+	5514.78,
+	34356.4
+	~	$*Thousand/(Person*Year)
+	~		|
+
+GWP per capita ratio for enrollment[Regions]=
+	GWP per Capita[Regions]/GWP per Capita 2000[Regions]
+	~	Dmnl
+	~		|
+
+Health Impact Delay=
+	1
+	~	Year
+	~	Time delay to account for impact of health services on life expectancy.
+	|
+
+Impact of Biodiversity on Health=
+	Min Impact of Biodiversity on Health+(Max Impact of Biodiversity on Health-Min Impact of Biodiversity on Health\
+		)*(sum(Mean Species Abundance[Regions!])/sum(INIT Species Abundance[Regions!]))
+	~	Dmnl
+	~	Impact of changes in biodiversity on health. Scaled between minimum and \
+		maximum impact.
+	|
+
+Impact of climate change on mortality fraction[Regions]=
+	IF THEN ELSE(CLIMATE MORTALITY SWITCH=0, Impact of climate change on mortality opt0[\
+		Regions],
+	             IF THEN ELSE(CLIMATE MORTALITY SWITCH=1, Impact of climate change on mortality opt1\
+		[Regions],
+	                          IF THEN ELSE(CLIMATE MORTALITY SWITCH=2, Impact of climate change on mortality opt2\
+		[Regions],
+	                                                                   0)))
+	~	percent
+	~		|
+
+Impact of climate change on mortality opt0[Regions]=
+	- y climate mortality[Regions] + 
+	"100 percent"*(Climate mortality saturation[Regions] / (1 + EXP(-Climate mortality steepness\
+		[Regions] * (Temperature Change from Preindustrial - Climate mortality inflection))\
+		))
+	~	percent
+	~		|
+
+Impact of climate change on mortality opt1[Regions]=
+	IF THEN ELSE(Mean Years of Schooling[Regions]>8.5, 
+	Opt1 temperature coeff*Temperature Change from Preindustrial + Opt1 MYS coeff*Mean Years of Schooling\
+		[Regions] + Opt1 constant,
+	Opt1 temperature coeff*Temperature Change from Preindustrial + Opt1 constant)
+	~	percent
+	~		|
+
+Impact of climate change on mortality opt2[Regions]=
+	Opt2 temperature coeff*Temperature Change from Preindustrial + Opt2 edu coeff*"Share of females aged 20-39 with sec+ education"\
+		[Regions] + Opt2 constant
+	~	percent
+	~		|
+
+Impact of Education on Life Expectancy[Regions]=
+	L LE mys[Regions] / (1 + EXP(-k LE mys[Regions] * (Ratio of MYS to the reference[Regions\
+		]-x0 LE mys[Regions])))
+	~	Dmnl
+	~	Impact of wealth on health services availability.
+	|
+
+Impact of Food on Life Expectancy[Regions]=
+	L food pop[Regions] / 
+	(
+	1 + EXP(-k food pop[Regions] * (Food Ratio[Regions] - x0 food pop[Regions]))
+	)
+	~	Dmnl
+	~	Impact of food availability on life expectancy.
+	|
+
+Impact of GDP on Fertility[Regions]=
+	L0 gdp Fer[Regions] + (L gdp fer[Regions] / (1 + EXP(-k gdp fer[Regions]*(GWP per Capita\
+		[Regions]/GDP per Capita 2000[Regions]-x0 gdp fer[Regions]))))
+	~	Dmnl
+	~	Decreasing logistic function of which parameters are estimated from the \
+		global average GDP per capita - Total Fertility relationship, also \
+		considering the impact of Mean Years of Schooling.
+	|
+
+Impact of GDP on Fertility Inflection=
+	2.00035
+	~	Dmnl
+	~	A parameter determining the inflection point of the nonlinear function \
+		representing the impact of population wealth on fertility.5.5
+	|
+
+Impact of GDP on Fertility Steepness=
+	0.3
+	~	Dmnl
+	~	A parameter determining the isteepness of the nonlinear function \
+		representing the impact of population wealth on fertility.
+	|
+
+Impact of GWP on Health[Regions]=
+	L LE gdp[Regions] / (1 + EXP(-k LE gdp[Regions] * (Ratio of GDP pc to the reference[\
+		Regions]-x0 LE gdp[Regions])))
+	~	Dmnl
+	~	Impact of wealth on health services availability.
+	|
+
+Impact of Water Quality on Health=
+	Quality of Domestic Water
+	~	Dmnl
+	~	Impact of changes in water quality on health.
+	|
+
+Impact of Wealth on Health[Regions]=
+	SMOOTH(Impact of GWP on Health[Regions],Health Impact Delay)
+	~	Dmnl
+	~	Impact of health services availability on health taking into account delay.
+	|
+
+Indicative Labor Force Participation Fraction[Regions,male,"15 to 24"]=
+	MIN(MAX(-0.6039*(Time-1989)+66.308, 10)/100, 0.8) ~~|
+Indicative Labor Force Participation Fraction[Regions,male,"25 to 54"]=
+	0.929 ~~|
+Indicative Labor Force Participation Fraction[Regions,male,"55 to 64"]=
+	0.72 ~~|
+Indicative Labor Force Participation Fraction[Regions,female,"15 to 24"]=
+	MIN(MAX(-0.5743*(Time-1989)+49.044, 10)/100, 0.62) ~~|
+Indicative Labor Force Participation Fraction[Regions,female,"55 to 64"]=
+	MAX(0.1, MIN(0.3743*(Time-1989)+34.797, 62)/100) ~~|
+Indicative Labor Force Participation Fraction[Regions,female,"25 to 54"]=
+	0.629
+	~	Dmnl
+	~	LF S + RAMP((Labor Force Participation Fraction Variation-LF S)/78, 2022, 2100)
+		Assumptions from the World Bank data. (Labor force participation rate data \
+		from WB.xlsx)
+	|
+
+"init 10-14"=
+	4.4e+07
+	~	
+	~		|
+
+INIT Species Abundance[Africa]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Stocks','F72') ~~|
+INIT Species Abundance[AsiaPacific]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Stocks','F73') ~~|
+INIT Species Abundance[EastEu]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Stocks','F74') ~~|
+INIT Species Abundance[LAC]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Stocks','F75') ~~|
+INIT Species Abundance[WestEu]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Stocks','F76')
+	~	Dmnl
+	~	Mean species abundance in year 1900.
+	|
+
+Initial Labor Force[Regions,Gender,WorkingAge,Labor force type]= INITIAL(
+	Labor Force[Regions,Gender,WorkingAge,Labor force type])
+	~	Person
+	~		|
+
+Initial Population[Africa,Gender,Cohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Population','B48') ~~|
+Initial Population[AsiaPacific,Gender,Cohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Population','B51') ~~|
+Initial Population[EastEu,Gender,Cohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Population','B54') ~~|
+Initial Population[LAC,Gender,Cohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Population','B57') ~~|
+Initial Population[WestEu,Gender,Cohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Population','B60')
+	~	People
+	~	Population values in year 1900. Taken fro mthe previous version of the \
+		Felix.
+	|
+
+Initial Primary Education Graduates[Africa,Gender,PrimaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C122') ~~|
+Initial Primary Education Graduates[AsiaPacific,Gender,PrimaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C125') ~~|
+Initial Primary Education Graduates[EastEu,Gender,PrimaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C128') ~~|
+Initial Primary Education Graduates[LAC,Gender,PrimaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C131') ~~|
+Initial Primary Education Graduates[WestEu,Gender,PrimaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C134')
+	~	People
+	~	Felix Model Initial Values
+	|
+
+Initial Secondary Education Graduates[Africa,Gender,SecondaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C138') ~~|
+Initial Secondary Education Graduates[AsiaPacific,Gender,SecondaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C141') ~~|
+Initial Secondary Education Graduates[EastEu,Gender,SecondaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C144') ~~|
+Initial Secondary Education Graduates[LAC,Gender,SecondaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C147') ~~|
+Initial Secondary Education Graduates[WestEu,Gender,SecondaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C150')
+	~	People
+	~	Estimated wrt 37% of world population having min primary aducation in 1900
+	|
+
+Initial Tertiary Education Graduates[Africa,Gender,TertiaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C154') ~~|
+Initial Tertiary Education Graduates[AsiaPacific,Gender,TertiaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C157') ~~|
+Initial Tertiary Education Graduates[EastEu,Gender,TertiaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C160') ~~|
+Initial Tertiary Education Graduates[LAC,Gender,TertiaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C163') ~~|
+Initial Tertiary Education Graduates[WestEu,Gender,TertiaryEdCohorts]=
+	GET XLS CONSTANTS('Reg_InitialValues.xlsx','Reg_Education','C166')
+	~	People
+	~	Felix Model Initial Values
+	|
+
+Interval duration=
+	5
+	~	Year
+	~		|
+
+k edu fer[Regions]=
+	-1.55216,
+	-11.2939,
+	-2.34225,
+	-6.80626,
+	-76.2787
+	~	Dmnl
+	~	-1.55216,
+		-11.2939,
+		-3.4141,
+		-6.04593,
+		-68.7044
+	|
+
+k food pop[Regions]=
+	0.2,
+	0.2,
+	0.2,
+	0.2,
+	0.2
+	~	Dmnl [0,1,0.05]
+	~		|
+
+k gdp fer[Regions]=
+	26.7246,
+	-1.45847,
+	1.91182,
+	10,
+	-261.441
+	~	Dmnl
+	~		|
+
+k LE gdp[Regions]=
+	3,
+	3,
+	3,
+	3,
+	3
+	~	Dmnl [2,3,0.05]
+	~	Parameter determining intensity of impact of wealth on health services \
+		availability.
+	|
+
+k LE mys[Regions]=
+	0.44,
+	0.44,
+	0.44,
+	0.44,
+	0.44
+	~	Dmnl [0.2,2,0.05]
+	~	Parameter determining intensity of impact of wealth on health services \
+		availability.  1.6716
+	|
+
+k mor[Africa,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B4' \
+		) ~~|
+k mor[Africa,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B10'\
+		 ) ~~|
+k mor[AsiaPacific,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B16'\
+		 ) ~~|
+k mor[AsiaPacific,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B22'\
+		 ) ~~|
+k mor[EastEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B28'\
+		 ) ~~|
+k mor[EastEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B34'\
+		 ) ~~|
+k mor[LAC,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B40'\
+		 ) ~~|
+k mor[LAC,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B46'\
+		 ) ~~|
+k mor[WestEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B52'\
+		 ) ~~|
+k mor[WestEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B58'\
+		 )
+	~	Dmnl
+	~		|
+
+L edu fer[Regions]=
+	1.48037,
+	0.871806,
+	3.61642,
+	1.6128,
+	0.59482
+	~	Dmnl
+	~	1.48037,
+		0.871806,
+		2.36502,
+		1.68807,
+		0.595412
+	|
+
+L Fertility Variation[Regions,Fertile]=
+	0
+	~	Dmnl
+	~		|
+
+L food pop[Regions]=
+	2,
+	2,
+	2,
+	2,
+	2
+	~	Dmnl [1.5,3,0.05]
+	~		|
+
+L gdp fer[Regions]=
+	0.0955965,
+	0.600567,
+	0.972781,
+	0.0277527,
+	0.05
+	~	Dmnl
+	~		|
+
+L LE gdp[Regions]=
+	1.5,
+	1.5,
+	1.5,
+	1.5,
+	1.5
+	~	Dmnl [1,2,0.05]
+	~	1.15384
+	|
+
+L LE mys[Regions]=
+	1.288,
+	1.288,
+	1.288,
+	1.288,
+	1.288
+	~	Dmnl [1,2,0.05]
+	~	1.44349
+	|
+
+L Mor[Africa,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B3' \
+		) ~~|
+L Mor[Africa,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B9' \
+		) ~~|
+L Mor[AsiaPacific,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B15'\
+		 ) ~~|
+L Mor[AsiaPacific,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B21'\
+		 ) ~~|
+L Mor[EastEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B27'\
+		 ) ~~|
+L Mor[EastEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B33'\
+		 ) ~~|
+L Mor[LAC,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B39'\
+		 ) ~~|
+L Mor[LAC,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B45'\
+		 ) ~~|
+L Mor[WestEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B51'\
+		 ) ~~|
+L Mor[WestEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B57'\
+		 )
+	~	Dmnl
+	~		|
+
+Labor Force[Regions,Gender,WorkingAge,skill]=
+	Fraction of skilled secondary education graduates*Secondary Education[Regions,Gender\
+		,WorkingAge]+Tertiary Education[Regions,Gender,WorkingAge] ~~|
+Labor Force[Regions,Gender,WorkingAge,unskill]=
+	NonEducated[Regions,Gender,WorkingAge]+
+	Primary Education[Regions,Gender,WorkingAge]+
+	(1-Fraction of skilled secondary education graduates)*Secondary Education[Regions,Gender\
+		,WorkingAge]
+	~	Person
+	~		|
+
+Labor Force input[Regions,Gender,WorkingAge,Labor force type]=
+	Change in Labor Force[Regions,Gender,WorkingAge,Labor force type]*Labor Force Participation Fraction\
+		[Regions,Gender,WorkingAge]
+	~	Dmnl
+	~		|
+
+Labor Force Participation Fraction[Regions,Gender,WorkingAge]=
+	MIN(Indicative Labor Force Participation Fraction[Regions,Gender,WorkingAge]*Labor force RAMP\
+		[Regions,Gender,WorkingAge], 1)
+	~	Dmnl
+	~	RAMP formulation is for policy implementation. The MIN formulation keeps \
+		the eventual fraction below 1
+	|
+
+Labor Force Participation Fraction Variation[Regions,Gender,"15 to 24"]=
+	0 ~~|
+Labor Force Participation Fraction Variation[Regions,male,"25 to 54"]=
+	0 ~~|
+Labor Force Participation Fraction Variation[Regions,male,"55 to 64"]=
+	0 ~~|
+Labor Force Participation Fraction Variation[Regions,female,"55-59"]=
+	0 ~~|
+Labor Force Participation Fraction Variation[Regions,female,"60-64"]=
+	Labor Force Participation Fraction Variation[Regions,female,"55-59"] ~~|
+Labor Force Participation Fraction Variation[Regions,female,"25-29"]=
+	0 ~~|
+Labor Force Participation Fraction Variation[Regions,female,"30-34"]=
+	Labor Force Participation Fraction Variation[Regions,female,"25-29"] ~~|
+Labor Force Participation Fraction Variation[Regions,female,"35-39"]=
+	Labor Force Participation Fraction Variation[Regions,female,"25-29"] ~~|
+Labor Force Participation Fraction Variation[Regions,female,"40-44"]=
+	Labor Force Participation Fraction Variation[Regions,female,"25-29"] ~~|
+Labor Force Participation Fraction Variation[Regions,female,"45-49"]=
+	Labor Force Participation Fraction Variation[Regions,female,"25-29"] ~~|
+Labor Force Participation Fraction Variation[Regions,female,"50-54"]=
+	Labor Force Participation Fraction Variation[Regions,female,"25-29"]
+	~	Dmnl
+	~		|
+
+Labor force RAMP[Regions,Gender,WorkingAge]=
+	Fractional1[Regions] + RAMP(Labor Force Participation Fraction Variation[Regions,Gender\
+		,WorkingAge]/(DemoFeliX target year-Current year), Current year , DemoFeliX target year\
+		)
+	~	
+	~		|
+
+Labor force type:
+	skill, unskill
+	~	
+	~		|
+
+LF S=
+	0.75
+	~	Dmnl
+	~		|
+
+Life Expectancy 2000[Regions]=
+	54.3896,
+	67.9285,
+	68.6051,
+	71.1922,
+	77.3289
+	~	Year
+	~		|
+
+Life Expectancy Normal[Regions]=
+	15,
+	20,
+	34,
+	26,
+	50
+	~	Year
+	~	Original global value is 28.785.
+		Quanliang Ye (quanliang.ye@ru.nl) set values by region as life expectancy \
+		at birth in 1900.
+	|
+
+Life Expectancy Normal Variation 1=
+	28
+	~	Year
+	~		|
+
+Life Expectancy Variation[Regions]=
+	65.68,
+	65.68,
+	65.68,
+	65.68,
+	65.68
+	~	Year
+	~		|
+
+Lifetime Multiplier from Climate Risk[Regions]=
+	1 / (1 + SMOOTH(Impact of climate change on mortality fraction[Regions],2)/"100 percent"\
+		)
+	~	Dmnl
+	~	Multiplier to account for changes in life expectancy at birth, depending \
+		on the impact of climate change on mortality fractions. Based on the \
+		equation that annual average mortality fraction = 1 / LE at birth.
+	|
+
+Lifetime Multiplier from Food[Regions]=
+	Impact of Food on Life Expectancy[Regions]
+	~	Dmnl
+	~	Multiplier to account for changes in life expectancy due to food \
+		availability.
+	|
+
+Lifetime Multiplier from Health Services[Regions]=
+	Impact of Wealth on Health[Regions]*Impact of Biodiversity on Health*Impact of Water Quality on Health
+	~	Dmnl
+	~	Multiplier to account for changes in life expectancy due to health factors \
+		related to biodiversity, health services and water quality.
+	|
+
+Lookup for the Impact of Female Education on Climate Mortality(
+	[(0,0)-(10,10)],(0.5,0.257497),(0.6,0.257497),(0.7,0.257497),(0.8,0.258934),(0.9,0.268012\
+		),(1,0.277423))
+	~	Dmnl
+	~	Note that values for x<=0.7 are set to the value of stepeness in the case \
+		of no education impact
+	|
+
+Lookup for the Impact of MYS on Climate Mortality(
+	[(0,0)-(10,10)],(8.5,0.257497),(9,0.257497),(10,0.257497),(11,0.261932),(12,0.270401\
+		),(13,0.279158),(14,0.288224),(15,0.297621))
+	~	Dmnl
+	~	Note that the values for <10 rs of MYS are set to the value of steepness \
+		where education impact wasn ot taken into account.
+	|
+
+Lookup secondary education duration[Africa](
+	[(0,0)-(10,10)],(1900,0.5),(1950,2.5),(1970,4.5),(1980,6.5),(1990,8.5),(2000,9),(2020\
+		,7.5),(2050,6),(2180,5)) ~~|
+Lookup secondary education duration[AsiaPacific](
+	[(0,0)-(10,10)],(1900,0.5),(1950,6),(1980,7.5),(2000,6),(2030,5)) ~~|
+Lookup secondary education duration[EastEu](
+	[(0,0)-(10,10)],(1900,1),(1950,3),(1980,4.5),(2000,5),(2020,5.5),(2080,6)) ~~|
+Lookup secondary education duration[LAC](
+	[(0,0)-(10,10)],(1900,1),(1950,2.5),(1980,4.5),(2000,5),(2040,5.5)) ~~|
+Lookup secondary education duration[WestEu](
+	[(0,0)-(10,10)],(1900,3),(1920,4.5),(1950,5.5),(2000,6),(2100,5.5))
+	~	Year
+	~	Africa: \
+		[(0,0)-(10,10)],(1900,2),(1950,2.2),(1970,4.5),(1980,6.5),(1990,9),(2000,10\
+		.5),(2020,9),(2050,7),(2100,5)
+		AsiaPacific: \
+		[(0,0)-(10,10)],(1900,2),(1950,2),(1970,4),(2000,5.5),(2030,6),(2060,5.5),(\
+		2100,5)
+		EastEu: [(0,0)-(10,10)],(1900,2),(1950,4),(1980,4.5)
+		LAC: [(0,0)-(10,10)],(1900,2),(1950,2.2),(1970,3.5),(2000,6),(2030,6),(2060,5.5)
+		WestEu: [(0,0)-(10,10)],(1900,2),(1950,5.5),(2070,5.5),(2100,6)
+	|
+
+Lookup tertiary education duration[Africa](
+	[(0,0)-(10,10)],(1900,0.5),(1960,2.5),(2000,4)) ~~|
+Lookup tertiary education duration[AsiaPacific](
+	[(0,0)-(10,10)],(1900,0.5),(1960,2.5),(2000,4)) ~~|
+Lookup tertiary education duration[EastEu](
+	[(0,0)-(10,10)],(1900,2),(1960,2.5),(2000,4)) ~~|
+Lookup tertiary education duration[LAC](
+	[(0,0)-(10,10)],(1900,2),(1960,2.5),(2000,4)) ~~|
+Lookup tertiary education duration[WestEu](
+	[(0,0)-(10,10)],(1900,1),(1950,2.5),(2000,4))
+	~	Year
+	~	other four: [(0,0)-(10,10)],(1900,2),(1960,2.5),(2000,4)
+		WestEU: [(0,0)-(10,10)],(1900,2),(1950,2.5),(2000,4)
+	|
+
+M0[Africa,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B2' \
+		) ~~|
+M0[Africa,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B8' \
+		) ~~|
+M0[AsiaPacific,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B14'\
+		 ) ~~|
+M0[AsiaPacific,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B20'\
+		 ) ~~|
+M0[EastEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B26'\
+		 ) ~~|
+M0[EastEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B32'\
+		 ) ~~|
+M0[LAC,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B38'\
+		 ) ~~|
+M0[LAC,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B44'\
+		 ) ~~|
+M0[WestEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B50'\
+		 ) ~~|
+M0[WestEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B56'\
+		 )
+	~	Dmnl
+	~		|
+
+Maturation of Primary Education Graduates[Regions,Gender,PrimaryEdCohorts]=
+	IF THEN ELSE(PrimaryEdCohorts = "100+", 0, Primary Education Graduates[Regions,Gender\
+		,PrimaryEdCohorts]/Interval duration)
+	~	People/Year
+	~	Average Primary Education Ratio[Gender,PrimaryEdCohorts]*Maturation Rate[Gender
+		,PrimaryEdCohorts]
+	|
+
+Maturation of Secondary Education Graduates[Regions,Gender,SecondaryEdCohorts]=
+	IF THEN ELSE(SecondaryEdCohorts = "100+", 0, Secondary Education Graduates[Regions,Gender\
+		,SecondaryEdCohorts]/Interval duration)
+	~	People/Year
+	~	Average Secondary Education Level[Gender,SecondaryEdCohorts]*Maturation Rate
+		[Gender,SecondaryEdCohorts]
+	|
+
+Maturation of Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts]=
+	IF THEN ELSE(TertiaryEdCohorts = "100+", 0, Tertiary Education Graduates[Regions,Gender\
+		,TertiaryEdCohorts]/Interval duration)
+	~	People/Year
+	~	Average Tertiary Education Level[Gender,TertiaryEdCohorts]*Maturation Rate
+		[Gender,TertiaryEdCohorts]
+	|
+
+Maturation Rate[Regions,Gender,AllButOldest]=
+	Population Cohorts[Regions,Gender,AllButOldest]/Interval duration ~~|
+Maturation Rate[Regions,Gender,"100+"]=
+	0
+	~	People/Year
+	~		|
+
+Max Impact of Biodiversity on Health=
+	1 + STEP(SA Max Impact of Biodiversity on Health-1, 2020)
+	~	Dmnl
+	~	Max impact of biodiversity on health and thus life expectancy.
+	|
+
+Mean Species Abundance[Regions]=
+	1,1,1,1,1
+	~	Dmnl
+	~		|
+
+Mean Years of Schooling OLD[Regions]=
+	(Total Duration in Primary[Regions]+Total Duration in Secondary[Regions]+Total Duration in Tertiary\
+		[Regions])/sum(Population Cohorts[Regions,Gender!,MYS!])
+	~	Year
+	~		|
+
+Min Impact of Biodiversity on Health=
+	0.95 + STEP(SA Min Impact of Biodiversity on Health-0.95, 2020)
+	~	Dmnl
+	~	Minimal impact of biodiversity on health and thus life expectancy.
+	|
+
+Mortality fraction[Regions,Gender,Cohorts]=
+	M0[Regions,Gender,Cohorts]+ (L Mor[Regions,Gender,Cohorts] / (1 + EXP(-k mor[Regions\
+		,Gender,Cohorts]*(Ratio of life expectancy to its reference value
+	[Regions]-x0 mor[Regions,Gender,Cohorts]))))
+	~	1/Year
+	~		|
+
+MYS:
+	"15-19", "20-24", "25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69"\
+		,"70-74","75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+MYS2000[Regions]=
+	4.74735,
+	6.69995,
+	9.83956,
+	7.25129,
+	11.2275
+	~	Year
+	~		|
+
+Net enrollment secondary[Regions,Gender]=
+	(Enrollment Rate to Secondary Education[Regions,Gender,"10-14"]+Enrollment Rate to Secondary Education\
+		[Regions,Gender,"15-19"])/(Population Cohorts[Regions,Gender,"10-14"]+Population Cohorts\
+		[Regions,Gender,"15-19"])
+	~	Dmnl
+	~		|
+
+Net enrolment primary historical[female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B8' ) ~~|
+Net enrolment primary historical[male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B9' )
+	~	Dmnl
+	~	WB data indicators: Net enrollment rate is the ratio of children of \
+		official school age who are enrolled in school to the population of the \
+		corresponding official school age.
+	|
+
+Net enrolment secondary historical[female]:INTERPOLATE::=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B10' ) ~~|
+Net enrolment secondary historical[male]:INTERPOLATE::=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B11' )
+	~	1/Year
+	~		|
+
+Net intake rate in grade 1[male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B14' ) ~~|
+Net intake rate in grade 1[female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data' , '1' , 'B15' )
+	~	Dmnl
+	~	Net intake rate in grade 1 is the number of new entrants in the first \
+		grade of primary education who are of official primary school entrance \
+		age, expressed as a percentage of the population of the corresponding age.
+	|
+
+net to gross fraction[Gender]=
+	0.887368, 0.900536
+	~	Dmnl
+	~	Average value for the period (1998-2018) where the net rate data is \
+		available.
+	|
+
+net to gross ter[Gender]=
+	0.6, 0.6
+	~	Dmnl
+	~		|
+
+NonEducated[Regions,Gender,WorkingAge]=
+	Population with No or Incomplete Education[Regions,Gender,WorkingAge]
+	~	Person
+	~		|
+
+Normal Fertility[Regions]=
+	Normal Fertility Init[Regions]
+	~	Dmnl
+	~	The initial reference parameter is gradually adjusted to the "variation" value after \
+		the current year.
+		
+		OLD FUNCTION: Normal Fertility Init[Regions] + SMOOTH3(STEP(Normal \
+		Fertility Variation[Regions]-Normal Fertility Init[Regions],Current year)  \
+		, SSP Demographic Variation Time)
+	|
+
+Normal Fertility Init[Regions]=
+	5.19,
+	2.559,
+	1.287,
+	2.61,
+	1.743
+	~	Dmnl
+	~	Reference fertility of reproductive fraction of population as estimated \
+		for year 2000.
+	|
+
+Normal Fertility Variation[Regions]=
+	7.10496,
+	3,
+	2.522,
+	3.55895,
+	2.8505
+	~	Dmnl
+	~	Fertility parameter to be adjusted for future scenario settings
+	|
+
+Opt1 constant=
+	4.95
+	~	percent
+	~		|
+
+Opt1 MYS coeff=
+	-0.422
+	~	percent/Year
+	~		|
+
+Opt1 temperature coeff=
+	2.513
+	~	percent/DegreesC
+	~		|
+
+Opt2 constant=
+	4.167
+	~	percent
+	~		|
+
+Opt2 edu coeff=
+	-4.56
+	~	percent
+	~		|
+
+Opt2 temperature coeff=
+	2.494
+	~	percent/DegreesC
+	~		|
+
+P0[Africa,Gender]=
+	0.691423,
+	0.830611 ~~|
+P0[AsiaPacific,Gender]=
+	0.245756,
+	0.342708 ~~|
+P0[EastEu,Gender]=
+	0.122255,
+	23.6592 ~~|
+P0[LAC,Gender]=
+	10,
+	10 ~~|
+P0[WestEu,Gender]=
+	0.195916,
+	0.257519
+	~	Dmnl
+	~	regionalize v1.2.1:
+		0.886634,1.01985
+		3.59139,0.279215
+		0.259996,8.68051
+		1.3937,1.85243
+		0.280913,0.0307003
+	|
+
+P1[Africa,Gender]=
+	3.76932,
+	7.97477 ~~|
+P1[AsiaPacific,Gender]=
+	5.72593,
+	5.34659 ~~|
+P1[EastEu,Gender]=
+	1.37411,
+	1.0931 ~~|
+P1[LAC,Gender]=
+	0.779659,
+	0.7433 ~~|
+P1[WestEu,Gender]=
+	1.07167,
+	0.990367
+	~	Dmnl
+	~	v15 pre-recalibration 0.692643,0.711052
+		regionalize v1.2.1:
+		1.17489,0.98068
+		0.521784,0.314224
+		1.92423,0.10667
+		0.855103,0.799745
+		-1.3919,4.99714
+	|
+
+P2[Africa,Gender]=
+	3.33021,
+	4.50502 ~~|
+P2[AsiaPacific,Gender]=
+	5.98633,
+	5.68742 ~~|
+P2[EastEu,Gender]=
+	100,
+	0 ~~|
+P2[LAC,Gender]=
+	0.110019,
+	0.1 ~~|
+P2[WestEu,Gender]=
+	10.4647,
+	162.985
+	~	Dmnl
+	~	v15 pre-recalibration: 0.0665895,0.0262134
+		regionalized_v1.2.1: 
+		4.29991,4.99777
+		-4.9973,3174.38
+		-10,10
+		5, -5.64135
+		4.99974,-4.95624
+	|
+
+People to Million People=
+	1/1e+06
+	~	Million
+	~		|
+
+Persistence[Africa,male]:INTERPOLATE::=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B88' ) ~~|
+Persistence[Africa,female]:INTERPOLATE::=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B89' ) ~~|
+Persistence[AsiaPacific,male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B90' ) ~~|
+Persistence[AsiaPacific,female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B91' ) ~~|
+Persistence[EastEu,male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B92' ) ~~|
+Persistence[EastEu,female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B93' ) ~~|
+Persistence[LAC,male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B94' ) ~~|
+Persistence[LAC,female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B95' ) ~~|
+Persistence[WestEu,male]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B96' ) ~~|
+Persistence[WestEu,female]:=
+	GET XLS DATA('TotalPopulationbyAge.xlsx', 'Enrolment rate data reg' , '1' , 'B97' )
+	~	Dmnl
+	~	WORLD BANK DATA INDICATORS: Persistence to last grade of primary is the \
+		percentage of children enrolled in the first grade of primary school who \
+		eventually reach the last grade of primary education. The estimate is \
+		based on the reconstructed cohort method.
+	|
+
+Persistence Tertiary Init[Africa,Gender]=
+	0.901043,
+	0.877981 ~~|
+Persistence Tertiary Init[AsiaPacific,Gender]=
+	0.974725,
+	0.982341 ~~|
+Persistence Tertiary Init[EastEu,Gender]=
+	0.990028,
+	0.987942 ~~|
+Persistence Tertiary Init[LAC,Gender]=
+	0.96148,
+	0.97314 ~~|
+Persistence Tertiary Init[WestEu,Gender]=
+	0.996079,
+	0.998349
+	~	Dmnl
+	~		|
+
+Persistence Tertiary Variation[Africa,Gender]=
+	0.901043,
+	0.877981 ~~|
+Persistence Tertiary Variation[AsiaPacific,Gender]=
+	0.974725,
+	0.982341 ~~|
+Persistence Tertiary Variation[EastEu,Gender]=
+	0.990028,
+	0.987942 ~~|
+Persistence Tertiary Variation[LAC,Gender]=
+	0.96148,
+	0.97314 ~~|
+Persistence Tertiary Variation[WestEu,Gender]=
+	0.996079,
+	0.998349
+	~	Dmnl
+	~		|
+
+Policy Ramp Primary Education[Regions,Gender]=
+	Fractional1[Regions] + RAMP(Primary Education Variation[Gender]/(DemoFeliX target year\
+		-Current year), Current year, DemoFeliX target year)
+	~	Dmnl
+	~		|
+
+Policy Ramp Sec Education[Regions,Gender]=
+	Fractional1[Regions] + RAMP(Secondary Education Variation[Regions,Gender]/(DemoFeliX target year\
+		-Current year), Current year , DemoFeliX target year)
+	~	Dmnl
+	~		|
+
+Population[Regions]=
+	sum(Population by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+"Population 0-19"[Regions]=
+	sum(Population Cohorts[Regions,Gender!,"0 to 19"!])
+	~	People
+	~		|
+
+"Population 20-39"[Regions]=
+	sum(Population Cohorts[Regions,Gender!,"20 to 39"!])
+	~	People
+	~		|
+
+"Population 40-64"[Regions]=
+	sum(Population Cohorts[Regions,Gender!,"40 to 64"!])
+	~	People
+	~		|
+
+"Population 65+"[Regions]=
+	sum(Population Cohorts[Regions,Gender!,"65+"!])
+	~	People
+	~		|
+
+Population by Gender[Regions,Gender]=
+	sum(Population Cohorts[Regions,Gender,Cohorts!])
+	~	People
+	~		|
+
+Population Cohorts[Regions,Gender,AllButYoungest]= INTEG (
+	Maturation Rate[Regions,Gender,PreviousCohort]-Maturation Rate[Regions,Gender,AllButYoungest\
+		]-Death Rate[Regions,Gender,AllButYoungest],
+		Initial Population[Regions,Gender,AllButYoungest]) ~~|
+Population Cohorts[Regions,Gender,"0-4"]= INTEG (
+	Birth Rate[Regions,Gender]-Maturation Rate[Regions,Gender,"0-4"]-Death Rate[Regions,\
+		Gender,"0-4"],
+		Initial Population[Regions,Gender,"0-4"])
+	~	People
+	~		|
+
+Population Female[Regions]=
+	Population by Gender[Regions,female]*People to Million People
+	~	Person*Million
+	~		|
+
+Population fraction with secondary and higher education[Regions]=
+	(Total Secondary Education Graduates[Regions]+Total Tertiary Education Graduates[Regions\
+		])/Population[Regions]
+	~	Dmnl
+	~		|
+
+Population fraction with secondary and higher education by gender[Regions,Gender]=
+	(Secondary Education Graduates by Gender[Regions,Gender]+Tertiary Education Graduates by Gender\
+		[Regions,Gender])/Population by Gender[Regions,Gender]
+	~	Dmnl
+	~		|
+
+Population Growth Rate[Regions]=
+	Total Birth Rate[Regions]-Total Death Rate[Regions]
+	~	Person/Year
+	~		|
+
+Population Male[Regions]=
+	Population by Gender[Regions,male]*People to Million People
+	~	Person*Million
+	~		|
+
+Population SSP1= WITH LOOKUP (
+	Time,
+		([(0,0)-(10,10)],(1970,3.68074e+09),(1975,4.05941e+09),(1980,4.43414e+09),(1985,4.79669e+09\
+		),(1990,5.28493e+09),(1995,5.7037e+09),(2000,6.09965e+09),(2005,6.48224e+09),(2010,\
+		6.87086e+09),(2015,7.22354e+09),(2020,7.53499e+09),(2025,7.80413e+09),(2030,8.0244e+09\
+		),(2035,8.21115e+09),(2040,8.35685e+09),(2045,8.45538e+09),(2050,8.50423e+09),(2055\
+		,8.50888e+09),(2060,8.47265e+09),(2065,8.3995e+09),(2070,8.29207e+09),(2075,8.15223e+09\
+		),(2080,7.98198e+09),(2085,7.78445e+09),(2090,7.56537e+09),(2095,7.33031e+09),(2100\
+		,7.08389e+09) ))
+	~	People
+	~		|
+
+Population SSP2= WITH LOOKUP (
+	Time,
+		([(0,0)-(10,10)],(1970,3.68074e+09),(1975,4.05941e+09),(1980,4.43414e+09),(1985,4.79669e+09\
+		),(1990,5.28493e+09),(1995,5.7037e+09),(2000,6.09965e+09),(2005,6.48224e+09),(2010,\
+		6.87086e+09),(2015,7.24792e+09),(2020,7.61173e+09),(2025,7.94973e+09),(2030,8.25612e+09\
+		),(2035,8.53101e+09),(2040,8.7722e+09),(2045,8.97649e+09),(2050,9.1404e+09),(2055,9.26159e+09\
+		),(2060,9.34085e+09),(2065,9.38442e+09),(2070,9.39716e+09),(2075,9.38021e+09),(2080\
+		,9.3346e+09),(2085,9.26382e+09),(2090,9.17313e+09),(2095,9.06635e+09),(2100,8.94823e+09\
+		) ))
+	~	People
+	~		|
+
+Population SSP3= WITH LOOKUP (
+	Time,
+		([(0,0)-(10,10)],(1970,3.68074e+09),(1975,4.05941e+09),(1980,4.43414e+09),(1985,4.79669e+09\
+		),(1990,5.28493e+09),(1995,5.7037e+09),(2000,6.09965e+09),(2005,6.48224e+09),(2010,\
+		6.87086e+09),(2015,7.27824e+09),(2020,7.69384e+09),(2025,8.10623e+09),(2030,8.51113e+09\
+		),(2035,8.89247e+09),(2040,9.25997e+09),(2045,9.61812e+09),(2050,9.9661e+09),(2055,\
+		1.02924e+10),(2060,1.05964e+10),(2065,1.08827e+10),(2070,1.11599e+10),(2075,1.14322e+10\
+		),(2080,1.17018e+10),(2085,1.19679e+10),(2090,1.22331e+10),(2095,1.24941e+10),(2100\
+		,1.27517e+10) ))
+	~	People
+	~		|
+
+Population SSP4= WITH LOOKUP (
+	Time,
+		([(0,0)-(10,10)],(1970,3.68074e+09),(1975,4.05941e+09),(1980,4.43414e+09),(1985,4.79669e+09\
+		),(1990,5.28493e+09),(1995,5.7037e+09),(2000,6.09965e+09),(2005,6.48224e+09),(2010,\
+		6.87086e+09),(2015,7.24797e+09),(2020,7.60818e+09),(2025,7.94136e+09),(2030,8.24256e+09\
+		),(2035,8.51377e+09),(2040,8.75486e+09),(2045,8.96436e+09),(2050,9.13967e+09),(2055\
+		,9.27775e+09),(2060,9.37804e+09),(2065,9.44417e+09),(2070,9.48298e+09),(2075,9.49829e+09\
+		),(2080,9.49356e+09),(2085,9.47088e+09),(2090,9.43664e+09),(2095,9.39173e+09),(2100\
+		,9.34039e+09) ))
+	~	People
+	~		|
+
+Population SSP5= WITH LOOKUP (
+	Time,
+		([(0,0)-(10,10)],(1970,3.68074e+09),(1975,4.05941e+09),(1980,4.43414e+09),(1985,4.79669e+09\
+		),(1990,5.28493e+09),(1995,5.7037e+09),(2000,6.09965e+09),(2005,6.48224e+09),(2010,\
+		6.87086e+09),(2015,7.22627e+09),(2020,7.54328e+09),(2025,7.82112e+09),(2030,8.05357e+09\
+		),(2035,8.25396e+09),(2040,8.41534e+09),(2045,8.53258e+09),(2050,8.60428e+09),(2055\
+		,8.63563e+09),(2060,8.6299e+09),(2065,8.59049e+09),(2070,8.5197e+09),(2075,8.41967e+09\
+		),(2080,8.29287e+09),(2085,8.1426e+09),(2090,7.97431e+09),(2095,7.79307e+09),(2100,\
+		7.60303e+09) ))
+	~	People
+	~		|
+
+population sum of edu[Regions,Gender, Cohorts]=
+	sum(Population wrt Education[Regions,Gender,Cohorts,Education!])
+	~	People
+	~		|
+
+Population with No or Incomplete Education[Regions,Gender,TertiaryEdCohorts]=
+	MAX(0, Population Cohorts[Regions,Gender,TertiaryEdCohorts]
+	- Primary Education Graduates[Regions,Gender,TertiaryEdCohorts]
+	- Secondary Education Graduates[Regions,Gender,TertiaryEdCohorts]
+	- Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts]) ~~|
+Population with No or Incomplete Education[Regions,Gender,"15-19"]=
+	MAX(0, Population Cohorts[Regions,Gender,"15-19"]
+	- Primary Education Graduates[Regions,Gender,"15-19"]
+	- Secondary Education Graduates[Regions,Gender,"15-19"]) ~~|
+Population with No or Incomplete Education[Regions,Gender,"10-14"]=
+	MAX(0, Population Cohorts[Regions,Gender,"10-14"]
+	-Primary Education Graduates[Regions,Gender,"10-14"]) ~~|
+Population with No or Incomplete Education[Regions,Gender,"0-4"]=
+	MAX(0,Population Cohorts[Regions,Gender,"0-4"]) ~~|
+Population with No or Incomplete Education[Regions,Gender,"5-9"]=
+	Population Cohorts[Regions,Gender,"5-9"]
+	~	People
+	~		|
+
+Population with No or Incomplete Education Indicator[Regions]=
+	Total Population with No or Incomplete Education[Regions]/Population[Regions]
+	~	1
+	~		|
+
+Population wrt Education[Regions,Gender,Cohorts,noEd]=
+	Population with No or Incomplete Education[Regions,Gender,Cohorts] ~~|
+Population wrt Education[Regions,Gender,Cohorts,primary]=
+	Primary Education Graduates[Regions,Gender,Cohorts] ~~|
+Population wrt Education[Regions,Gender,Cohorts,secondary]=
+	Secondary Education Graduates[Regions,Gender,Cohorts] ~~|
+Population wrt Education[Regions,Gender,Cohorts,tertiary]=
+	Tertiary Education Graduates[Regions,Gender,Cohorts]
+	~	People
+	~		|
+
+PreviousCohort:
+	"0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49"\
+		, "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", \
+		"95-99" -> AllButYoungest
+	~	
+	~		|
+
+Primary Education[Regions,Gender,WorkingAge]=
+	Primary Education Graduates[Regions,Gender,WorkingAge]
+	~	Person
+	~		|
+
+Primary education enrollment fraction[Regions,Gender]=
+	MIN(Reference primary education enrollment fraction[Regions,Gender]*Policy Ramp Primary Education\
+		[Regions,Gender]*Effect of GWP per capita on primary enrollment[Regions,Gender],Fractional1\
+		[Regions])
+	~	Dmnl
+	~		|
+
+Primary Education Graduates[Regions,Gender,"10-14"]= INTEG (
+	Graduation Rate from Primary Education[Regions,Gender,"10-14"]
+	-Death Rate of Primary Education Graduates[Regions,Gender,"10-14"]
+	-Maturation of Primary Education Graduates[Regions,Gender,"10-14"]
+	-Enrollment Rate to Secondary Education[Regions,Gender,"10-14"],
+		Initial Primary Education Graduates[Regions,Gender,"10-14"]) ~~|
+Primary Education Graduates[Regions,Gender,PrimaryEdButYoungest]= INTEG (
+	Maturation of Primary Education Graduates[Regions,Gender,PrimaryEdPrevious]
+	-Death Rate of Primary Education Graduates[Regions,Gender,PrimaryEdButYoungest]
+	-Maturation of Primary Education Graduates[Regions,Gender,PrimaryEdButYoungest],
+		Initial Primary Education Graduates[Regions,Gender,PrimaryEdButYoungest]) ~~|
+Primary Education Graduates[Regions,Gender,"0-4"]= INTEG (
+	0,
+		0) ~~|
+Primary Education Graduates[Regions,Gender,"5-9"]= INTEG (
+	0,
+		0) ~~|
+Primary Education Graduates[Regions,Gender,"15-19"]= INTEG (
+	Graduation Rate from Primary Education[Regions,Gender,"15-19"]
+	- Death Rate of Primary Education Graduates[Regions,Gender,"15-19"]
+	-Maturation of Primary Education Graduates[Regions,Gender,"15-19"]
+	-Enrollment Rate to Secondary Education[Regions,Gender,"15-19"]
+	+Maturation of Primary Education Graduates[Regions,Gender,"10-14"]
+	,
+		Initial Primary Education Graduates[Regions,Gender,"15-19"])
+	~	People
+	~		|
+
+Primary Education Graduates by Gender[Regions,Gender]=
+	sum(Primary Education Graduates[Regions,Gender,PrimaryEdCohorts!])
+	~	People
+	~		|
+
+Primary Education Variation[Gender]=
+	0,0
+	~	Dmnl
+	~		|
+
+PrimaryEdButYoungest:
+	"20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74"\
+		,"75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+PrimaryEdCohorts:
+	"10-14","15-19","20-24","25-29","30-34","35-39","40-44", "45-49","50-54","55-59","60-64"\
+		,"65-69","70-74","75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+PrimaryEdPrevious:
+	"15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64"\
+		, "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", "95-99" -> PrimaryEdButYoungest
+	~	
+	~		|
+
+Quality of Domestic Water=
+	1
+	~	Dmnl
+	~		|
+
+Ratio of GDP pc to the reference[Regions]=
+	GWP per Capita[Regions]/GDP per Capita 2000[Regions]
+	~	Dmnl
+	~	Reference average world gross domestic product per capita.
+		A reference value against which the GDP per Capita is compared to \
+		calculate the impact of wealth on health.
+	|
+
+Ratio of life expectancy to its reference value[Regions]=
+	Life Expectancy at Birth[Regions]/Life Expectancy Normal[Regions]
+	~	Dmnl
+	~		|
+
+Ratio of MYS to the reference[Regions]=
+	Mean Years of Schooling[Regions]/MYS2000[Regions]
+	~	Dmnl
+	~	Reference average world gross domestic product per capita.
+		A reference value against which the GDP per Capita is compared to \
+		calculate the impact of wealth on health.
+	|
+
+Ratio of Secondary Education Graduates[Regions,Gender]=
+	Secondary Education Graduates by Gender[Regions,Gender]/Population by Gender[Regions\
+		,Gender]
+	~	Dmnl
+	~		|
+
+Reference Life Expectancy at Birth[Regions]=
+	Life Expectancy 2000[Regions] + SMOOTH3(STEP(Life Expectancy Variation[Regions]-Life Expectancy 2000\
+		[Regions],Current year),SSP Demographic Variation Time)
+	~	Year
+	~		|
+
+Reference primary education enrollment fraction[Africa,Gender]=
+	0.0599697,
+	0.0272895 ~~|
+Reference primary education enrollment fraction[AsiaPacific,Gender]=
+	0.0368385,
+	0.0386456 ~~|
+Reference primary education enrollment fraction[EastEu,Gender]=
+	0.15742,
+	0.411439 ~~|
+Reference primary education enrollment fraction[LAC,Gender]=
+	0.895098,
+	0.885493 ~~|
+Reference primary education enrollment fraction[WestEu,Gender]=
+	0.217214,
+	0.22945
+	~	Dmnl
+	~	0.86,0.81
+	|
+
+Reference secondary education enrollment fraction Init[Africa,Gender,"10-14"]=
+	1,
+	0.95 ~~|
+Reference secondary education enrollment fraction Init[Africa,Gender,"15-19"]=
+	0.376551,
+	0.401369 ~~|
+Reference secondary education enrollment fraction Init[AsiaPacific,Gender,"10-14"]=
+	0.205855,
+	0.764602 ~~|
+Reference secondary education enrollment fraction Init[AsiaPacific,Gender,"15-19"]=
+	0.246567,
+	0.85 ~~|
+Reference secondary education enrollment fraction Init[EastEu,Gender,"10-14"]=
+	0.868576,
+	0.95 ~~|
+Reference secondary education enrollment fraction Init[EastEu,Gender,"15-19"]=
+	0.85,
+	0.85 ~~|
+Reference secondary education enrollment fraction Init[LAC,Gender,"10-14"]=
+	0.00162777,
+	0.0246805 ~~|
+Reference secondary education enrollment fraction Init[LAC,Gender,"15-19"]=
+	0.068788,
+	0.0884058 ~~|
+Reference secondary education enrollment fraction Init[WestEu,Gender,"10-14"]=
+	0.855602,
+	0.201918 ~~|
+Reference secondary education enrollment fraction Init[WestEu,Gender,"15-19"]=
+	0.0994514,
+	0.30166
+	~	Dmnl
+	~	Corresponding to 2000 values
+	|
+
+Reference tertiary education enrollment fraction Init[Africa,Gender,"15-19"]=
+	0.4,
+	0.4 ~~|
+Reference tertiary education enrollment fraction Init[Africa,Gender,"20-24"]=
+	0.01,
+	0.217265 ~~|
+Reference tertiary education enrollment fraction Init[Africa,Gender,"25-29"]=
+	0.36047,
+	0.139449 ~~|
+Reference tertiary education enrollment fraction Init[AsiaPacific,Gender,"15-19"]=
+	0.15985,
+	0.01 ~~|
+Reference tertiary education enrollment fraction Init[AsiaPacific,Gender,"20-24"]=
+	0.0588432,
+	0.134116 ~~|
+Reference tertiary education enrollment fraction Init[AsiaPacific,Gender,"25-29"]=
+	0.442394,
+	0.430937 ~~|
+Reference tertiary education enrollment fraction Init[EastEu,Gender,"15-19"]=
+	0.630832,
+	0.8 ~~|
+Reference tertiary education enrollment fraction Init[EastEu,Gender,"20-24"]=
+	0.01,
+	0.0119146 ~~|
+Reference tertiary education enrollment fraction Init[EastEu,Gender,"25-29"]=
+	0.0900204,
+	0.412176 ~~|
+Reference tertiary education enrollment fraction Init[LAC,Gender,"15-19"]=
+	0.01,
+	0.01 ~~|
+Reference tertiary education enrollment fraction Init[LAC,Gender,"20-24"]=
+	0.5,
+	0.22503 ~~|
+Reference tertiary education enrollment fraction Init[LAC,Gender,"25-29"]=
+	0.0293957,
+	0.5 ~~|
+Reference tertiary education enrollment fraction Init[WestEu,Gender,"15-19"]=
+	0.01,
+	0.01 ~~|
+Reference tertiary education enrollment fraction Init[WestEu,Gender,"20-24"]=
+	0.7,
+	0.7 ~~|
+Reference tertiary education enrollment fraction Init[WestEu,Gender,"25-29"]=
+	0.191544,
+	0.697932
+	~	Dmnl
+	~	Corresponding to 2000 values of the fraction of seondary education \
+		graduates aged 15-19 enrolling at tertiary education
+	|
+
+Regions:
+	Africa,
+	AsiaPacific,
+	EastEu,
+	LAC,
+	WestEu
+	~	
+	~	Africa: African States
+		AsiaPacific: Asia-Pacific States
+		EastEu: Eastern European States
+		LAC: Latin American and Caribbean States
+		WestEu: Western European and other States
+	|
+
+Reproductive Lifetime=
+	35
+	~	Year
+	~		|
+
+S0[Africa,Gender]=
+	2.2233,
+	4.24933 ~~|
+S0[AsiaPacific,Gender]=
+	0.483612,
+	2.17785 ~~|
+S0[EastEu,Gender]=
+	0.45867,
+	0.475397 ~~|
+S0[LAC,Gender]=
+	8.12671,
+	0.874088 ~~|
+S0[WestEu,Gender]=
+	0.645178,
+	1.42943
+	~	Dmnl
+	~	v15 pre-recalibration: 2,2.49553
+	|
+
+S1[Africa,Gender]=
+	1.59077,
+	2.02669 ~~|
+S1[AsiaPacific,Gender]=
+	2.85248,
+	2.85248 ~~|
+S1[EastEu,Gender]=
+	63.6901,
+	63.6901 ~~|
+S1[LAC,Gender]=
+	87.8935,
+	11.3128 ~~|
+S1[WestEu,Gender]=
+	101.461,
+	521.595
+	~	Dmnl
+	~	The effect function is a logistic function that saturates at 1, meaning that \
+		enrollment fraction does not become higher than its reference value 
+		v15 pre-recalibration 1.04703,1.65163
+	|
+
+S2[Africa,Gender]=
+	0.522027,
+	0.334997 ~~|
+S2[AsiaPacific,Gender]=
+	4.74723,
+	1.2806 ~~|
+S2[EastEu,Gender]=
+	29.775,
+	29.1568 ~~|
+S2[LAC,Gender]=
+	0.234956,
+	34.4987 ~~|
+S2[WestEu,Gender]=
+	19.8584,
+	6.23386
+	~	Dmnl
+	~	v15 pre-recalibration: 0.904801,1.16551
+	|
+
+SA Max Impact of Biodiversity on Health=
+	1
+	~	Dmnl
+	~		|
+
+SA Min Impact of Biodiversity on Health=
+	0.95
+	~	Dmnl
+	~		|
+
+SA Subsistence Food per Capita[Regions]=
+	2000,
+	2000,
+	2000,
+	2000,
+	2000
+	~	kcal/(Person*Day)
+	~		|
+
+SE Var T=
+	0
+	~	Year
+	~		|
+
+Secondary Education[Regions,Gender,WorkingAge]=
+	Secondary Education Graduates[Regions,Gender,WorkingAge]
+	~	Person
+	~		|
+
+Secondary Education Enrollment Fraction[Regions,Gender,"10-14"]=
+	MIN(Reference secondary education enrollment fraction[Regions,Gender,"10-14"]*Policy Ramp Sec Education\
+		[Regions,Gender]*Effect of GWP per capita on secondary enrollment[Regions,Gender],1\
+		) ~~|
+Secondary Education Enrollment Fraction[Regions,Gender,"15-19"]=
+	MIN((Reference secondary education enrollment fraction[Regions,Gender,"15-19"]*Policy Ramp Sec Education\
+		[Regions,Gender])*Effect of GWP per capita on secondary enrollment[Regions,Gender],\
+		1)
+	~	1/Year
+	~	Fraction of Primary graduates enrolling to Secondary. The ramp function is \
+		for implementing scenarios as a fractional increase to 2100. Kept maximum \
+		at 1, to avoid enrolment >100%, and not to override the effect of GDP.
+	|
+
+Secondary education enrollment Variation[Gender,"10-14"]=
+	1,
+	0.9 ~~|
+Secondary education enrollment Variation[Gender,"15-19"]=
+	0.85,
+	0.85
+	~	Dmnl
+	~	Corresponding to 2000 values
+	|
+
+Secondary Education Graduates[Regions,Gender,"15-19"]= INTEG (
+	Graduation Rate from Secondary Education[Regions,Gender,"15-19"]
+	-Death Rate of Secondary Education Graduates[Regions,Gender,"15-19"]
+	-Maturation of Secondary Education Graduates[Regions,Gender,"15-19"]
+	-Enrollment Rate to Tertiary Education[Regions,Gender,"15-19"],
+		Initial Secondary Education Graduates[Regions,Gender,"20-24"]) ~~|
+Secondary Education Graduates[Regions,Gender,SecondaryEdButYoungest]= INTEG (
+	Maturation of Secondary Education Graduates[Regions,Gender,SecondaryEdPrevious]
+	-Death Rate of Secondary Education Graduates[Regions,Gender,SecondaryEdButYoungest]
+	-Maturation of Secondary Education Graduates[Regions,Gender,SecondaryEdButYoungest],
+		Initial Secondary Education Graduates[Regions,Gender,SecondaryEdButYoungest]) ~~|
+Secondary Education Graduates[Regions,Gender,"0-4"]= INTEG (
+	0,
+		0) ~~|
+Secondary Education Graduates[Regions,Gender,"5-9"]= INTEG (
+	0,
+		0) ~~|
+Secondary Education Graduates[Regions,Gender,"10-14"]= INTEG (
+	0,
+		0) ~~|
+Secondary Education Graduates[Regions,Gender,"20-24"]= INTEG (
+	Graduation Rate from Secondary Education[Regions,Gender,"20-24"]
+	-Death Rate of Secondary Education Graduates[Regions,Gender,"20-24"]
+	-Maturation of Secondary Education Graduates[Regions,Gender,"20-24"]
+	-Enrollment Rate to Tertiary Education[Regions,Gender,"20-24"]
+	+Maturation of Secondary Education Graduates[Regions,Gender,"15-19"],
+		Initial Secondary Education Graduates[Regions,Gender,"20-24"]) ~~|
+Secondary Education Graduates[Regions,Gender,"25-29"]= INTEG (
+	Graduation Rate from Secondary Education[Regions,Gender,"25-29"]
+	-Enrollment Rate to Tertiary Education[Regions,Gender,"25-29"]
+	-Death Rate of Secondary Education Graduates[Regions,Gender,"25-29"]
+	-Maturation of Secondary Education Graduates[Regions,Gender,"25-29"]
+	+Maturation of Secondary Education Graduates[Regions,Gender,"20-24"],
+		Initial Secondary Education Graduates[Regions,Gender,"25-29"])
+	~	People
+	~		|
+
+Secondary Education Graduates by Gender[Regions,Gender]=
+	sum(Secondary Education Graduates[Regions,Gender,SecondaryEdCohorts!])
+	~	People
+	~		|
+
+Secondary Education Variation[Africa,Gender]=
+	0,0 ~~|
+Secondary Education Variation[AsiaPacific,Gender]=
+	0,0 ~~|
+Secondary Education Variation[EastEu,Gender]=
+	0,0 ~~|
+Secondary Education Variation[LAC,Gender]=
+	0,0 ~~|
+Secondary Education Variation[WestEu,Gender]=
+	0,0
+	~	Dmnl
+	~		|
+
+SecondaryEdButYoungest:
+	"30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80-84"\
+		,"85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+SecondaryEdCohorts:
+	"15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69"\
+		,"70-74","75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+SecondaryEdPrevious:
+	"25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79"\
+		,"80-84","85-89","90-94","95-99" -> SecondaryEdButYoungest
+	~	
+	~		|
+
+SecondaryGraduation:
+	"15-19", "20-24", "25-29"
+	~	
+	~		|
+
+"Share of females aged 20-39 with sec+ education"[Regions]=
+	(sum(Secondary Education Graduates[Regions,female,"20 to 39"!]) + sum(Tertiary Education Graduates\
+		[Regions,female,"20 to 39"!])) / sum(Population Cohorts[Regions,female,"20 to 39"!]\
+		)
+	~	Dmnl
+	~		|
+
+Smoothed Total Population[Regions]=
+	SMOOTH(Population[Regions], Year Period)
+	~	People
+	~		|
+
+SSP Demographic Variation Time=
+	5
+	~	Year
+	~		|
+
+Subsistence Food per Capita[Regions]=
+	2000 + STEP(SA Subsistence Food per Capita[Regions]-2000, 2020)
+	~	kcal/(Person*Day)
+	~	Subsistence amount of food per person required to survive.
+	|
+
+SWITCH Impact of Education on Climate Mortality=
+	1
+	~	Dmnl
+	~	0 : No impact, hence a constant
+		1 : The driver is MYS
+		2 : The driver is Share of Females aged 20-39 with sec+ education
+	|
+
+T0[Africa,Gender]=
+	6.83625,
+	0.355173 ~~|
+T0[AsiaPacific,Gender]=
+	10.1524,
+	9.86608 ~~|
+T0[EastEu,Gender]=
+	3.49584,
+	3.12258 ~~|
+T0[LAC,Gender]=
+	0.964523,
+	3.86408 ~~|
+T0[WestEu,Gender]=
+	2.39532,
+	1.26494
+	~	Dmnl
+	~		|
+
+T1[Africa,Gender]=
+	0.774202,
+	0.209939 ~~|
+T1[AsiaPacific,Gender]=
+	2.00674,
+	2.82472 ~~|
+T1[EastEu,Gender]=
+	2.22926,
+	0.876611 ~~|
+T1[LAC,Gender]=
+	0.345646,
+	1.03796 ~~|
+T1[WestEu,Gender]=
+	1.32505,
+	0.370888
+	~	Dmnl
+	~		|
+
+T2[Africa,Gender]=
+	0.215568,
+	0.941395 ~~|
+T2[AsiaPacific,Gender]=
+	0.272322,
+	0.325584 ~~|
+T2[EastEu,Gender]=
+	0.761678,
+	0.854319 ~~|
+T2[LAC,Gender]=
+	3.55273,
+	0.671973 ~~|
+T2[WestEu,Gender]=
+	1.3186,
+	2.73204
+	~	Dmnl
+	~		|
+
+Temperature Change from Preindustrial=
+	0.02
+	~	DegreesC
+	~	Temperature of the Atmosphere and Upper Ocean and how it has changed from \
+		preindustrial period.
+		
+		Heat in Atmosphere and Upper Ocean/Atmospheric and Upper Ocean Heat \
+		Capacity
+	|
+
+Tertiary age distribution[Regions,"15-19"]=
+	0.606804 ~~|
+Tertiary age distribution[Regions,"20-24"]=
+	0.36567 ~~|
+Tertiary age distribution[Regions,"25-29"]=
+	0.0625012
+	~	
+	~		|
+
+Tertiary Education[Regions,Gender,WorkingAge]=
+	Tertiary Education Graduates[Regions,Gender,WorkingAge]
+	~	Person
+	~		|
+
+Tertiary education enrollment Variation[Africa,Gender]=
+	0.4,
+	0.4 ~~|
+Tertiary education enrollment Variation[AsiaPacific,Gender]=
+	0.5,
+	0.5 ~~|
+Tertiary education enrollment Variation[EastEu,Gender]=
+	0.8,
+	0.8 ~~|
+Tertiary education enrollment Variation[LAC,Gender]=
+	0.5,
+	0.5 ~~|
+Tertiary education enrollment Variation[WestEu,Gender]=
+	0.9,
+	0.9
+	~	Dmnl
+	~	Corresponding to 2000 values of the fraction of seondary education \
+		graduates aged 15-19 enrolling at tertiary education
+	|
+
+Tertiary Education Graduates[Regions,Gender,"20-24"]= INTEG (
+	Graduation Rate from Tertiary Education[Regions,Gender,"20-24"]
+	-Death Rate of Tertiary Education Graduates[Regions,Gender,"20-24"]
+	-Maturation of Tertiary Education Graduates[Regions,Gender,"20-24"],
+		Initial Tertiary Education Graduates[Regions,Gender,"20-24"]) ~~|
+Tertiary Education Graduates[Regions,Gender,TertiaryEdButYoungest]= INTEG (
+	Maturation of Tertiary Education Graduates[Regions,Gender,TertiaryEdPrevious]
+	-Death Rate of Tertiary Education Graduates[Regions,Gender,TertiaryEdButYoungest]
+	-Maturation of Tertiary Education Graduates[Regions,Gender,TertiaryEdButYoungest],
+		Initial Tertiary Education Graduates[Regions,Gender,TertiaryEdButYoungest]) ~~|
+Tertiary Education Graduates[Regions,Gender,"0-4"]= INTEG (
+	0,
+		0) ~~|
+Tertiary Education Graduates[Regions,Gender,"5-9"]= INTEG (
+	0,
+		0) ~~|
+Tertiary Education Graduates[Regions,Gender,"10-14"]= INTEG (
+	0,
+		0) ~~|
+Tertiary Education Graduates[Regions,Gender,"15-19"]= INTEG (
+	0,
+		0) ~~|
+Tertiary Education Graduates[Regions,Gender,"25-29"]= INTEG (
+	Graduation Rate from Tertiary Education[Regions,Gender,"25-29"]
+	-Death Rate of Tertiary Education Graduates[Regions,Gender,"25-29"]
+	-Maturation of Tertiary Education Graduates[Regions,Gender,"25-29"]
+	+Maturation of Tertiary Education Graduates[Regions,Gender,"20-24"],
+		Initial Tertiary Education Graduates[Regions,Gender,"25-29"]) ~~|
+Tertiary Education Graduates[Regions,Gender,"30-34"]= INTEG (
+	Graduation Rate from Tertiary Education[Regions,Gender,"30-34"]
+	-Death Rate of Tertiary Education Graduates[Regions,Gender,"30-34"]
+	-Maturation of Tertiary Education Graduates[Regions,Gender,"30-34"]
+	+Maturation of Tertiary Education Graduates[Regions,Gender,"25-29"],
+		Initial Tertiary Education Graduates[Regions,Gender,"30-34"])
+	~	People
+	~		|
+
+Tertiary Education Graduates by Gender[Regions,Gender]=
+	sum(Tertiary Education Graduates[Regions,Gender,TertiaryEdCohorts!])
+	~	People
+	~		|
+
+TertiaryEdButYoungest:
+	"35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80-84","85-89"\
+		,"90-94","95-99","100+"
+	~	
+	~		|
+
+TertiaryEdCohorts:
+	"20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74"\
+		,"75-79","80-84","85-89","90-94","95-99","100+"
+	~	
+	~		|
+
+TertiaryEdPrevious:
+	"30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80-84"\
+		,"85-89","90-94","95-99" -> TertiaryEdButYoungest
+	~	
+	~		|
+
+Total Birth Rate[Regions]=
+	sum(Birth Rate[Regions,Gender!])
+	~	People/Year
+	~		|
+
+Total Birth Rate Indicator[Regions]=
+	Total Birth Rate[Regions]
+	~	Person/Year
+	~		|
+
+Total Daily Calorie Supply per Capita=
+	2000
+	~	kcal/Person/Day
+	~	Total average amount of food measured in calories available for each person per day. \
+		Source of projection data: GLOBIOM model, IIASA.
+		
+		Animal Food Supply kcal capita day+Vegetal Food supply kcal capita day
+	|
+
+Total Death Rate[Regions]=
+	sum(Death Rate[Regions,Gender!,Cohorts!])
+	~	People/Year
+	~		|
+
+Total Duration in Primary[Regions]=
+	sum(Primary Education Graduates[Regions,Gender!,MYS!]) * Average Primary Education Duration
+	~	Person*Year
+	~	sum(Primary Education Graduates[Gender!, "25-29"])*Years of Edu in Primary
+	|
+
+Total Duration in Secondary[Regions]=
+	sum(Secondary Education Graduates[Regions,Gender!,MYS!])*(Average Primary Education Duration\
+		+Average Secondary Education Duration[Regions]
+	)
+	~	Person*Year
+	~		|
+
+Total Duration in Tertiary[Regions]=
+	sum(Tertiary Education Graduates[Regions,Gender!,MYS!])*(Average Primary Education Duration\
+		+Average Secondary Education Duration[Regions]
+	+Average Tertiary Education Duration
+	)
+	~	Person*Year
+	~		|
+
+Total Enrollment Rate to Primary Education[Regions]=
+	sum(Enrollment rate to primary education[Regions,Gender!])
+	~	People/Year
+	~		|
+
+Total enrollment rate to secondary education[Regions]=
+	sum(Enrollment Rate to Secondary Education[Regions,Gender!,"10-14"]) + sum(Enrollment Rate to Secondary Education\
+		[Regions,Gender!,"15-19"])
+	~	People/Year
+	~		|
+
+Total Enrollment Rate to Tertiary Education[Regions]=
+	sum(Enrollment Rate to Tertiary Education[Regions,Gender!,"15-19"])
+	+ sum(Enrollment Rate to Tertiary Education[Regions,Gender!,"20-24"])
+	+ sum(Enrollment Rate to Tertiary Education[Regions,Gender!,"25-29"])
+	~	People/Year
+	~		|
+
+Total Labor Force[Regions]=
+	sum(Labor Force[Regions,Gender!,WorkingAge!,skill])
+	~	People
+	~		|
+
+Total Population Indicator[Regions]=
+	Population Female[Regions]+Population Male[Regions]
+	~	Person*Million
+	~		|
+
+Total Population with No or Incomplete Education[Regions]=
+	sum(Total Population with No or Incomplete Education by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+Total Population with No or Incomplete Education by Gender[Regions,Gender]=
+	sum(Population with No or Incomplete Education[Regions,Gender,Cohorts!])
+	~	People
+	~		|
+
+Total Primary Education Graduates[Regions]=
+	sum(Primary Education Graduates by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+Total Primary Education Graduates Indicator[Regions]=
+	Total Primary Education Graduates[Regions]*People to Million People
+	~	Person*Million
+	~		|
+
+Total Secondary Education Graduates[Regions]=
+	sum(Secondary Education Graduates by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+Total Secondary Education Graduates Indicator[Regions]=
+	Total Secondary Education Graduates[Regions]*People to Million People
+	~	Person*Million
+	~		|
+
+Total Tertiary Education Graduates[Regions]=
+	sum(Tertiary Education Graduates by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+Total Tertiary Education Graduates Indicator[Regions]=
+	Total Tertiary Education Graduates[Regions]*People to Million People
+	~	Person*Million
+	~		|
+
+WorkingAge:
+	"15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64"
+	~	
+	~		|
+
+x0 edu fer[Regions]=
+	1.12489,
+	0.691358,
+	0.599484,
+	0.798874,
+	0.8358
+	~	Dmnl
+	~	1.12489,
+		0.691358,
+		0.782443,
+		0.76805,
+		0.828695
+	|
+
+x0 food pop[Regions]=
+	0.8,
+	0.8,
+	0.8,
+	0.8,
+	0.8
+	~	Dmnl [0,1,0.05]
+	~		|
+
+x0 gdp fer[Regions]=
+	0.612438,
+	1.15825,
+	2.28658,
+	1.89342,
+	1.06
+	~	Dmnl
+	~		|
+
+x0 LE gdp[Regions]=
+	0.1,
+	0.1,
+	0.1,
+	0.1,
+	0.1
+	~	Dmnl [0,1,0.05]
+	~	Parameter determining inflection point of impact of wealth on health \
+		services availability.
+	|
+
+x0 LE mys[Regions]=
+	0.45,
+	0.45,
+	0.45,
+	0.45,
+	0.45
+	~	Dmnl [0.2,1,0.05]
+	~	Parameter determining inflection point of impact of wealth on health \
+		services availability.
+	|
+
+x0 mor[Africa,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B5' \
+		) ~~|
+x0 mor[Africa,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B11'\
+		 ) ~~|
+x0 mor[AsiaPacific,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B17'\
+		 ) ~~|
+x0 mor[AsiaPacific,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B23'\
+		 ) ~~|
+x0 mor[EastEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B29'\
+		 ) ~~|
+x0 mor[EastEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B35'\
+		 ) ~~|
+x0 mor[LAC,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B41'\
+		 ) ~~|
+x0 mor[LAC,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B47'\
+		 ) ~~|
+x0 mor[WestEu,male,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B53'\
+		 ) ~~|
+x0 mor[WestEu,female,Cohorts]=
+	GET XLS CONSTANTS( 'Reg_InitialValues.xlsx','Mortality fractions parameters' , 'B59'\
+		 )
+	~	Dmnl
+	~		|
+
+y climate mortality[Regions]=
+	7.96458,
+	7.96458,
+	7.96458,
+	7.96458,
+	7.96458
+	~	percent
+	~	The parameter that defines the negative values of mortality impact when T \
+		change is below 0. Obtained from the curve fit to the Bressler et al. 2021 \
+		function.
+	|
+
+Year Period=
+	1
+	~	Year
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 2100
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 1900
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 1
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.125
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Population
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,61,0
+10,1,Population,1698,519,45,12,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|14|B|0-0-0,0,0,0,0,0,0
+10,2,Indicative Labor Force Participation Fraction,2895,657,82,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,3,Primary Education,2148,347,37,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,4,Secondary Education,2489,295,40,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,5,Tertiary Education,2642,404,37,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,6,NonEducated,2222,493,50,10,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,7,Labor Force,2409,412,51,12,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|14||0-0-0,0,0,0,0,0,0
+1,8,6,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,9,3,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,10,4,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,11,5,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,12,Initial Labor Force,2317,583,43,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,13,Change in Labor Force,2397,521,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,14,7,13,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,15,12,13,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,16,Labor Force input,2515,588,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,17,13,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,18,Total Duration in Primary,1118,1393,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,19,Total Duration in Secondary,1118,1510,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,20,Total Duration in Tertiary,1118,1627,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,21,Mean Years of Schooling OLD,1347,1516,56,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,22,20,21,1,0,0,0,0,64,0,-1--1--1,,1|(1250,1623)|
+1,23,19,21,1,0,0,0,0,64,0,-1--1--1,,1|(1236,1540)|
+1,24,18,21,1,0,0,0,0,64,0,-1--1--1,,1|(1276,1405)|
+10,25,Impact of GDP on Fertility,749,364,54,18,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+10,26,Normal Fertility,891,143,54,10,8,3,1,10,0,0,0,0,-1--1--1,0-0-0,|12||255-160-0,0,0,0,0,0,0
+10,27,Total Fertility,807,298,46,10,8,3,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+10,28,Impact of GDP on Fertility Inflection,297,296,65,18,8,3,1,0,-1,0,0,0,0,0,0,0,0,0
+10,29,Impact of GDP on Fertility Steepness,293,339,68,18,8,3,1,8,-1,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+10,30,GDP per Capita 2000,809,434,46,18,8,3,1,8,0,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,31,30,25,0,1,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,32,Life Expectancy at Birth,2303,1464,58,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,33,Lifetime Multiplier from Food,2276,1537,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,Lifetime Multiplier from Climate Risk,2544,1490,66,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,35,Lifetime Multiplier from Health Services,1859,1477,76,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,36,Subsistence Food per Capita,2416,1725,67,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,37,36,42,1,0,0,0,0,64,0,-1--1--1,,1|(2378,1698)|
+10,38,Ratio of GDP pc to the reference,2157,1780,69,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,39,Impact of Wealth on Health,2032,1559,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,40,Health Impact Delay,1836,1663,50,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,41,39,35,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,42,Food Ratio,2322,1698,41,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,43,Impact of GWP on Health,1998,1663,56,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,44,k LE gdp,2198,1702,34,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,45,x0 LE gdp,1925,1751,38,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,46,44,43,1,0,0,0,0,64,0,-1--1--1,,1|(2100,1664)|
+1,47,45,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,48,Impact of Food on Life Expectancy,2303,1610,66,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,49,42,48,1,0,0,0,0,64,0,-1--1--1,,1|(2325,1684)|
+1,50,48,33,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,51,INIT Species Abundance,1749,1875,52,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,52,Impact of Biodiversity on Health,1800,1771,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,53,51,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,54,Min Impact of Biodiversity on Health,1666,1813,54,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,55,Max Impact of Biodiversity on Health,1923,1810,54,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,56,54,52,1,0,0,0,0,64,0,-1--1--1,,1|(1709,1767)|
+1,57,55,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,58,Impact of Water Quality on Health,2154,1557,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,59,52,35,1,0,0,0,0,64,0,-1--1--1,,1|(1752,1614)|
+1,60,58,35,1,0,0,0,0,64,0,-1--1--1,,1|(2090,1525)|
+1,61,38,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,62,Population,2418,2046,48,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,63,Smoothed Total Population,2316,2051,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,64,2,637,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,65,7,12,1,0,0,0,0,64,1,-1--1--1,,1|(2126,407)|
+10,66,Interval duration,1336,211,56,10,8,3,1,0,0,0,0,0,0,0,0,0,0,0
+10,67,Initial Population,1312,305,59,10,8,3,1,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,68,Population Cohorts,1228,394,80,71,3,131,0,8,0,0,0,0,-1--1--1,0-0-0,|14||0-0-0,0,0,0,0,0,0
+12,69,48,884,379,10,8,0,3,0,8,-1,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,70,72,68,4,0,43,22,10,0,0,-1--1--1,|16||0-0-0,1|(1087,379)|
+1,71,72,69,100,0,0,22,0,0,0,-1--1--1,,1|(954,379)|
+11,72,0,1021,379,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,73,Birth Rate,1021,397,37,10,40,3,0,8,-1,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,74,76,68,4,0,0,22,0,0,0,-1--1--1,,1|(1228,275)|
+1,75,76,68,100,0,0,22,0,0,0,-1--1--1,,1|(1479,394)|
+11,76,0,1479,275,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,77,Maturation Rate,1544,275,57,10,40,131,0,8,-1,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+12,78,48,1225,553,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,79,81,78,4,0,0,22,0,0,0,-1--1--1,,1|(1225,522)|
+1,80,81,68,100,0,45,22,10,0,0,-1--1--1,|16||0-0-0,1|(1225,476)|
+11,81,0,1225,492,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,82,Death Rate,1275,492,42,10,40,3,0,8,-1,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,83,66,77,1,1,0,0,0,64,0,-1--1--1,,1|(1529,258)|
+1,84,68,76,1,1,0,0,0,64,0,-1--1--1,,1|(1397,338)|
+10,85,Population by Gender,1478,473,50,18,8,131,1,0,0,0,0,0,0,0,0,0,0,0
+1,86,68,85,1,1,0,0,0,64,0,-1--1--1,,1|(1357,419)|
+10,87,Mortality fraction,1371,564,59,10,8,3,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,88,87,82,1,0,43,0,10,64,0,-1--1--1,|16||0-0-0,1|(1317,537)|
+1,89,68,82,1,0,43,0,2,64,0,-1--1--1,|||0-0-0,1|(1317,464)|
+10,90,Fertile Population,1053,480,40,18,8,3,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,91,68,90,1,0,43,0,10,64,0,-1--1--1,|16||0-0-0,1|(1149,469)|
+10,92,Reproductive Lifetime,1005,533,49,18,8,3,0,8,0,0,0,0,0-0-0,0-0-0,|12||255-160-0,0,0,0,0,0,0
+10,93,Birth Gender Fraction,699,576,47,18,8,3,0,10,0,0,0,0,-1--1--1,0-0-0,|12||255-160-0,0,0,0,0,0,0
+1,94,93,73,1,0,0,0,0,64,0,-1--1--1,,1|(823,474)|
+10,95,Total Birth Rate,946,586,56,10,8,3,0,8,0,0,0,0,0-0-0,0-0-0,|12|B|0-0-0,0,0,0,0,0,0
+1,96,73,95,1,0,0,0,0,64,0,-1--1--1,,1|(949,534)|
+10,97,Total Death Rate,1272,594,43,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,98,82,97,1,0,0,0,0,64,0,-1--1--1,,1|(1279,523)|
+10,99,Primary Education Graduates,821,971,51,33,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,100,102,99,4,0,0,22,0,0,0,-1--1--1,,1|(821,856)|
+1,101,102,99,100,0,0,22,0,0,0,-1--1--1,,1|(885,971)|
+11,102,0,885,856,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,103,Maturation of Primary Education Graduates,971,856,78,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,104,48,825,1133,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,105,107,104,4,0,0,22,0,0,0,-1--1--1,,1|(825,1103)|
+1,106,107,99,100,0,0,22,0,0,0,-1--1--1,,1|(825,1036)|
+11,107,0,825,1075,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,108,Death Rate of Primary Education Graduates,914,1075,81,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,109,Maturation Rate,618,928,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,110,Average Primary Education Duration,663,1108,70,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,111,Initial Primary Education Graduates,606,771,78,18,8,131,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,112,Average Primary Education Ratio,1010,923,62,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,113,68,112,1,1,0,0,0,64,0,-1--1--1,,1|(1047,706)|
+1,114,99,112,1,0,0,0,0,64,0,-1--1--1,,1|(930,969)|
+10,115,Death Rate,878,1170,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,116,Average Primary Education Ratio,971,1157,67,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,117,Primary Education Graduates by Gender,738,1155,79,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,118,99,117,1,0,0,0,0,64,0,-1--1--1,,1|(763,1044)|
+10,119,Total Primary Education Graduates,855,1221,49,27,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,120,117,119,1,0,0,0,0,64,0,-1--1--1,,1|(788,1205)|
+1,121,122,99,100,0,0,22,0,0,0,-1--1--1,,1|(957,982)|
+11,122,0,1048,982,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,123,Enrollment Rate to Secondary Education,1048,1008,79,18,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,124,Secondary Education Enrollment Fraction,1355,1005,79,18,8,131,0,4,0,0,0,0,-1--1--1,255-249-251,|||0-0-0,0,0,0,0,0,0
+10,125,Secondary Education Graduates,1789,976,51,33,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,126,128,125,4,0,0,22,0,0,0,-1--1--1,,1|(1789,874)|
+1,127,128,125,100,0,0,22,0,0,0,-1--1--1,,1|(1879,976)|
+11,128,0,1879,874,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,129,Maturation of Secondary Education Graduates,1966,874,79,27,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+12,130,48,1784,1133,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,131,133,130,4,0,0,22,0,0,0,-1--1--1,,1|(1784,1103)|
+1,132,133,125,100,0,0,22,0,0,0,-1--1--1,,1|(1784,1039)|
+11,133,0,1784,1075,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,134,Death Rate of Secondary Education Graduates,1871,1075,79,27,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,135,Average Secondary Education Duration,1636,1096,73,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,136,Initial Secondary Education Graduates,1565,772,78,18,8,131,0,4,0,0,0,0,0-0-0,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,137,Average Secondary Education Level,1800,813,73,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,138,125,137,1,0,0,0,0,64,0,-1--1--1,,1|(1770,878)|
+10,139,Death Rate,1879,1178,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,140,Average Secondary Education Level,1974,1142,64,27,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,141,Maturation Rate,2014,804,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,142,Secondary Education Graduates by Gender,1699,1155,79,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,143,125,142,1,0,0,0,0,64,0,-1--1--1,,1|(1733,1062)|
+10,144,Total Secondary Education Graduates,1739,1232,78,18,8,131,0,8,0,0,0,0,0-0-0,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,145,142,144,1,0,0,0,0,64,0,-1--1--1,,1|(1701,1199)|
+1,146,147,125,100,0,0,22,0,0,0,-1--1--1,,1|(1882,986)|
+11,147,0,1931,986,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,148,Enrollment Rate to Tertiary Education,1931,1012,67,18,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,149,Tertiary Education Enrollment Fraction,2189,963,71,18,8,3,0,4,0,0,0,0,-1--1--1,255-249-251,|||0-0-0,0,0,0,0,0,0
+1,150,125,148,1,0,0,0,0,64,0,-1--1--1,,1|(1849,1031)|
+1,151,136,125,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,152,68,137,1,1,0,0,0,64,0,-1--1--1,,1|(1679,569)|
+1,153,135,380,1,0,0,0,0,64,0,-1--1--1,,1|(1671,1040)|
+10,154,Tertiary Education Graduates,2764,974,51,33,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,155,157,154,4,0,0,22,0,0,0,-1--1--1,,1|(2764,874)|
+1,156,157,154,100,0,0,22,0,0,0,-1--1--1,,1|(2862,974)|
+11,157,0,2862,874,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,158,Maturation of Tertiary Education Graduates,2948,874,78,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,159,48,2767,1133,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,160,162,159,4,0,0,22,0,0,0,-1--1--1,,1|(2767,1103)|
+1,161,162,154,100,0,0,22,0,0,0,-1--1--1,,1|(2767,1038)|
+11,162,0,2767,1075,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,163,Death Rate of Tertiary Education Graduates,2855,1075,80,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,164,Average Tertiary Education Duration,2629,1100,70,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,165,Initial Tertiary Education Graduates,2596,789,48,27,8,131,0,4,0,0,0,0,0-0-0,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,166,Death Rate,2862,1178,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,167,Tertiary Education Graduates by Gender,2708,1155,79,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,168,154,167,1,0,0,0,0,64,0,-1--1--1,,1|(2710,1040)|
+10,169,Total Tertiary Education Graduates,2795,1231,48,27,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|12||0-0-0,0,0,0,0,0,0
+1,170,167,169,1,0,0,0,0,64,0,-1--1--1,,1|(2707,1199)|
+10,171,Average Tertiary Education Level,2966,996,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,172,154,171,1,0,0,0,0,64,0,-1--1--1,,1|(2853,1001)|
+10,173,Population Cohorts,3023,1066,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,174,173,171,1,0,0,0,0,64,0,-1--1--1,,1|(3030,1039)|
+1,175,164,390,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,176,Population with No or Incomplete Education,718,1462,79,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,177,Population Cohorts,582,1386,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,178,Primary Education Graduates,580,1436,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,179,Secondary Education Graduates,582,1494,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,180,Tertiary Education Graduates,579,1552,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,181,177,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,182,178,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,183,179,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,184,180,176,1,0,0,0,0,64,0,-1--1--1,,1|(688,1504)|
+10,185,Total Population with No or Incomplete Education by Gender,808,1553,88,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,186,Total Population with No or Incomplete Education,784,1397,75,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,187,176,185,1,0,0,0,0,64,0,-1--1--1,,1|(737,1499)|
+1,188,185,186,1,0,0,0,0,64,0,-1--1--1,,1|(815,1476)|
+10,189,Population with No or Incomplete Education,2051,518,83,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,190,189,6,1,0,0,0,0,64,0,-1--1--1,,1|(2148,528)|
+10,191,Primary Education Graduates,2159,234,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,192,191,3,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,193,Secondary Education Graduates,2634,251,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,194,193,4,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,195,Tertiary Education Graduates,2701,496,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,196,195,5,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,197,0,2029,293,75,24,8,7,0,4,-1,0,0,0,0-0-0,192-255-255,|||0-0-0,0,0,0,0,0,0
+Why don't we just sum up the population cohorts? :)
+10,198,Average Primary Education Duration,1014,1510,75,18,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,199,198,18,1,0,0,0,0,64,0,-1--1--1,,1|(1044,1443)|
+1,200,198,19,1,0,0,0,0,64,0,-1--1--1,,1|(1070,1481)|
+1,201,198,20,1,0,0,0,0,64,0,-1--1--1,,1|(1041,1570)|
+10,202,Average Secondary Education Duration,1166,1570,78,18,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,203,Average Tertiary Education Duration,934,1648,75,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,204,202,19,1,0,0,0,0,64,0,-1--1--1,,1|(1103,1547)|
+1,205,202,20,1,0,0,0,0,64,0,-1--1--1,,1|(1181,1600)|
+1,206,203,20,1,0,0,0,0,64,0,-1--1--1,,1|(1022,1628)|
+10,207,Primary Education Graduates,1256,1427,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,208,207,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,209,Secondary Education Graduates,1253,1480,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,210,209,19,1,0,0,0,0,64,0,-1--1--1,,1|(1182,1460)|
+10,211,Tertiary Education Graduates,1106,1690,44,27,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,212,211,20,1,0,0,0,0,64,0,-1--1--1,,1|(1115,1684)|
+10,213,Population Cohorts,1442,1434,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,214,213,21,1,0,0,0,0,64,0,-1--1--1,,1|(1436,1483)|
+10,215,Life Expectancy at Birth,1268,654,63,18,8,130,0,11,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128,0,0,0,0,0,0
+1,216,62,63,1,0,0,0,0,64,0,-1--1--1,,1|(2364,2066)|
+10,217,Year Period,1806,1978,44,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,218,Impact of Education on Fertility,675,261,48,27,8,131,0,8,0,0,0,0,-1--1--1,0-0-0,|12||255-160-0,0,0,0,0,0,0
+10,219,Mean Years of Schooling OLD,347,197,61,18,8,2,1,11,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128,0,0,0,0,0,0
+12,220,0,1197,22,647,28,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+POPULATION 
+1,221,85,1,0,1,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,222,0,2372,150,431,28,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+LABOR FORCE
+12,223,0,898,725,356,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+PRIMARY EDUCATION
+12,224,0,1892,724,356,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+SECONDARY EDUCATION
+12,225,0,2879,723,356,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+TERTIARY EDUCATION
+10,226,Maturation Rate,2997,804,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,227,0,750,1331,210,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+NO EDUCATION
+12,228,0,1344,1330,354,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+EDUCATION INDEX
+12,229,0,2262,1330,532,29,8,135,0,12,-1,0,0,0,0-0-0,192-192-192,|12||0-0-0,0,0,0,0,0,0
+LIFE EXPECTANCY
+10,230,Population wrt Education,706,1698,52,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,231,176,230,0,1,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,232,Population Cohorts,1078,1736,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,233,Total Labor Force,2202,594,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,234,7,233,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,235,k food pop,2421,1565,39,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,236,L food pop,2428,1607,40,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,237,x0 food pop,2425,1673,43,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,238,235,48,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,239,236,48,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,240,237,48,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,241,Ratio of Secondary Education Graduates,2184,1239,78,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,242,Population by Gender,2091,1291,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,243,242,241,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,244,142,241,1,0,0,0,0,64,0,-1--1--1,,1|(1928,1210)|
+10,245,b fertility,414,321,31,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,246,Total Daily Calorie Supply per Capita,2321,1832,72,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,247,246,42,1,0,0,0,0,64,0,-1--1--1,,1|(2307,1764)|
+10,248,L Fertility Variation,982,197,34,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,249,Birth Gender Fraction Variation,678,657,66,18,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,250,249,93,1,0,0,0,0,64,0,-1--1--1,,1|(706,618)|
+10,251,Life Expectancy Normal,1625,644,58,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,252,SA Subsistence Food per Capita,2496,1799,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,253,252,36,1,0,0,0,0,64,0,-1--1--1,,1|(2419,1764)|
+10,254,SA Min Impact of Biodiversity on Health,1616,1920,79,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,255,254,54,1,0,0,0,0,64,0,-1--1--1,,1|(1628,1870)|
+10,256,SA Max Impact of Biodiversity on Health,1943,1916,79,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,257,256,55,1,0,0,0,0,64,0,-1--1--1,,1|(1948,1870)|
+10,258,Population SSP1,1825,479,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,259,Population SSP2,1825,507,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,260,Population SSP3,1825,538,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,261,Population SSP4,1825,565,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,262,Population SSP5,1825,604,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,263,Time,1955,477,29,10,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,264,263,258,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,265,263,259,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,266,263,260,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,267,263,261,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,268,263,262,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,269,Population Male,1600,409,58,10,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,270,Population Female,1600,446,40,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,271,85,270,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,272,85,269,1,0,0,0,0,128,0,-1--1--1,,1|(1514,412)|
+10,273,People to Million People,1728,426,61,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,274,273,269,1,0,0,0,0,128,0,-1--1--1,,1|(1667,406)|
+1,275,273,270,1,0,0,0,0,128,0,-1--1--1,,1|(1663,443)|
+10,276,People to Million People,1242,1232,57,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,277,People to Million People,2030,1253,57,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,278,People to Million People,3177,1221,57,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,279,Total Primary Education Graduates Indicator,1080,1261,78,27,8,131,0,10,0,0,0,0,-1--1--1,0-0-0,|12|B|255-0-255,0,0,0,0,0,0
+10,280,Total Secondary Education Graduates Indicator,1890,1254,78,27,8,131,0,10,0,0,0,0,-1--1--1,0-0-0,|12|B|255-0-255,0,0,0,0,0,0
+10,281,Total Tertiary Education Graduates Indicator,2963,1227,78,27,8,131,0,10,0,0,0,0,-1--1--1,0-0-0,|12|B|255-0-255,0,0,0,0,0,0
+1,282,119,279,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,283,276,279,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,284,144,280,1,0,0,0,0,128,0,-1--1--1,,1|(1808,1282)|
+1,285,277,280,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,286,169,281,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,287,278,281,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,288,Total Population Indicator,1639,351,59,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,289,269,288,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,290,270,288,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,291,SSP Demographic Variation Time,2922,410,74,18,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,292,SSP Demographic Variation Time,2785,1417,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,293,SSP Demographic Variation Time,839,586,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,294,293,93,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,295,LF S,2922,334,19,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,296,SE Var T,2923,366,34,10,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,297,Labor Force Participation Fraction Variation,2825,500,79,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,298,Life Expectancy Normal Variation 1,2824,2238,69,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,299,SE Var T,2453,1407,43,10,3,2,0,23,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,300,Gross enrolment primary historical,46,893,62,18,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||255-0-0,0,0,0,0,0,0
+10,301,Gross enrolment secondary historical,1341,722,73,18,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||0-0-0,0,0,0,0,0,0
+10,302,Gross enrolment tertiary historical,2396,781,60,18,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||0-0-0,0,0,0,0,0,0
+10,303,Net enrolment primary historical,42,840,62,18,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||255-0-0,0,0,0,0,0,0
+10,304,Net intake rate in grade 1,47,791,62,18,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||255-0-0,0,0,0,0,0,0
+1,305,124,123,1,0,0,0,0,128,0,-1--1--1,,1|(1192,1017)|
+10,306,Persistence,689,1281,44,10,8,3,0,4,0,0,0,0,0-0-0,128-255-128,|||0-0-0,0,0,0,0,0,0
+1,307,149,148,1,0,0,0,0,128,0,-1--1--1,,1|(2077,1015)|
+10,308,net to gross ter,2413,734,54,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||0-255-0,0,0,0,0,0,0
+10,309,Population Cohorts,1434,1095,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,310,Population with No or Incomplete Education Indicator,960,1423,79,27,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,311,186,310,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,312,Population,910,1512,48,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,313,312,310,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,314,Population Growth Rate,1097,639,46,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,315,95,314,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,316,97,314,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,317,Total Birth Rate Indicator,975,646,57,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,318,95,317,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,319,Year Period,2328,2118,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,320,319,63,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,321,population sum of edu,643,1828,56,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,322,230,321,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,323,Tertiary Education Graduates,733,1770,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,324,Secondary Education Graduates,527,1774,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,325,Primary Education Graduates,554,1698,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,326,325,230,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,327,324,230,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,328,323,230,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,329,Population Cohorts,653,859,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,330,0,75,-34,48,14,3,7,0,12,-1,0,0,0,0-0-0,128-255-128,|12||0-0-0,0,0,0,0,0,0
+External data
+12,331,0,70,-73,65,16,8,7,0,8,-1,0,0,0,-1--1--1,-1--1--1,|14||0-0-0,0,0,0,0,0,0
+LEGEND
+12,332,0,75,7,60,25,8,7,0,10,-1,0,0,0,0-0-0,0-0-0,|12||255-0-0,0,0,0,0,0,0
+Assumption
+10,333,Population Cohorts,2682,851,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,334,Primary education enrollment fraction,411,877,67,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,335,Net enrollment primary cal,761,823,53,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,336,Persistence,2486,1256,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,337,net to gross fraction,1356,1257,48,18,8,2,2,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,338,Net enrolment secondary historical,1477,723,78,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,339,Net enrollment secondary,1287,1104,53,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,340,309,339,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,341,Effect of GWP per capita on primary enrollment,407,797,67,27,8,3,0,1,-1,0,0,0,245-245-245,0-0-0,||B|247-44-37,0,0,0,0,0,0
+10,342,GWP per Capita 2000,443,682,46,18,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,343,GWP per capita ratio for enrollment,387,731,68,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,344,342,343,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,345,343,341,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,346,Reference primary education enrollment fraction,539,825,75,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,347,346,334,1,0,0,0,0,192,0,-1--1--1,,1|(471,837)|
+1,348,341,334,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,349,Reference secondary education enrollment fraction,1349,933,78,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,350,Effect of GWP per capita on secondary enrollment,1433,814,74,27,8,3,0,1,-1,0,0,0,245-245-245,0-0-0,||B|247-44-37,0,0,0,0,0,0
+10,351,GWP per capita ratio for enrollment,1595,865,72,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,352,349,124,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,353,350,124,1,0,0,0,0,192,0,-1--1--1,,1|(1424,917)|
+10,354,Time,2155,1057,29,10,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,355,Reference tertiary education enrollment fraction,2344,925,75,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,356,Effect of GWP per capita on tertiary enrollment,2217,869,67,27,8,3,0,1,-1,0,0,0,245-245-245,0-0-0,|||247-44-37,0,0,0,0,0,0
+10,357,GWP per capita ratio for enrollment,2261,777,72,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,358,357,356,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,359,355,149,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,360,356,149,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,361,Gross enrollment tertiary,2593,894,65,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,362,333,361,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,363,48,557,972,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,364,366,363,100,0,0,22,0,192,0,-1--1--1,,1|(614,972)|
+1,365,366,99,4,0,0,22,0,192,0,-1--1--1,,1|(722,972)|
+11,366,0,668,972,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,367,Graduation Rate from Primary Education,668,998,79,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,368,Enrollment rate to primary education,461,946,66,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,369,334,368,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,370,368,367,1,0,0,0,0,192,0,-1--1--1,,1|(541,1001)|
+10,371,Interval duration,708,907,35,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,372,Average Primary Education Duration,1064,1205,75,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,373,48,1193,982,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,374,122,373,4,0,0,22,0,192,0,-1--1--1,,2|(1183,982)|(1183,982)|
+1,375,123,339,1,0,0,0,0,192,0,-1--1--1,,1|(1148,1103)|
+12,376,48,1528,976,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,377,379,376,100,0,0,22,0,192,0,-1--1--1,,1|(1580,976)|
+1,378,379,125,4,0,0,22,0,192,0,-1--1--1,,1|(1686,976)|
+11,379,0,1629,976,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,380,Graduation Rate from Secondary Education,1629,1002,79,18,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+1,381,123,380,1,0,0,0,0,192,0,-1--1--1,,1|(1350,1060)|
+10,382,Interval duration,1504,1010,35,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,383,382,380,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,384,48,2030,986,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,385,147,384,4,0,0,22,0,192,0,-1--1--1,,2|(2020,986)|(2020,986)|
+12,386,48,2497,976,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,387,389,386,100,0,0,22,0,192,0,-1--1--1,,1|(2623,976)|
+1,388,389,154,4,0,0,22,0,192,0,-1--1--1,,1|(2671,990)|
+11,389,0,2623,990,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,390,Graduation Rate from Tertiary Education,2623,1025,60,27,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,391,Persistence tertiary,2483,1179,44,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,392,336,391,1,0,0,0,0,192,0,-1--1--1,,1|(2457,1234)|
+1,393,148,390,1,0,0,0,0,192,0,-1--1--1,,1|(2274,1062)|
+1,394,165,154,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,395,148,361,1,0,0,0,0,192,0,-1--1--1,,1|(2282,1003)|
+1,396,371,367,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,397,"init 10-14",774,895,35,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,398,111,99,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,399,Tertiary age distribution,2053,921,44,18,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-0,0,0,0,0,0,0
+10,400,Time,1636,1128,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,401,351,350,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,402,P0,257,843,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,403,402,341,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,404,P1,254,810,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,405,404,341,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,406,P2,257,774,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,407,406,341,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,408,S0,1340,774,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,409,408,350,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,410,S1,1384,762,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,411,410,350,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,412,S2,1423,756,12,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,413,412,350,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,414,T0,2118,872,11,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,415,414,356,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,416,T1,2126,842,11,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,417,416,356,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,418,T2,2151,827,11,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,419,418,356,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,420,Age Specific Fertility Rate,1022,304,48,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,421,Mean Years of Schooling,1179,1792,53,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,422,Total Secondary Education Graduates,1320,1847,82,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,423,Total Tertiary Education Graduates,1218,1872,53,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,424,Population,1237,1965,48,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,425,Average duration of primary education,989,1786,72,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,426,Average duration of secondary education,1032,1851,76,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,427,Average duration of tertiary education,1065,1921,72,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,428,Time,847,1903,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,429,428,425,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,430,428,426,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,431,428,427,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,432,425,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,433,426,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,434,427,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,435,207,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,436,209,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,437,211,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,438,Population fraction with secondary and higher education,1387,1948,84,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,439,422,438,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,440,423,438,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,441,424,438,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,442,Mean Years of Schooling,531,266,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,443,Lookup secondary education duration,829,1833,68,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,444,443,426,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,445,L0 edu Fer,546,203,40,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,446,L edu fer,620,201,33,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,447,k edu fer,697,202,32,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,448,x0 edu fer,778,205,36,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,449,445,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,450,446,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,451,447,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,452,448,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,453,MYS2000,572,305,37,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,454,453,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,455,L0 gdp Fer,562,373,41,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,456,L gdp fer,601,401,33,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,457,k gdp fer,629,430,33,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,458,x0 gdp fer,651,462,37,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,459,455,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,460,456,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,461,457,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,462,458,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,463,420,73,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,464,68,73,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,465,66,73,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,466,232,421,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,467,"Population 0-19",647,2069,57,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,468,"Population 20-39",649,2103,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,469,"Population 40-64",647,2147,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,470,"Population 65+",648,2184,55,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,471,Population Cohorts,794,2119,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,472,471,467,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,473,471,468,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,474,471,469,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,475,471,470,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,476,Future fertility MYS,516,147,49,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,477,Future fertility GDP,449,394,49,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,478,Age Specific Fertility Rate LOOKUP,944,471,48,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,479,27,478,1,0,0,0,0,64,0,-1--1--1,,1|(839,389)|
+10,480,Ramp for fertility variation,907,247,54,17,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,481,248,480,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,482,Secondary Education Variation,1707,813,72,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,483,Policy Ramp Sec Education,1683,894,64,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,484,482,483,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,485,483,124,1,0,0,0,0,192,0,-1--1--1,,1|(1506,945)|
+10,486,M0,1482,523,13,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,487,486,87,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,488,Ratio of life expectancy to its reference value,1439,653,61,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,489,215,488,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,490,488,87,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,491,Life Expectancy 2000,1965,1386,58,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,492,40,39,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,493,43,39,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,494,GDP per Capita 2000,2157,1840,51,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,495,494,38,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,496,L LE gdp,2149,1725,34,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,497,496,43,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,498,Ratio of MYS to the reference,2615,1882,57,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,499,Impact of Education on Life Expectancy,2576,1718,72,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,500,k LE mys,2772,1742,34,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+10,501,x0 LE mys,2693,1824,38,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,502,500,499,1,0,0,0,0,64,0,-1--1--1,,1|(2680,1713)|
+1,503,501,499,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,504,498,499,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,505,L LE mys,2752,1785,35,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,506,505,499,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,507,Mean Years of Schooling,2535,1944,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,508,MYS2000,2706,1935,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,509,507,498,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,510,508,498,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,511,0,2346,2205,299,238,8,15,0,0,2,0,0,0,0,0,0,0,0,0
+Life Expectancy at Birth,Graph
+10,512,Total enrollment rate to secondary education,1279,1166,85,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,513,123,512,1,0,0,0,0,192,0,-1--1--1,,1|(1150,1176)|
+1,514,99,123,1,0,0,0,0,192,0,-1--1--1,,1|(906,1030)|
+10,515,Primary enrollment rate previous,483,1046,68,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,516,Primary Education Variation,207,1003,68,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,517,Policy Ramp Primary Education,290,943,68,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,518,516,517,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,519,517,334,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,520,y climate mortality,2949,1560,33,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,521,Climate mortality saturation,2962,1602,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,522,Climate mortality steepness,3252,1674,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,523,Climate mortality inflection,2962,1723,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,524,Climate mortality saturation SA,3105,1614,61,18,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,|||255-0-128,0,0,0,0,0,0
+10,525,Climate mortality steepness SA,3767,1655,61,18,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,|||255-0-128,0,0,0,0,0,0
+10,526,Climate mortality inflection SA,3112,1731,61,18,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,|||255-0-128,0,0,0,0,0,0
+10,527,Current year,3043,1550,45,10,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,528,527,521,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,529,524,521,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,530,526,523,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,531,527,523,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,532,Impact of climate change on mortality opt0,2833,1658,71,27,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,533,520,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,534,521,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,535,522,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,536,523,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,537,Climate mortality saturation 0,3239,1616,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,538,Climate mortality steepness 0,3438,1541,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,539,Climate mortality inflection 0,3242,1729,61,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,540,537,521,1,0,0,0,0,192,0,-1--1--1,,1|(3101,1590)|
+1,541,539,523,1,0,0,0,0,192,0,-1--1--1,,1|(3103,1710)|
+10,542,"100 percent",2732,1520,53,10,8,2,0,19,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,543,542,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,544,Temperature Change from Preindustrial,2916,1786,52,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,545,544,532,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,546,532,550,1,0,0,0,0,192,0,-1--1--1,,1|(2740,1654)|
+1,547,542,34,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,548,Time,3006,656,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,549,548,2,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,550,Impact of climate change on mortality fraction,2688,1596,71,27,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,551,550,34,1,0,0,0,0,192,0,-1--1--1,,1|(2586,1549)|
+10,552,CLIMATE MORTALITY SWITCH,2580,1625,46,27,8,3,0,4,-1,0,0,0,0-0-0,131-106-162,|||0-0-0,0,0,0,0,0,0
+1,553,552,550,1,0,0,0,0,192,0,-1--1--1,,1|(2649,1637)|
+10,554,Impact of climate change on mortality opt1,2993,1475,71,27,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,555,Impact of climate change on mortality opt2,2987,1340,71,27,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,556,554,550,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,557,555,550,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,558,Opt1 temperature coeff,3151,1468,65,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,559,Opt1 constant,3152,1496,50,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,560,Opt1 MYS coeff,3148,1440,57,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,561,Opt2 temperature coeff,3149,1376,65,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,562,Opt2 constant,3150,1404,50,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,563,Opt2 edu coeff,3146,1348,53,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,564,560,554,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,565,558,554,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,566,559,554,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,567,Temperature Change from Preindustrial,2987,1415,52,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,568,567,555,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,569,567,554,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,570,Mean Years of Schooling,3153,1524,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,571,570,554,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,572,563,555,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,573,561,555,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,574,562,555,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,575,"Share of females aged 20-39 with sec+ education",3143,1289,83,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,576,Secondary Education Graduates,3277,1234,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,577,Tertiary Education Graduates,3274,1316,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,578,576,575,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,579,577,575,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,580,Population Cohorts,3342,1277,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,581,580,575,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,582,575,555,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,583,Fractional1,295,1066,41,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,584,583,517,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,585,Current year,225,1097,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,586,DemoFeliX target year,347,1113,47,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,587,585,517,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,588,586,517,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,589,Current year,1680,767,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,590,Fractional1,1641,820,50,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,591,DemoFeliX target year,1761,850,47,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,592,589,483,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,593,590,483,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,594,591,483,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,595,Population fraction with secondary and higher education by gender,1392,2039,84,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,596,Secondary Education Graduates by Gender,1234,2057,83,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,597,Tertiary Education Graduates by Gender,1384,2101,83,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,598,Population by Gender,1529,2106,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,599,598,595,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,600,597,595,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,601,596,595,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,602,Lookup for the Impact of MYS on Climate Mortality,3441,1601,79,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,603,Lookup for the Impact of Female Education on Climate Mortality,3454,1754,87,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,604,"Share of females aged 20-39 with sec+ education",3455,1802,88,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,605,Mean Years of Schooling,3446,1644,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,606,SWITCH Impact of Education on Climate Mortality,3445,1696,79,27,8,3,0,4,-1,0,0,0,0-0-0,131-106-162,|||0-0-0,0,0,0,0,0,0
+1,607,602,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,608,606,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,609,603,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,610,605,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,611,604,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,612,538,522,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,613,Lookup tertiary education duration,850,1980,68,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,614,613,427,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,615,251,488,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,616,67,68,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,617,329,368,1,0,0,0,0,192,0,-1--1--1,,1|(569,911)|
+1,618,110,367,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,619,Mortality fraction,1023,1096,36,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,620,619,108,1,0,0,0,0,192,0,-1--1--1,,1|(953,1122)|
+1,621,99,108,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,622,Interval duration,1135,853,35,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,623,99,103,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,624,622,103,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,625,Mortality fraction,2029,1095,36,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,626,625,134,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,627,125,134,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,628,Interval duration,1940,920,35,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,629,628,129,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,630,125,129,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,631,Interval duration,3039,842,35,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,632,Mortality fraction,2927,1123,36,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,633,632,163,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,634,154,163,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,635,154,158,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,636,631,158,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,637,Labor Force Participation Fraction,2707,617,47,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,638,637,16,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,639,Labor force RAMP,2892,578,43,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,640,297,639,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,641,639,637,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,642,Current year,3043,549,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,643,DemoFeliX target year,3132,609,47,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,644,Fractional1,2974,500,50,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,645,642,639,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,646,643,639,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,647,644,639,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,648,109,367,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,649,Maturation Rate,1681,935,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,650,649,380,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,651,Maturation Rate,2643,946,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,652,651,390,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,653,Total Enrollment Rate to Tertiary Education,2198,1170,78,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,654,148,653,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,655,Total Enrollment Rate to Primary Education,506,1177,78,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,656,368,655,1,0,0,0,0,192,0,-1--1--1,,1|(393,1043)|
+10,657,Normal Fertility Variation,1096,87,55,18,8,3,1,10,0,0,0,0,-1--1--1,0-0-0,|12||255-0-255,0,0,0,0,0,0
+10,658,Normal Fertility Init,974,70,39,18,8,3,1,10,0,0,0,0,-1--1--1,0-0-0,|12||255-160-0,0,0,0,0,0,0
+1,659,658,26,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,660,Current year,809,118,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,661,SSP Demographic Variation Time,842,76,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,662,Birth Gender Fraction Init,602,515,47,18,8,3,0,10,0,0,0,0,-1--1--1,0-0-0,|12||255-160-0,0,0,0,0,0,0
+1,663,662,93,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,664,Current year,836,546,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,665,664,93,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,666,Life Expectancy Variation,2221,1384,58,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,667,Reference Life Expectancy at Birth,2104,1439,70,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,668,491,667,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,669,666,667,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,670,Current year,1899,1419,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,671,SSP Demographic Variation Time,2094,1378,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,672,671,667,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,673,670,667,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,674,Fractional1,548,872,50,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,675,674,334,1,0,0,0,0,192,0,-1--1--1,,1|(492,890)|
+10,676,Persistence Tertiary Init,2376,1109,44,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,677,Persistence Tertiary Variation,2483,1088,63,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,678,676,391,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,679,677,391,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,680,Current year,2607,1226,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,681,SSP Demographic Variation Time,2342,1214,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,682,681,391,1,0,0,0,0,192,0,-1--1--1,,1|(2403,1186)|
+1,683,680,391,1,0,0,0,0,192,0,-1--1--1,,1|(2567,1190)|
+10,684,Tertiary education enrollment Variation,2413,825,73,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,685,Reference tertiary education enrollment fraction Init,2532,856,75,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,686,685,355,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,687,Current year,2343,865,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,688,SSP Demographic Variation Time,2490,918,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,689,Reference secondary education enrollment fraction Init,1383,868,78,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,690,Secondary education enrollment Variation,1177,923,78,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,691,Current year,1231,875,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,692,SSP Demographic Variation Time,1271,822,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,693,690,349,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,694,689,349,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,695,692,349,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,696,691,349,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,697,Current year,2679,1677,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,698,Time,2580,1664,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,699,Time,2580,1664,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,700,k mor,1474,579,22,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,701,700,87,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,702,x0 mor,1426,502,26,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,703,702,87,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,704,L Mor,1370,485,22,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,705,704,87,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,706,Fraction of skilled secondary education graduates,2527,469,74,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,707,706,7,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,708,Gross World Product,184,663,45,22,3,3,0,7,-1,0,0,0,8-91-45,8-91-45,|||255-255-255,0,0,0,0,0,0
+10,709,Time,99,599,28,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,710,709,708,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,711,GWP per Capita,318,660,60,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,712,708,711,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,713,711,343,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,714,GWP per Capita,732,449,39,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,715,714,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,716,GWP per Capita,2047,1843,39,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,717,716,38,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,718,Mean Species Abundance,1852,1860,52,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,719,718,52,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,720,Quality of Domestic Water,2191,1646,58,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,721,720,58,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,722,0,2390,1394,155,41,3,7,0,23,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+Life Expectancy at Birth depends on|<<NnN>>|1. referency life expectancy at birth|<<NnN>>|2. impact of wealth of health|<<NnN>>|3. lifetime multiplier from food|<<NnN>>|4. impact of education on life expectancy|<<NnN>>|5. lifetime multiplier from climate risk
+10,723,Time,2443,1448,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,724,723,32,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,725,218,27,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,726,25,27,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,727,26,27,1,0,0,0,0,192,0,-1--1--1,,1|(813,224)|
+10,728,L0 age fertility,898,190,50,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,729,728,480,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,730,329,335,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,731,368,335,1,0,0,0,0,192,0,-1--1--1,,1|(617,908)|
+10,732,Net enrollment primary,255,886,51,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,733,Time,1372,1700,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,734,Lookup primary education duration,861,1737,63,11,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,735,734,425,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,736,p tfr,851,344,16,9,8,3,0,58,-1,0,0,0,0-0-0,0-0-0,Arial|12||0-0-0,0,0,0,0,0,0
+10,737,p mys,1145,245,22,15,8,3,0,58,-1,0,0,0,0-0-0,0-0-0,Arial|12||0-0-0,0,0,0,0,0,0
+10,738,k asfr,1121,284,21,9,8,3,0,58,-1,0,0,0,0-0-0,0-0-0,Arial|12||0-0-0,0,0,0,0,0,0
+1,739,738,420,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,740,Effect TFR,907,300,22,21,8,3,0,58,-1,0,0,0,0-0-0,0-0-0,Arial|12||0-0-0,0,0,0,0,0,0
+10,741,Effect Edu,1069,226,21,17,8,3,0,58,-1,0,0,0,0-0-0,0-0-0,Arial|12||0-0-0,0,0,0,0,0,0
+1,742,737,741,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,743,741,420,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,744,736,740,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,745,27,740,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,746,740,420,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,747,L asfr,1067,352,23,12,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,748,747,420,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,749,L0 asfr,948,350,26,17,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,750,749,420,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,751,Interval duration,2485,1011,34,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,752,751,390,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,753,Mean Years of Schooling,1106,162,56,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,754,753,741,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,755,442,218,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,756,Population,223,584,48,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,757,756,711,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Education_output
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
+///---\\\
+:GRAPH asf_vs_total_f
+:TITLE asf vs total f
+:X-AXIS Total Fertility
+:SCALE
+:VAR Age Specific Fertility Rate[Africa,"30-34"]
+:DATASET *1
+:SCALE
+:VAR Age Specific Fertility Rate[AsiaPacific,"30-34"]
+:DATASET *1
+:SCALE
+:VAR Age Specific Fertility Rate[EastEu,"30-34"]
+:DATASET *1
+:SCALE
+:VAR Age Specific Fertility Rate[LAC,"30-34"]
+:DATASET *1
+:SCALE
+:VAR Age Specific Fertility Rate[WestEu,"30-34"]
+:DATASET *1
+
+:GRAPH total_fertility
+:TITLE total_fertility
+:X-AXIS Time
+:SCALE
+:VAR Total Fertility
+:DATASET *1
+:VAR Total Fertility
+:DATASET *2
+
+:GRAPH Total_Fertility_0
+:TITLE Total Fertility
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Total Fertility[Regions]
+:DATASET *1
+:VAR Total Fertility[Regions]
+:DATASET *2
+
+:GRAPH Graph_for_Mean_Years_of_
+:TITLE Graph for Mean Years of Schooling
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Mean Years of Schooling[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling[Regions]
+:DATASET *2
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *2
+
+:GRAPH Graph_for_Mean_Years_of__0
+:TITLE Graph for Mean Years of Schooling
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Mean Years of Schooling[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling[Regions]
+:DATASET *2
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *2
+
+:GRAPH Graph_for_Lookup_primary
+:TITLE Graph for Lookup primary education duration
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Mean Years of Schooling[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling[Regions]
+:DATASET *2
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *2
+
+:GRAPH Graph_for_Mean_Years_of__1
+:TITLE Graph for Mean Years of Schooling
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Mean Years of Schooling[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling[Regions]
+:DATASET *2
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *2
+
+:GRAPH Graph_for_Mean_Years_of__2
+:TITLE Graph for Mean Years of Schooling OLD
+:WIDTH 6
+:HEIGHT 4
+:SCALE
+:VAR Mean Years of Schooling OLD[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling OLD[Regions]
+:DATASET *2
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *1
+:VAR Mean Years of Schooling YQL[Regions]
+:DATASET *2
+:L<%^E!@
+1:felix_reg_v1.5.3_2024.vdfx
+1:felix_reg_v1.4.3_2024.vdfx
+1:felix_reg_v1.3.3_2024.vdfx
+1:Reg_Data.vdfx
+4:Time
+5:Mean Years of Schooling[Regions]
+6:"20-24"
+6:"25-29"
+6:"30-34"
+6:"35-39"
+6:Africa
+6:female
+6:male
+6:noEd
+6:skill
+9:felix_reg_v1.5.3_2024
+19:61,0
+24:1900
+25:2100
+26:2100
+22:$,Dollar,Dollars,$s
+22:Day,Days
+22:Hour,Hours
+22:Meter,m
+22:Month,Months
+22:Person,People,Persons
+22:Unit,Units
+22:W,Watt
+22:Week,Weeks
+22:Year,Years
+11:fertility.voc
+107:kalman.prm
+12:fertility.vpd
+13:Reg_Data.vdfx
+23:0
+15:1,0,0,0,5,0
+27:2,
+34:0,
+42:0
+72:0
+73:0
+35:Date
+36:YYYY-MM-DD
+37:1900
+38:1
+39:1
+40:2
+41:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:1
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Arial|10||0-0-0|0-0-0|-1--1--1|0-0-0|192-192-192|-1--1--1
