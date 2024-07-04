@@ -1,3 +1,7 @@
+# FeliX3_YoGL_v25.0.0 (by Q. Ye)
+- Based on FeliX3_YoGL_v24.0.0
+- Add the energy demand module.
+
 # FeliX3_YoGL_v24.0.0 (by Q. Ye)
 - Based on FeliX3_YoGL_v23
 - Adjust the parameter values to match the total investment in oil. Total investment inlcudes investment in oil exploration, oil production, and oil technology.
