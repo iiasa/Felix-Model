@@ -1,8 +1,39 @@
-## CHANGELOG FOR THE REGIONALIZED VERSION OF FELIX
+## CHANGELOG for the regionalized version of FeliX
+
+## Version 5.3.4
+- Based on version 5.2.4
+- Recalibrate parameters in nature gas module to match historic trends of oil production
+- Add import matrix of gas, and feed into export demand from the exporters, in this case, gas demand include both local demand and export demand 
+- 
+
+## Version 5.2.4
+- Based on version 5.1.4
+- Population and GDP in LAC
+
+## Version 5.1.4
+- Based on version 5.0.4
+- using modeled ratio between demand and production
+
+## Version 5.0.4
+- Based on version 4.0.4
+- Change variables' name including "Fossil Fuel" into "coal"
+- Add Energy Coal module, and solve exising errors
+- Add the regional dimension
+- Recalibrate parameters in oil module to match historic trends of oil production
+- Change the oil price based on global demand / global production
+- Add import matrix of oil, and feed into export demand from the exporters, in this case, oil demand include both local demand and export demand 
+
+
+## Version 4.0.4
+- Based on version 3.0.4
+- Change variables' name including "Fossil Fuel" into "Gas"
+- Add Energy Gas module, and solve exising errors
+- Add the regional dimension
 
 ## Version 3.0.4
 - Based on version 3.0.0
 - Add the regional dimension
+- Change variables' names including "Fossil Fuel" into "Oil"
 
 ## Version 3.0.0
 - Based on version 2.2.4
@@ -157,7 +188,7 @@
 - Modify the subscripts and functions of relevant variables
 
 
-## CHANGELOG FOR THE GLOBAL VERSION OF FELIX
+## CHANGELOG for the Global version of FeliX
 
 # FeliX3_YoGL_v25 (by Q. Ye)
 - Based on FeliX3_YoGL_v24

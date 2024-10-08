@@ -1,4 +1,968 @@
 {UTF-8}
+Relative Productivity of Investment in Gas Production to Exploration[Regions]=
+	RPGPE Var S[Regions]+SMOOTH(STEP(Relative Productivity of Investment in Gas Production Compared to Exploration Variation\
+		[Regions]-RPGPE Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time)
+	~	Dmnl
+	~	Relative Productivity of Investment in Gas Production as a multiplier of \
+		Productivity of Investment in Gas Exploration.
+	|
+
+Investment in Gas Technology[Regions]=
+	Fraction of Gas Revenues Invested in Technology[Regions]*Gas Revenue[Regions]
+	~	$/Year
+	~	Investments in development of gas exploration and production technology.
+	|
+
+Increase in Ratio of Gas Fraction Recoverable to Unrecoverable[Regions]=
+	DELAY3(Investment in Gas Recovery Technology[Regions]*Effectiveness of Investment in Gas Recovery Technology\
+		[Regions], 
+	Gas Recovery Technology Development Time[Regions])
+	~	1/Year
+	~	Increase in Ratio of Gas Fraction Recoverable to Unrecoverable due to \
+		investments in recovery technology and their productivity.
+	|
+
+Productivity of Investment in Gas Exploration[Regions]=
+	MAX(0,Relative Productivity of Investment in Gas Exploration[Regions]*Effect of Technology on Gas Discoveries
+	[Regions])
+	~	toe/$
+	~	Parameter indicating the amount of gas resources possible to be explored \
+		per unit investment spent.
+	|
+
+Change in Effective Investment in Gas Exploration[Regions]=
+	(Investment in Gas Exploration[Regions]-Effective Investment in Gas Exploration[Regions\
+		])/Investment in Gas Exploration Delay[Regions]
+	~	$/(Year*Year)
+	~	Change in Effective Investment in Gas Exploration.
+	|
+
+Change in Effective Investment in Gas Production[Regions]=
+	(Investment in Gas Production[Regions]-Effective Investment in Gas Production[Regions\
+		])/Investment in Gas Production Delay[Regions]
+	~	$/(Year*Year)
+	~	Change in Effective Investment in Gas Production.
+	|
+
+Increase in Ratio of Gas Fraction Discoverable to Undiscoverable[Regions]=
+	DELAY3(Investment in Gas Discovery Technology[Regions]*Effectiveness of Investment in Gas Discovery Technology\
+		[Regions]
+	,Gas Discovery Technology Development Time[Regions])
+	~	1/Year
+	~	Increase in Ratio of Gas Fraction Discoverable to Undiscoverable due to \
+		investments in discovery technology and their productivity.
+	|
+
+Effect of Gas Demand and Supply on Price[Regions]=
+	(Total Gas Demand[Regions]/Potential Gas Production[Regions])^Sensitivity of Gas Price to Supply and Demand
+	~	Dmnl
+	~	Effect of Gas Demand and Supply ratio on actual gas price.
+	|
+
+Productivity of Investment in Gas Production[Regions]=
+	Relative Productivity of Investment in Gas Production to Exploration[Regions]*Gas Productivity of Investment\
+		[Regions]
+	~	toe/$
+	~	Parameter indicating the amount of gas resources possible to be recovered \
+		per unit investment spent.
+	|
+
+Rate of New Discovery Gas[Regions]=
+	Annual Growth in Gas Reserves[Regions]*Mtoe per Billion Cubic meter
+	~	Mtoe/Year
+	~		|
+
+SG Init=
+	1
+	~	Dmnl [0,2]
+	~	A CONSTANT
+	|
+
+RPGPE Var S[Regions]=
+	RPGPE S[Regions]+SMOOTH(STEP(RPGPE S[Regions]-RPGPE S[Regions], 2020),1)
+	~	Dmnl
+	~		|
+
+Total Investment in Gas[Regions]=
+	(Investment in Gas Exploration[Regions]+Investment in Gas Production[Regions]+Investment in Gas Technology\
+		[Regions])/Share of Upstream Investment in Total Investment Gas
+	~	$/Year
+	~		|
+
+Share of Upstream Investment in Total Investment Gas=
+	0.9
+	~	Dmnl
+	~	Data from World Energy Investment 2023
+	|
+
+Effectiveness of Investment in Gas Discovery Technology[Regions]=
+	Effectiveness of Investment in Gas Discovery Technology Variation[Regions]+STEP(Effectiveness of Investment in Gas Discovery Technology Variation\
+		[Regions]-Effectiveness of Investment in Gas Discovery Technology Variation[Regions\
+		], 2020)
+	~	1/$
+	~	Effectiveness of resources dedicated to gas discovery technology \
+		development.
+	|
+
+Effectiveness of Investment in Gas Recovery Technology[Regions]=
+	EIGR Var S[Regions]+SMOOTH(STEP(Effectiveness of Investment in Gas Recovery Technology Variation\
+		[Regions]-EIGR Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time
+	)
+	~	1/$
+	~	Effectiveness of resources dedicated to gas recovery technology \
+		development.
+	|
+
+EIGR Var S[Regions]=
+	EIGR S[Regions]+SMOOTH(STEP(EIGR S[Regions]-EIGR S[Regions], 2020),1
+	)
+	~	1/$
+	~	Effectiveness of resources dedicated to gas recovery technology \
+		development.
+	|
+
+Gas Revenue[Regions]=
+	Gas Price[Regions]*Average Gas Production[Regions]
+	~	$/Year
+	~	Total revenue in gas market.
+	|
+
+Gas Shortage[Regions]=
+	Total Gas Demand[Regions]-Gas Production[Regions]
+	~	Mtoe/Year
+	~	Difference between demand and the gas production rate.
+	|
+
+Gas Technology[Regions]=
+	((Gas Fraction Discoverable[Regions]/MAXGFD)+(Gas Fraction Recoverable[Regions]/MAXGFR\
+		))/2
+	~	Dmnl
+	~	Factor productivity in Gas energy sector.
+	|
+
+Ratio of Gas Fraction Recoverable to Unrecoverable[Regions]= INTEG (
+	Increase in Ratio of Gas Fraction Recoverable to Unrecoverable[Regions],
+		INIT RGRU)
+	~	Dmnl
+	~	Ratio of Gas Fraction Recoverable to Unrecoverable increased due to \
+		investments in recovery technology and their productivity.
+	|
+
+GDR S[Regions]=
+	6,
+	6,
+	6,
+	6,
+	6
+	~	Year
+	~		|
+
+GDR Var S[Regions]=
+	GDR S[Regions]+SMOOTH(STEP(GDR S[Regions]-GDR S[Regions], 2020),1)
+	~	Year
+	~		|
+
+Effective Investment in Gas Production[Regions]= INTEG (
+	Change in Effective Investment in Gas Production[Regions],
+		INIT EIGP[Regions])
+	~	$/Year
+	~	Effective investments dedicated for gas resources production.
+	|
+
+Gas Demand to Supply Ratio[Regions]=
+	Total Gas Demand[Regions]/Potential Gas Production[Regions]
+	~	Dmnl
+	~	Gas Demand to Supply Ratio.
+	|
+
+Gas Discovery and Recovery Technology Development Time Variation[Regions]=
+	6,
+	6,
+	6,
+	6,
+	6
+	~	Year
+	~		|
+
+Desired Gas Exploration Rate[Regions]=
+	MAX(0,Adjustment for Identified Gas Resource[Regions]+Gas Production[Regions])
+	~	Mtoe/Year
+	~	Desired Gas exploration rate due to Total Gas Demand and Identified Gas \
+		Resources safety coverage.
+	|
+
+Adjustment for Identified Gas Resource[Regions]=
+	(Required Identified Gas Resources[Regions]-Identified Gas Resources[Regions])/Identified Gas Resources Adjustment Time\
+		[Regions]
+	~	Mtoe/Year
+	~	Adjustment of Identified Gas Resource to the desired level over a \
+		specified adjustment time.
+	|
+
+Desired Investment in Gas Exploration[Regions]=
+	Desired Gas Exploration Rate[Regions]*Unit Cost of Gas Exploration[Regions]
+	~	$/Year
+	~	Desired amount of resources that need to be invested in order to secure \
+		desired gas exploration.
+	|
+
+Desired Investment in Gas Production[Regions]=
+	MIN(Potential Gas Production from Resources[Regions],Total Gas Demand[Regions])/Productivity of Investment in Gas Production\
+		[Regions]*toe per Mtoe
+	~	$/Year
+	~	Desired Investment in Gas Production due to Total Gas Demand and \
+		Productivity of Investment in Gas Production.
+	|
+
+Net Energy Capital Change[Regions]=
+	(Investment in Oil Exploration[Regions]+Investment in Oil Production[Regions]+Investment in Oil Technology\
+		[Regions]+
+	Investment in Coal Exploration+Investment in Coal Production+Investment in Coal Technology\
+		+
+	Investment in Gas Exploration[Regions]+Investment in Gas Production[Regions]+Investment in Gas Technology\
+		[Regions]+
+	Investment in Biomass Capacity+Investment in Biomass Energy Technology+
+	Investment in Solar Capacity+Investment in Solar Energy Technology+
+	Investment in Wind Capacity+Investment in Wind Energy Technology
+	)
+	~	$/Year
+	~	Capital change from energy sector.
+	|
+
+Investment in Gas Discovery Technology[Regions]=
+	Investment in Gas Technology[Regions]*Fraction Invested in Gas Discovery Technology[\
+		Regions]
+	~	$/Year
+	~	Total investments in gas exploration technology.
+	|
+
+Investment in Gas Exploration[Regions]=
+	Desired Investment in Gas Exploration[Regions]
+	~	$/Year
+	~	Amount of resources dedicated to gas exploration.
+	|
+
+Investment in Gas Exploration Delay[Regions]=
+	IG Var S[Regions]+SMOOTH(STEP(Investment in Gas Exploration and Production Delay Variation\
+		[Regions]-IG Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time)
+	~	Year
+	~	Time delay to make investments in gas exploration effective.
+	|
+
+Investment in Gas Production[Regions]=
+	Desired Investment in Gas Production[Regions]
+	~	$/Year
+	~	Amount of resources dedicated to gas production.
+	|
+
+Annual Growth in Gas Reserves[Regions]=
+	STEP(URG Var S[Regions]+SMOOTH(STEP(Annual Growth in Gas Reserves Variation[Regions]\
+		-URG Var S[Regions], 2020+E Var T),SSP Energy Production Variation Time), 2010)
+	~	Billion Cubic Meters/Year
+	~	We asssumed the gas boost equal to the average annual growth in the total \
+		proved gas reserves is 2.2 Trillion cubic meters in the last 20 years \
+		(1999-2019).
+	|
+
+Investment in Gas Recovery Technology[Regions]=
+	Investment in Gas Technology[Regions]*(1-Fraction Invested in Gas Discovery Technology\
+		[Regions])
+	~	$/Year
+	~	Total investments in gas production technology.
+	|
+
+Effect of Technology on Gas Discoveries[Regions]=
+	Total Gas Discoverable Resources[Regions]/INIT UGRN[Regions]
+	~	Dmnl
+	~	Impact of technology development on gas exploration taking into account \
+		remaining undiscovered gas resources (the less remaining undiscovered gas \
+		resources the more expensive it is to discover them).
+	|
+
+Ratio of Gas Fraction Discoverable to Undiscoverable[Regions]= INTEG (
+	Increase in Ratio of Gas Fraction Discoverable to Undiscoverable[Regions],
+		INIT RGDU)
+	~	Dmnl
+	~	Ratio of Gas Fraction Discoverable to Undiscoverable increased due to \
+		investments in discovery technology and their productivity.
+	|
+
+URG Var S[Regions]=
+	URG S[Regions]+SMOOTH(STEP(URG S[Regions]-URG S[Regions], 2020),1)
+	~	Billion Cubic Meters/Year
+	~		|
+
+Average Gas Production[Regions]= INTEG (
+	Change in Average Gas Production[Regions],
+		INIT Average Gas Production[Regions])
+	~	Mtoe/Year
+	~	Average total gas production per year.
+	|
+
+Gas Production[Regions]=
+	Gas Production Rate[Regions]
+	~	Mtoe/Year
+	~	Total gas energy production per year. Source of historical data: \
+		International Energy Agency – Key World Energy Statistics 2007; BP \
+		Statistical Review of World Energy June 2008
+	|
+
+Gas Cost[Regions]=
+	Unit Cost of Gas Exploration[Regions]+Unit Cost of Gas Production[Regions]
+	~	$/Mtoe
+	~	Cost of unit gas resources as a sum of unit exploration and production \
+		costs.
+	|
+
+Identified Gas Resources[Regions]= INTEG (
+	Gas Exploration[Regions]-Gas Production[Regions],
+		(Total Gas Demand[Regions]*Normal Gas Production Ratio[Regions]+Cumulative Gas Production\
+		[Regions]*(1-Gas Fraction Recoverable[Regions]))/Gas Fraction Recoverable[Regions])
+	~	Mtoe
+	~	Gas Resources discovered thanks to developments in exploration technology.
+	|
+
+Gas Discovery Technology Development Time[Regions]=
+	GDR Var S[Regions]+SMOOTH(STEP(Gas Discovery and Recovery Technology Development Time Variation\
+		[Regions]-GDR Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time
+	)
+	~	Year
+	~	Average time required to turn investments into concrete gas discovery \
+		developments.
+	|
+
+Relative Productivity of Investment in Gas Exploration[Regions]=
+	Relative Productivity of Investment in Gas Exploration Variation[Regions]+
+	STEP(Relative Productivity of Investment in Gas Exploration Variation[Regions]-Relative Productivity of Investment in Gas Exploration Variation\
+		[Regions], 2020)
+	~	toe/$
+	~	Relative Productivity of Investment in Gas Exploration without taking into \
+		account remaining undiscovered gas resources and advances in exploration \
+		technologies.
+	|
+
+Gas Exploration Rate[Regions]=
+	MIN(Desired Gas Exploration Rate[Regions],Potential Gas Exploration[Regions])
+	~	Mtoe/Year
+	~	Gas Exploration Rate accounting for potential and desired gas exploration \
+		rates.
+	|
+
+Relative Productivity of Investment in Gas Production Compared to Exploration Variation\
+		[Regions]=
+	10,
+	10,
+	2,
+	10,
+	10
+	~	Dmnl
+	~		|
+
+Change in Average Gas Production[Regions]=
+	(Gas Production[Regions]-Average Gas Production[Regions])/Time to Average Gas Production
+	~	Mtoe/(Year*Year)
+	~	Change in Average Gas Production.
+	|
+
+Gas Gross Margin[Regions]=
+	(Gas Price[Regions]-Gas Cost[Regions])/Gas Cost[Regions]
+	~	Dmnl
+	~	Actual gas gross margin.
+	|
+
+Gas Price[Regions]=
+	Indicated Gas Price[Regions]*Effect of Gas Demand and Supply on Price[Regions]
+	~	$/Mtoe
+	~	Actual gas price accounting for indicated gas price and effect of demand \
+		and supply.
+	|
+
+Gas Price per MBtu[Regions]=
+	Gas Price[Regions]*Mtoe per Btu
+	~	$/MBtu
+	~	Actual Gas Price per Barrel.
+	|
+
+RPGPE S[Regions]=
+	10,
+	10,
+	2,
+	10,
+	10
+	~	Dmnl
+	~		|
+
+Gas Production Coverage[Regions]=
+	Identified Gas Resources[Regions]/Average Gas Production[Regions]
+	~	Year
+	~	Ratio indicating gas coverage in years for discovered resources and at the \
+		current average gas production.
+	|
+
+Gas Production Indicator[Regions]=
+	Gas Production[Regions]*Mtoe into EJ
+	~	EJ/Year
+	~		|
+
+Required Identified Gas Resources[Regions]=
+	(Identified Gas Resources[Regions]/Total Gas Recoverable Resource Remaining[Regions]\
+		)*(Normal Gas Production Ratio[Regions]*Total Gas Demand[Regions])
+	~	Mtoe
+	~	The desired Identified Gas Resources level sought by the gas sector.
+	|
+
+FG Var S[Regions]=
+	FG S[Regions]+SMOOTH(STEP(FG S[Regions]-FG S[Regions], 2020),1)
+	~	Dmnl
+	~	Percentage of total gas sector revenue dedicated to exploration and \
+		production technology development.
+	|
+
+Energy Technology[Regions]=
+	(Oil Technology[Regions]+Coal Technology+Gas Technology[Regions]+Biomass Technology+\
+		Solar Technology+Wind Technology)
+	~	Dmnl
+	~	Factor productivity in energy sector.
+	|
+
+Sensitivity of Gas Price to Supply and Demand=
+	2+SMOOTH(STEP(Sensitivity of Gas Price to Supply and Demand Variation-2, 2020),SSP Energy Demand Variation Time
+	)
+	~	Dmnl
+	~	Sensitivity of Gas Price to Supply and Demand ratio.
+	|
+
+Investment in Gas Production Delay[Regions]=
+	IG Var S[Regions]+SMOOTH(STEP(Investment in Gas Exploration and Production Delay Variation\
+		[Regions]-IG Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time
+	)
+	~	Year
+	~	Time delay to make investments in gas production effective.
+	|
+
+Gas Exploration[Regions]=
+	MAX(0,Gas Exploration Rate[Regions])
+	~	Mtoe/Year
+	~	Gas resources discovery rate.
+	|
+
+Potential Gas Exploration[Regions]=
+	Effective Investment in Gas Exploration[Regions]*Productivity of Investment in Gas Exploration\
+		[Regions]/toe per Mtoe
+	~	Mtoe/Year
+	~	Potential Gas exploration due to available investments in gas resources \
+		discovery.
+	|
+
+Effective Investment in Gas Exploration[Regions]= INTEG (
+	Change in Effective Investment in Gas Exploration[Regions],
+		INIT EIGE[Regions])
+	~	$/Year
+	~	Effective investments dedicated for gas resources exploration.
+	|
+
+Fraction of Gas Revenues Invested in Technology[Regions]=
+	FG Var S[Regions]+SMOOTH(STEP(Fraction of Gas Revenues Invested in Technology Variation\
+		[Regions]-FG Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time
+	)
+	~	Dmnl
+	~	Percentage of total gas sector revenue dedicated to exploration and \
+		production technology development.
+	|
+
+Indicated Gas Price[Regions]=
+	Gas Cost[Regions]*(1+Desired Gas Gross Margin)
+	~	$/Mtoe
+	~	Indicated gas price accounting for exploration and production cost and \
+		gross margin.
+	|
+
+Gas Fraction Discoverable[Regions]=
+	MINGFD+(MAXGFD-MINGFD)*(Ratio of Gas Fraction Discoverable to Undiscoverable[Regions\
+		]/(Ratio of Gas Fraction Discoverable to Undiscoverable[Regions]+1))
+	~	Dmnl
+	~	Percentage of gas resources that can be still explored due to current \
+		state of discovery technology.
+	|
+
+Gas Fraction Recoverable[Regions]=
+	MINGFR+(MAXGFR-MINGFR)*(Ratio of Gas Fraction Recoverable to Unrecoverable[Regions]/\
+		(Ratio of Gas Fraction Recoverable to Unrecoverable[Regions]+1))
+	~	Dmnl
+	~	Percentage of gas resources that can be produced due to current state of \
+		recovery technology.
+	|
+
+Cumulative Gas Production[Regions]= INTEG (
+	Gas Production[Regions],
+		INIT CGPN[Regions])
+	~	Mtoe
+	~	Cumulative Gas resources that has been produced.
+	|
+
+Total Gas Resources[Regions]=
+	Undiscovered Gas Resources[Regions]+Cumulative Additions to Gas Production[Regions]
+	~	Mtoe
+	~	Total gas resources including Undiscovered Gas Resources, Identified Gas \
+		Resources and resources already produced i.e. Cumulative Gas Production.
+	|
+
+Unit Cost of Gas Production[Regions]=
+	1/Productivity of Investment in Gas Production[Regions]*toe per Mtoe+Climate Policy Scenario\
+		*CO2 Intensity of Fuels[Gas
+	]*Carbon Price Global Data
+	~	$/Mtoe
+	~	Unit cost of gas production.
+	|
+
+Change in Gas Productivity of Investment[Regions]=
+	(Productivity of Investment in Gas Exploration[Regions]-Gas Productivity of Investment\
+		[Regions])/Gas Production Coverage[Regions]
+	~	toe/(Year*$)
+	~	Change in Gas Productivity of Investment.
+	|
+
+Total Gas Discoverable Resources[Regions]=
+	Total Gas Resources[Regions]*Gas Fraction Discoverable[Regions]-Cumulative Additions to Gas Production\
+		[Regions]
+	~	Mtoe
+	~	Total Gas Discoverable Resources as a percentage of Total Gas Resources. \
+		It excludes identified and already produced resources. The percentage is \
+		determined by exploration technology developments.
+	|
+
+Potential Gas Production from Resources[Regions]=
+	Total Gas Recoverable Resource Remaining[Regions]/Normal Gas Production Ratio[Regions\
+		]
+	~	Mtoe/Year
+	~	Potential Gas Production rate due to Total Oil Recoverable Resource \
+		Remaining adjusted by oil production safety coverage.
+	|
+
+Gas Production Rate[Regions]=
+	MIN(Total Gas Demand[Regions],Potential Gas Production[Regions])
+	~	Mtoe/Year
+	~	Total gas energy production per year due to available resources, \
+		developments in production technology and gas energy demand.
+	|
+
+Gas Recovery Technology Development Time[Regions]=
+	GDR Var S[Regions]+SMOOTH(STEP(Gas Discovery and Recovery Technology Development Time Variation\
+		[Regions]-GDR Var S[Regions], 2020+E Var T),SSP Energy Technology Variation Time
+	)
+	~	Year
+	~	Average time required to turn investments into concrete gas recovery \
+		developments.
+	|
+
+Sensitivity of Gas Price to Supply and Demand Variation=
+	2
+	~	Dmnl
+	~		|
+
+Gas Productivity of Investment[Regions]= INTEG (
+	Change in Gas Productivity of Investment[Regions],
+		INIT GPI[Regions])
+	~	toe/$
+	~	Factor indicating productivity of investments in gas production.
+	|
+
+Potential Gas Production from Investment[Regions]=
+	Productivity of Investment in Gas Production[Regions]*Effective Investment in Gas Production\
+		[Regions]/toe per Mtoe
+	~	Mtoe/Year
+	~	Potential Gas Production due to available investments in gas resources \
+		recovery.
+	|
+
+Unit Cost of Gas Exploration[Regions]=
+	MIN(Max Unit Cost of Gas Exploration, IF THEN ELSE(Productivity of Investment in Gas Exploration\
+		[Regions]=0,0,1/Productivity of Investment in Gas Exploration[Regions]*toe per Mtoe\
+		))
+	~	$/Mtoe
+	~	Unit cost of gas exploration. Depends on remaining undiscovered gas \
+		resources and advances in exploration technologies.
+	|
+
+Cumulative Additions to Gas Production[Regions]=
+	Identified Gas Resources[Regions]+Cumulative Gas Production[Regions]
+	~	Mtoe
+	~	Identified and already produced gas resources.
+	|
+
+Fraction Invested in Gas Discovery Technology[Regions]=
+	Table for FIGDT(Gas Fraction Discoverable[Regions])
+	~	Dmnl
+	~	Fraction of investments in gas technology dedicated to discovery \
+		technology.
+	|
+
+Total Gas Recoverable Resource Remaining[Regions]=
+	Cumulative Additions to Gas Production[Regions]*Gas Fraction Recoverable[Regions]-Cumulative Gas Production\
+		[Regions]
+	~	Mtoe
+	~	Total Gas Recoverable Resources Remaining as a percentage of Cumulative \
+		Additions to Gas Production. It excludes already produced resources. The \
+		percentage is determined by production technology developments.
+	|
+
+Investment in Gas Exploration and Production Delay Variation[Regions]=
+	5,
+	5,
+	5,
+	5,
+	5
+	~	Year
+	~		|
+
+Potential Gas Production[Regions]=
+	MIN(Potential Gas Production from Investment[Regions],Potential Gas Production from Resources\
+		[Regions])
+	~	Mtoe/Year
+	~	Potential Gas Production due to available investments in gas resources \
+		recovery and recovery technology.
+	|
+
+Undiscovered Gas Resources[Regions]= INTEG (
+	Rate of New Discovery Gas[Regions]-Gas Exploration[Regions],
+		INIT UGRN[Regions])
+	~	Mtoe
+	~	Existing Gas Resources but not discovered yet.
+	|
+
+MAXGFD=
+	1
+	~	Dmnl
+	~	Maximal possible percentage of gas resources to be discovered.
+	|
+
+MAXGFR=
+	1
+	~	Dmnl
+	~	Maximal possible percentage of gas resources to be recovered.
+	|
+
+Initial World Stock of Gas Billion Cubic meter[Regions]=
+	169901,
+	169901,
+	169901,
+	169901,
+	169901
+	~	Billion Cubic Meters
+	~	Global value is 849505
+	|
+
+Market Share Gas=
+	Change in Market Share Gas/Reference Change in Total Market Share
+	~	Dmnl
+	~	Gas market share among other energy sources.
+	|
+
+Market Share Gas Data= WITH LOOKUP (
+	Time,
+		 ([(0,0)-(10,10)],(1900,0.000276993),(1901,0.000300462),(1902,0.000332792),(1903,0.000370819\
+		),(1904,0.000415441),(1905,0.000467801),(1906,0.000529261),(1907,0.000601426),(1908\
+		,0.00068618),(1909,0.000785708),(1910,0.000902528),(1911,0.00103952),(1912,0.0012),\
+		(1913,0.00138765),(1914,0.00160649),(1915,0.00186087),(1916,0.0021554),(1917,0.00249496\
+		),(1918,0.00288461),(1919,0.00332973),(1920,0.00383591),(1921,0.0044088),(1922,0.00505391\
+		),(1923,0.0057765),(1924,0.00658148),(1925,0.00747336),(1926,0.00845621),(1927,0.00953368\
+		),(1928,0.0107089),(1929,0.0119847),(1930,0.013363),(1931,0.0148457),(1932,0.0164335\
+		),(1933,0.0181268),(1934,0.0199251),(1935,0.0218269),(1936,0.0238299),(1937,0.0259313\
+		),(1938,0.0281271),(1939,0.0304131),(1940,0.0327847),(1941,0.035237),(1942,0.0377653\
+		),(1943,0.0403652),(1944,0.0430324),(1945,0.0457633),(1946,0.0485547),(1947,0.0514039\
+		),(1948,0.0543085),(1949,0.0572669),(1950,0.0602776),(1951,0.0633397),(1952,0.0664525\
+		),(1953,0.069615),(1954,0.0728257),(1955,0.0760825),(1956,0.079383),(1957,0.0827241\
+		),(1958,0.0861024),(1959,0.0895147),(1960,0.0929576),(1961,0.0964279),(1962,0.0999226\
+		),(1963,0.103439),(1964,0.106977),(1965,0.110536),(1966,0.114119),(1967,0.117724),(\
+		1968,0.121353),(1969,0.125003),(1970,0.128673),(1971,0.13236),(1972,0.136061),(1973\
+		,0.139773),(1974,0.143491),(1975,0.147213),(1976,0.150935),(1977,0.154654),(1978,0.158366\
+		),(1979,0.162069),(1980,0.16576),(1981,0.169436),(1982,0.173097),(1983,0.176739),(1984\
+		,0.180361),(1985,0.183962),(1986,0.187538),(1987,0.191089),(1988,0.194613),(1989,0.198107\
+		),(1990,0.201572),(1991,0.205005),(1992,0.208406),(1993,0.211776),(1994,0.215114),(\
+		1995,0.218419),(1996,0.221692),(1997,0.224931),(1998,0.228136),(1999,0.231305),(2000\
+		,0.234439),(2001,0.237536),(2002,0.240594),(2003,0.243615),(2004,0.246598),(2005,0.249543\
+		),(2006,0.25245),(2007,0.255322),(2008,0.258157),(2009,0.260957),(2010,0.263724),(2011\
+		,0.266458),(2012,0.269168),(2013,0.271864),(2014,0.274553),(2015,0.277243),(2016,0.279938\
+		),(2017,0.28264),(2018,0.285349),(2019,0.288061),(2020,0.290771),(2021,0.293282),(2022\
+		,0.295365),(2023,0.297068),(2024,0.298444),(2025,0.299547),(2026,0.300426),(2027,0.301122\
+		),(2028,0.301674),(2029,0.302108),(2030,0.302445),(2031,0.302703),(2032,0.302888),(\
+		2033,0.303),(2034,0.303041),(2035,0.303019),(2036,0.302942),(2037,0.302823),(2038,0.302671\
+		),(2039,0.302499),(2040,0.302313),(2041,0.30212),(2042,0.301925),(2043,0.30173),(2044\
+		,0.301537),(2045,0.301348),(2046,0.301163),(2047,0.300982),(2048,0.300805),(2049,0.300634\
+		),(2050,0.300468),(2051,0.300307),(2052,0.300152),(2053,0.300002),(2054,0.299858),(\
+		2055,0.299721),(2056,0.299588),(2057,0.29946),(2058,0.299336),(2059,0.299212),(2060\
+		,0.299085),(2061,0.298954),(2062,0.298815),(2063,0.298667),(2064,0.298505),(2065,0.298326\
+		),(2066,0.298129),(2067,0.297913),(2068,0.297678),(2069,0.297427),(2070,0.297161),(\
+		2071,0.296884),(2072,0.296597),(2073,0.296304),(2074,0.296015),(2075,0.295748),(2076\
+		,0.29551),(2077,0.295302),(2078,0.29512),(2079,0.294955),(2080,0.294798),(2081,0.294637\
+		),(2082,0.294462),(2083,0.294262),(2084,0.294029),(2085,0.293757),(2086,0.293447),(\
+		2087,0.293105),(2088,0.292735),(2089,0.292339),(2090,0.291917),(2091,0.291467),(2092\
+		,0.290989),(2093,0.290478),(2094,0.289933),(2095,0.289351),(2096,0.288727),(2097,0.288061\
+		),(2098,0.287348),(2099,0.286588),(2100,0.285779) ))
+	~	Dmnl
+	~		|
+
+Desired Gas Gross Margin=
+	0.2
+	~	Dmnl
+	~	Desired Gross Margin per unit gas resources.
+	|
+
+Max Unit Cost of Gas Exploration=
+	MFC Var S+SMOOTH(STEP(Max Unit Cost of Fossil Fuel Exploration Variation-MFC Var S, \
+		2020+E Var T),SSP Energy Production Variation Time)
+	~	$/Mtoe
+	~	Upper level limit for unit cost of gas exploration.
+	|
+
+Annual Growth in Gas Reserves Variation[Regions]=
+	1000
+	~	Billion Cubic Meters/Year
+	~	Global value is 5000
+	|
+
+URG S[Regions]=
+	680,
+	680,
+	680,
+	680,
+	680
+	~	Billion Cubic Meters/Year
+	~	Global value is 3400
+	|
+
+INIT Average Gas Production[Regions]=
+	1.87028,
+	1.87028,
+	1.87028,
+	1.87028,
+	1.87028
+	~	
+	~		|
+
+IG S[Regions]=
+	5
+	~	Year
+	~		|
+
+IG Var S[Regions]=
+	IG S[Regions]+SMOOTH(STEP(IG S[Regions]-IG S[Regions], 2020),1)
+	~	Year
+	~		|
+
+INIT EIGP[Regions]=
+	1.81633e+06,
+	1.81633e+06,
+	1.81633e+06,
+	1.81633e+06,
+	1.81633e+06
+	~	
+	~	Effective Investment in Gas Production
+		Global value is 9.08165e+06
+	|
+
+Relative Productivity of Investment in Fossil Fuel Production Compared to Exploration Variation\
+		=
+	10
+	~	Dmnl
+	~		|
+
+Relative Productivity of Investment in Gas Exploration Variation[Regions]=
+	0.7,
+	0.3,
+	0.03,
+	0.013,
+	0.9
+	~	toe/$ [0,1.5]
+	~	Relative Productivity of Investment in Gas Exploration without taking into \
+		account remaining undiscovered gas resources and advances in exploration \
+		technologies.
+	|
+
+INIT RGDU=
+	0
+	~	Dmnl
+	~	Initial Ratio of Gas Fraction Discoverable to Undiscoverable.
+	|
+
+EIGR S[Regions]=
+	3e-11,
+	3e-11,
+	3e-11,
+	3e-11,
+	3e-11
+	~	1/$
+	~	Effectiveness of resources dedicated to gas recovery technology \
+		development.
+	|
+
+MINGFD=
+	0.02
+	~	Dmnl
+	~	Initial and minimal possible percentage of gas resources to be discovered.
+	|
+
+MINGFR=
+	0.008
+	~	Dmnl
+	~	Initial and minimal possible percentage of gas resources to be recovered.
+	|
+
+Identified Gas Resources Adjustment Time[Regions]=
+	5,
+	5,
+	5,
+	5,
+	5
+	~	Year
+	~	Time to adjust Identified Gas Resource to the desired level.
+	|
+
+INIT CGPN[Regions]=
+	0
+	~	Mtoe
+	~	Cumulative Gas Production
+	|
+
+Mtoe per Billion Cubic meter=
+	0.86
+	~	Mtoe/Billion Cubic Meters
+	~	Unit conversion: \
+		https://www.bp.com/content/dam/bp/business-sites/en/global/corporate/pdfs/e\
+		nergy-economics/statistical-review/bp-stats-review-2019-approximate-convers\
+		ion-factors.pdf
+	|
+
+Mtoe per Btu=
+	2.5e-08
+	~	Mtoe/MBtu
+	~	Coefficient to convert million tons of oil equivalent unit (Mtoe) into \
+		British thermal unit (Btu).
+	|
+
+FG S[Regions]=
+	0.03,
+	0.13,
+	0.04,
+	0.2,
+	0.014
+	~	Dmnl [0,?]
+	~	Percentage of total gas sector revenue dedicated to exploration and \
+		production technology development.
+	|
+
+INIT GPI[Regions]=
+	0.0205941,
+	0.0205941,
+	0.0205941,
+	0.0205941,
+	0.0205941
+	~	
+	~	Gas Productivity of Investment
+	|
+
+Effectiveness of Investment in Gas Recovery Technology Variation[Regions]=
+	3e-11,
+	3e-11,
+	3e-11,
+	3e-11,
+	3e-11
+	~	1/$
+	~	Effectiveness of resources dedicated to gas recovery technology \
+		development.
+	|
+
+Fraction of Gas Revenues Invested in Technology Variation[Regions]=
+	0.03,
+	0.13,
+	0.04,
+	0.2,
+	0.014
+	~	Dmnl
+	~	Percentage of total gas sector revenue dedicated to exploration and \
+		production technology development.
+	|
+
+Sensitivity of Fossil Fuel Price to Supply and Demand Variation=
+	2
+	~	Dmnl
+	~		|
+
+Normal Gas Production Ratio[Regions]=
+	5,
+	5,
+	5,
+	5,
+	5
+	~	Year
+	~	Safety stock coverage as a number of years of the total gas demand the gas \
+		sector would like to maintain in identified gas resources. It secures the \
+		market against possibility of unforeseen variations in demand. It is also \
+		a stimulus for gas exploration.
+	|
+
+Time to Average Gas Production=
+	1
+	~	Year
+	~	Time to average total gas production per year.
+	|
+
+INIT RGRU=
+	1e-05
+	~	Dmnl
+	~	Initial Ratio of Gas Fraction Recoverable to Unrecoverable.
+	|
+
+INIT UGRN[Regions]=
+	Initial World Stock of Gas Billion Cubic meter[Regions]*Mtoe per Billion Cubic meter
+	~	Mtoe
+	~	Initial amount of Undiscovered Gas Resources.
+	|
+
+Table for FIGDT(
+	[(0,0)-(1,1)],(0,0.8),(0.2,0.8),(0.4,0.7),(0.6,0.5),(0.8,0.2),(1,0))
+	~	Dmnl
+	~	Table determining order by which technology investments are dedicated to \
+		gas exploration and production technologies. For small Gas Fraction \
+		Discoverable, in order to make sufficient resources available to be \
+		produced, more investments are directed to exploration technologies. Once \
+		the Gas Fraction Discoverable increases the investments are redirected to \
+		production technologies.
+	|
+
+Fossil Fuel Discovery and Recovery Technology Development Time Variation=
+	6
+	~	Year
+	~		|
+
+Effectiveness of Investment in Gas Discovery Technology Variation[Regions]=
+	1.86e-09,
+	1.86e-09,
+	1.86e-09,
+	1.86e-09,
+	1.86e-09
+	~	1/$
+	~	Effectiveness of resources dedicated to gas discovery technology \
+		development.
+	|
+
+Total Gas Demand[Regions]=
+	Energy Demand Data[Regions]*Market Share Gas Data
+	~	Mtoe/Year
+	~	Total demand for gas resources.
+	|
+
+INIT EIGE[Regions]=
+	1.81633e+07,
+	1.81633e+07,
+	1.81633e+07,
+	1.81633e+07,
+	1.81633e+07
+	~	
+	~	Effective Investment in Gas Exploration
+		Global value is 9.08164e+07
+	|
+
 Change in Effective Investment in Oil Production[Regions]=
 	(Investment in Oil Production[Regions]-Effective Investment in Oil Production[Regions\
 		])/Investment in Oil Production Delay[Regions]
@@ -157,8 +1121,7 @@ Share of Upstream Investment in Total Investment Oil=
 
 Unit Cost of Oil Production[Regions]=
 	1/Productivity of Investment in Oil Production[Regions]*toe per Mtoe+Climate Policy Scenario\
-		*CO2 Intensity of Fuels[Oil
-	]*Carbon Price Global Data
+		*CO2 Intensity of Fuels[Oil]*Carbon Price Global Data
 	~	$/Mtoe
 	~	Unit cost of oil production.
 	|
@@ -522,13 +1485,6 @@ Required Identified Oil Resources[Regions]=
 	~	The desired Identified Oil Resources level sought by the oil sector.
 	|
 
-Energy Technology[Regions]=
-	(Oil Technology[Regions]+Coal Technology+Gas Technology+Biomass Technology+Solar Technology\
-		+Wind Technology)
-	~	Dmnl
-	~	Factor productivity in energy sector.
-	|
-
 Rate of New Discovery Oil[Regions]=
 	Mtoe per Barrel*Annual Change in Oil Reserves[Regions]
 	~	Mtoe/Year
@@ -558,21 +1514,6 @@ Total Oil Resources[Regions]=
 	~	Mtoe
 	~	Total oil resources including Undiscovered Oil Resources, Identified Oil \
 		Resources and resources already produced i.e. Cumulative Oil Production.
-	|
-
-Net Energy Capital Change[Regions]=
-	(Investment in Oil Exploration[Regions]+Investment in Oil Production[Regions]+Investment in Oil Technology\
-		[Regions]+
-	Investment in Coal Exploration+Investment in Coal Production+Investment in Coal Technology\
-		+
-	Investment in Gas Exploration+Investment in Gas Production+Investment in Gas Technology\
-		+
-	Investment in Biomass Capacity+Investment in Biomass Energy Technology+
-	Investment in Solar Capacity+Investment in Solar Energy Technology+
-	Investment in Wind Capacity+Investment in Wind Energy Technology
-	)
-	~	$/Year
-	~	Capital change from energy sector.
 	|
 
 Investment in Oil Production[Regions]=
@@ -2952,20 +3893,6 @@ Reference Other Technology=
 	~	Reference factor productivity in other than energy sectors.
 	|
 
-Gas Fraction Recoverable=
-	MINGFR+(MAXGFR-MINGFR)*(Ratio of Gas Fraction Recoverable to Unrecoverable/(Ratio of Gas Fraction Recoverable to Unrecoverable\
-		+1))
-	~	Dmnl
-	~	Percentage of gas resources that can be produced due to current state of \
-		recovery technology.
-	|
-
-Gas Technology=
-	((Gas Fraction Discoverable/MAXGFD)+(Gas Fraction Recoverable/MAXGFR))/2
-	~	Dmnl
-	~	Factor productivity in Gas energy sector.
-	|
-
 Reference relative income of skilled=
 	Relative income of skilled variation baseline + 
 	RAMP((Relative income of skilled variation-Relative income of skilled variation baseline\
@@ -3016,12 +3943,6 @@ MAXCFR=
 	1
 	~	Dmnl
 	~	Maximal possible percentage of coal resources to be recovered.
-	|
-
-MAXGFR=
-	1
-	~	Dmnl
-	~	Maximal possible percentage of gas resources to be recovered.
 	|
 
 Investment in Wind Capacity=
@@ -3119,14 +4040,6 @@ Table for standard normal distribution(
 	~	Dmnl
 	~		|
 
-Gas Fraction Discoverable=
-	MINGFD+(MAXGFD-MINGFD)*(Ratio of Gas Fraction Discoverable to Undiscoverable/(Ratio of Gas Fraction Discoverable to Undiscoverable\
-		+1))
-	~	Dmnl
-	~	Percentage of gas resources that can be still explored due to current \
-		state of discovery technology.
-	|
-
 Wind Installation Efficiency=
 	MINWIE+(MAXWIE-MINWIE)*(Wind Installation Technology Ratio/(Wind Installation Technology Ratio\
 		+1))
@@ -3208,18 +4121,6 @@ Investment in Coal Technology=
 	Fraction of Coal Revenues Invested in Technology*Coal Revenue
 	~	$/Year
 	~	Investments in development of coal exploration and production technology.
-	|
-
-Investment in Gas Production=
-	Desired Investment in Gas Production
-	~	$/Year
-	~	Amount of resources dedicated to gas production.
-	|
-
-Investment in Gas Technology=
-	Fraction of Gas Revenues Invested in Technology*Gas Revenue
-	~	$/Year
-	~	Investments in development of gas exploration and production technology.
 	|
 
 Skilled fraction of secondary education graduates baseline=
@@ -3336,12 +4237,6 @@ USD to billionUSD=
 	~	B$/$
 	~		|
 
-Investment in Gas Exploration=
-	Desired Investment in Gas Exploration
-	~	$/Year
-	~	Amount of resources dedicated to gas exploration.
-	|
-
 Investment in Biomass Capacity=
 	Installation of Biomass Capacity Rate*Unit Cost of Biomass Capacity Installation*Efficiency of Biomass Installed Capacity\
 		*Biomass Capacity Aging Time
@@ -3386,12 +4281,6 @@ Total relative incomes[Gender,Cohorts]=
 	100
 	~	$/Year
 	~	Relative total incomes of skilled and unskilled.
-	|
-
-MAXGFD=
-	1
-	~	Dmnl
-	~	Maximal possible percentage of gas resources to be discovered.
 	|
 
 Solar Installation Efficiency=
@@ -7493,537 +8382,537 @@ Life Expectancy at Birth depends on|<<NnN>>|1. referency life expectancy at birt
 V300  Do not put anything below this section - it will be ignored
 *Economy_GDP
 $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,88,0
-10,1,Net Energy Capital Change,351,629,58,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,2,Investment in Coal Exploration,72,371,66,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,3,Investment in Coal Production,72,432,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,4,Investment in Coal Technology,72,493,66,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,5,Investment in Gas Exploration,72,554,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,6,Investment in Gas Production,72,615,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,7,Investment in Gas Technology,72,676,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,8,Investment in Solar Capacity,72,875,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,9,Investment in Solar Energy Technology,72,936,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,10,Investment in Wind Capacity,72,997,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,11,Investment in Wind Energy Technology,72,1064,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,12,3,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,13,4,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,14,5,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,15,6,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,16,7,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,17,8,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,18,9,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,19,10,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,20,11,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,21,2,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,22,Oil Technology,1235,239,53,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,23,Coal Technology,1235,383,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,24,Gas Technology,1235,527,58,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,25,Solar Technology,1235,851,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,26,Wind Technology,1235,1003,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,27,Coal Fraction Discoverable,1413,332,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,28,Coal Fraction Recoverable,1413,404,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,29,MAXCFD,1413,368,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,30,MAXCFR,1413,440,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,31,27,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,32,29,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,33,28,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,34,30,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,35,Gas Fraction Discoverable,1413,476,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,36,Gas Fraction Recoverable,1413,548,53,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,37,MAXGFD,1413,512,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,38,MAXGFR,1413,584,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,39,Solar Conversion Efficiency,1413,789,68,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,40,MAXSCE,1413,835,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,41,Solar Installation Efficiency,1413,873,65,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,42,MAXSIE,1413,911,41,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,43,Wind Capacity Factor,1413,949,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,44,MAXWCF,1413,987,47,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,45,Wind Installation Efficiency,1413,1024,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,46,MAXWIE,1413,1075,43,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,47,35,24,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,48,37,24,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,49,36,24,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,50,38,24,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,51,39,25,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,52,40,25,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,53,41,25,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,54,42,25,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,55,43,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,56,44,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,57,45,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,58,46,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,59,22,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,60,23,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,61,24,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,62,25,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,63,26,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,64,Energy Technology,1088,623,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,65,Other Technologies,947,834,49,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,66,Investment in Biomass Energy Technology,72,806,61,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,67,Investment in Biomass Capacity,72,737,72,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,68,67,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,69,66,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,70,Biomass Capacity Factor,1413,620,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,71,MAXBCF,1413,656,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,72,Biomass Installation Efficiency,1413,700,41,27,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,73,MAXBIE,1413,744,41,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,74,Biomass Technology,1235,671,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,75,70,74,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,76,71,74,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,77,72,74,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,78,73,74,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,79,74,64,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,80,Time,772,1044,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,81,INITIAL TIME,772,972,56,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,82,Other Technology Inflection Point,1110,904,64,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,83,82,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,84,Other Technology Steepness,1066,972,64,18,8,3,0,4,-1,0,0,0,-1--1--1,0-255-0,||B|0-0-0,0,0,0,0,0,0
-1,85,84,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,86,Reference Other Technology,947,1044,60,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,87,86,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,88,81,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,89,80,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,90,Other Capital Change,584,850,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
-12,91,48,374,851,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,92,94,90,4,0,0,22,0,0,0,-1--1--1,,1|(505,851)|
-1,93,94,91,100,0,0,22,0,0,0,-1--1--1,,1|(419,851)|
-11,94,0,461,851,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,95,Net Change in Other Capital,461,875,53,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,96,Current to Max Other Capital,534,970,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,97,90,95,1,0,0,0,0,64,0,-1--1--1,,1|(548,899)|
-1,98,90,96,1,0,0,0,0,64,0,-1--1--1,,1|(587,923)|
-10,99,Other Capital Change Ratio,434,1042,51,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,100,96,95,1,0,0,0,0,64,0,-1--1--1,,1|(479,936)|
-10,101,Time to Adjust Other Capital,329,967,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,102,101,95,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,103,99,96,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,104,INIT Other Capital Change,478,799,58,18,8,3,0,4,-1,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
-1,105,104,90,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,106,Impact of Biodiversity on Economy,531,293,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,107,Min Impact of Biodiversity on Economy,351,366,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,108,Max Impact of Biodiversity on Economy,351,218,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,109,107,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,110,108,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,111,GDP per Capita GLOBIOM usd,501,81,60,18,8,3,0,4,0,0,0,0,-1--1--1,255-128-0,|||0-0-0,0,0,0,0,0,0
-10,112,Reference Other Capital Change,621,1037,60,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,113,112,96,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,114,Reference Economy Output,722,403,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,115,Gross World Product,722,266,46,18,8,3,0,16,0,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
-10,116,GWP per Capita,733,151,35,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
-10,117,Labor Force input,900,327,40,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,118,Output in 1900,526,422,53,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,119,Population,722,48,48,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,120,119,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,121,115,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,122,Capital,722,549,46,25,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-12,123,48,721,689,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,124,126,122,4,0,0,22,0,0,0,-1--1--1,,1|(721,599)|
-1,125,126,123,100,0,0,22,0,0,0,-1--1--1,,1|(721,659)|
-11,126,0,721,631,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
-10,127,Net Capital Change Rate,773,631,49,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,128,INIT Capital,576,460,42,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
-10,129,Capital Elasticity Output,834,464,48,19,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,130,128,122,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,131,Net Capital Change,585,630,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,132,131,126,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,133,Technology,948,623,42,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,134,64,133,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,135,128,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,136,122,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,137,129,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,138,118,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,139,106,115,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,140,Smoothed GWP per Capita,1059,55,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,141,116,111,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,142,65,133,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,143,Variable16 Technology,1196,1126,47,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-1,144,143,84,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,145,Year Period,873,779,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,146,145,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,147,Year Period,874,80,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,148,116,140,1,0,0,0,0,64,0,-1--1--1,,1|(926,166)|
-1,149,147,140,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,150,GWP per Capita Indicator,985,214,61,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-1,151,116,150,1,0,0,0,0,128,0,-1--1--1,,1|(822,214)|
-10,152,"$ into $thousand",1113,164,43,18,8,130,0,3,0,0,0,0,128-128-128,0-0-0,|||255-0-255,0,0,0,0,0,0
-1,153,152,150,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,154,Capital Elasticity Output Variation,1014,551,61,18,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,155,Other Technology Inflection Point Variation,1073,804,64,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
-1,156,155,82,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,157,SSP Demographic Variation Time,1730,656,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,158,CE Var S,1010,518,36,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,159,CE S,1079,512,21,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,160,SE Var T,1136,289,43,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,161,159,158,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,162,SSP Economic Variation Time,909,545,57,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
-10,163,Poverty rate,1748,167,44,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,164,"lnPL-mean",1600,116,40,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,165,164,163,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,166,Standard deviation of the lognormal distribution of consumption,1925,158,91,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,167,166,163,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,168,Table for standard normal distribution,1595,214,67,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,169,168,163,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,170,Gini coefficient,2117,230,54,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,171,170,166,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,172,Inverse table for standard normal distribution,1926,262,59,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,173,172,166,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,174,Mean value of the lognormal distribution of consumption or income,1805,-1,87,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,175,174,164,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,176,Poverty line,1503,67,42,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,177,176,164,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,178,Consumption or income of a person per day,1459,-39,70,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,179,178,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,180,Days in Year,1626,7,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,181,180,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,182,166,174,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,183,Gini2,2214,167,21,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,184,183,170,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,185,Gini1,2215,280,21,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,186,185,170,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,187,Relative incomes of skilled,2541,278,63,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,188,187,183,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,189,Relative incomes of unskilled,2523,203,63,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,190,189,183,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,191,Skilled population,2387,156,39,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,192,191,183,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,193,Unskilled population,2308,93,39,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,194,193,183,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,195,189,185,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,196,191,185,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,197,193,185,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,198,Secondary Education Graduates,2492,32,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,199,Tertiary Education Graduates,2376,29,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,200,198,191,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,201,199,191,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,202,Total relative incomes,2424,301,47,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,203,202,183,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,204,202,185,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,205,191,193,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,206,Population Cohorts,2351,351,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-1,207,206,193,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,208,206,183,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,209,206,185,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-12,210,0,1977,-158,525,17,8,135,0,12,-1,0,0,0,-1--1--1,192-192-192,|15||0-0-0,0,0,0,0,0,0
+10,1,Net Energy Capital Change,-228,832,58,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,2,Investment in Coal Exploration,-507,574,66,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,3,Investment in Coal Production,-507,635,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,4,Investment in Coal Technology,-507,696,66,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,5,Investment in Solar Capacity,-507,1078,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,6,Investment in Solar Energy Technology,-507,1139,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,7,Investment in Wind Capacity,-507,1200,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,8,Investment in Wind Energy Technology,-507,1267,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,9,3,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,10,4,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,11,5,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,12,6,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,13,7,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,14,8,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,15,2,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,16,Oil Technology,656,442,53,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,17,Coal Technology,656,586,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,18,Gas Technology,656,730,58,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,19,Solar Technology,656,1054,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,20,Wind Technology,656,1206,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,21,Coal Fraction Discoverable,834,535,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,22,Coal Fraction Recoverable,834,607,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,23,MAXCFD,834,571,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,24,MAXCFR,834,643,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,25,21,17,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,26,23,17,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,27,22,17,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,28,24,17,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,29,Solar Conversion Efficiency,834,992,68,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,30,MAXSCE,834,1038,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,31,Solar Installation Efficiency,834,1076,65,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,32,MAXSIE,834,1114,41,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,33,Wind Capacity Factor,834,1152,59,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,34,MAXWCF,834,1190,47,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,35,Wind Installation Efficiency,834,1227,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,36,MAXWIE,834,1278,43,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,37,29,19,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,38,30,19,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,39,31,19,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,40,32,19,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,41,33,20,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,42,34,20,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,43,35,20,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,44,36,20,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,45,16,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,46,17,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,47,18,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,48,19,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,49,20,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,50,Energy Technology,509,826,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,51,Other Technologies,368,1037,49,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,52,Investment in Biomass Energy Technology,-507,1009,61,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,53,Investment in Biomass Capacity,-507,940,72,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,54,53,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,55,52,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,56,Biomass Capacity Factor,834,823,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,57,MAXBCF,834,859,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,58,Biomass Installation Efficiency,834,903,41,27,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,59,MAXBIE,834,947,41,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,60,Biomass Technology,656,874,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,61,56,60,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,62,57,60,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,63,58,60,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,64,59,60,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,65,60,50,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,66,Time,193,1247,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,67,INITIAL TIME,193,1175,56,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,68,Other Technology Inflection Point,531,1107,64,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,69,68,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,70,Other Technology Steepness,487,1175,64,18,8,3,0,4,-1,0,0,0,-1--1--1,0-255-0,||B|0-0-0,0,0,0,0,0,0
+1,71,70,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,72,Reference Other Technology,368,1247,60,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,73,72,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,74,67,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,75,66,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,76,Other Capital Change,5,1053,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+12,77,48,-205,1054,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,78,80,76,4,0,0,22,0,0,0,-1--1--1,,1|(-73,1054)|
+1,79,80,77,100,0,0,22,0,0,0,-1--1--1,,1|(-159,1054)|
+11,80,0,-118,1054,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,81,Net Change in Other Capital,-118,1078,53,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,82,Current to Max Other Capital,-45,1173,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,83,76,81,1,0,0,0,0,64,0,-1--1--1,,1|(-31,1102)|
+1,84,76,82,1,0,0,0,0,64,0,-1--1--1,,1|(8,1126)|
+10,85,Other Capital Change Ratio,-145,1245,51,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,86,82,81,1,0,0,0,0,64,0,-1--1--1,,1|(-100,1139)|
+10,87,Time to Adjust Other Capital,-250,1170,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,88,87,81,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,89,85,82,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,90,INIT Other Capital Change,-101,1002,58,18,8,3,0,4,-1,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,91,90,76,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,92,Impact of Biodiversity on Economy,-48,496,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,93,Min Impact of Biodiversity on Economy,-228,569,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,94,Max Impact of Biodiversity on Economy,-228,421,54,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,95,93,92,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,96,94,92,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,97,GDP per Capita GLOBIOM usd,-78,284,60,18,8,3,0,4,0,0,0,0,-1--1--1,255-128-0,|||0-0-0,0,0,0,0,0,0
+10,98,Reference Other Capital Change,42,1240,60,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,99,98,82,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,100,Reference Economy Output,143,606,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,101,Gross World Product,143,469,46,18,8,3,0,16,0,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,102,GWP per Capita,154,354,35,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,103,Labor Force input,321,530,40,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,104,Output in 1900,-53,625,53,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,105,Population,143,251,48,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,106,105,102,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,107,101,102,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,108,Capital,143,752,46,25,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,109,48,142,892,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,110,112,108,4,0,0,22,0,0,0,-1--1--1,,1|(142,802)|
+1,111,112,109,100,0,0,22,0,0,0,-1--1--1,,1|(142,862)|
+11,112,0,142,834,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,113,Net Capital Change Rate,194,834,49,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,114,INIT Capital,-3,663,42,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,115,Capital Elasticity Output,255,667,48,19,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,116,114,108,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,117,Net Capital Change,6,833,42,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,118,117,112,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,119,Technology,369,826,42,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,120,50,119,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,121,114,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,122,108,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,123,115,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,124,104,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,125,92,101,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,126,Smoothed GWP per Capita,480,258,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,127,102,97,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,128,51,119,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,129,Variable16 Technology,617,1329,47,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,130,129,70,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,131,Year Period,294,982,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,132,131,51,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,133,Year Period,295,283,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,134,102,126,1,0,0,0,0,64,0,-1--1--1,,1|(347,369)|
+1,135,133,126,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,136,GWP per Capita Indicator,406,417,61,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,137,102,136,1,0,0,0,0,128,0,-1--1--1,,1|(243,417)|
+10,138,"$ into $thousand",534,367,43,18,8,130,0,3,0,0,0,0,128-128-128,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,139,138,136,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,140,Capital Elasticity Output Variation,435,754,61,18,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,141,Other Technology Inflection Point Variation,494,1007,64,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,142,141,68,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,143,SSP Demographic Variation Time,1151,859,74,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,144,CE Var S,431,721,36,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,145,CE S,500,715,21,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,146,SE Var T,557,492,43,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,147,145,144,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,148,SSP Economic Variation Time,330,748,57,18,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,149,Poverty rate,1169,370,44,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,150,"lnPL-mean",1021,319,40,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,151,150,149,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,152,Standard deviation of the lognormal distribution of consumption,1346,361,91,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,153,152,149,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,154,Table for standard normal distribution,1016,417,67,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,155,154,149,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,156,Gini coefficient,1538,433,54,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,157,156,152,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,158,Inverse table for standard normal distribution,1347,465,59,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,159,158,152,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,160,Mean value of the lognormal distribution of consumption or income,1226,202,87,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,161,160,150,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,162,Poverty line,924,270,42,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,163,162,150,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,164,Consumption or income of a person per day,880,164,70,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,165,164,162,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,166,Days in Year,1047,210,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,167,166,162,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,168,152,160,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,169,Gini2,1635,370,21,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,170,169,156,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,171,Gini1,1636,483,21,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,172,171,156,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,173,Relative incomes of skilled,1962,481,63,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,174,173,169,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,175,Relative incomes of unskilled,1944,406,63,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,176,175,169,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,177,Skilled population,1808,359,39,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,178,177,169,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,179,Unskilled population,1729,296,39,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,180,179,169,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,181,175,171,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,182,177,171,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,183,179,171,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,184,Secondary Education Graduates,1913,235,45,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,185,Tertiary Education Graduates,1797,232,44,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,186,184,177,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,187,185,177,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,188,Total relative incomes,1845,504,47,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,189,188,169,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,190,188,171,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,191,177,179,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,192,Population Cohorts,1772,554,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,193,192,179,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,194,192,169,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,195,192,171,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,196,0,1398,45,525,17,8,135,0,12,-1,0,0,0,-1--1--1,192-192-192,|15||0-0-0,0,0,0,0,0,0
 Poverty rate
-10,211,Global poverty rate,1747,355,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,212,163,211,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,213,206,211,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,214,187,185,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,215,Fraction of skilled secondary education graduates,2561,106,76,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,216,215,191,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,217,GWP per capita ratio for enrollment,2564,138,72,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,218,202,189,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,219,187,189,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,220,Real incomes per capita,2088,34,50,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,221,Real incomes parameter,2164,-57,50,18,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-0,0,0,0,0,0,0
-10,222,Adjustments for relative incomes of skilled,2735,266,69,27,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
-1,223,222,187,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,224,221,220,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,225,220,174,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,226,GWP per Capita,2075,110,40,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,227,226,220,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,228,Skilled fraction of secondary education graduates,2800,144,76,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
-10,229,Reference relative income of skilled,2544,352,67,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,230,229,187,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,231,Relative income of skilled variation,2544,438,68,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
-1,232,231,229,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,233,GWP Indicator,864,270,53,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-1,234,115,233,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,235,USD to billionUSD,999,275,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,236,235,233,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,237,Net Climate Change Impact on Economy,520,150,79,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,238,InitialREO,667,473,37,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,239,238,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,240,Ratio of capital,584,363,54,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,241,240,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,242,Ratio of technology,752,339,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,243,242,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,244,REOs,607,509,23,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
-1,245,244,238,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,246,RCs,493,371,18,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
-1,247,246,240,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,248,Ts,834,342,11,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
-1,249,248,242,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,250,Cs,837,521,12,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,251,250,129,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,252,Cu,898,507,12,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,253,252,129,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,254,Total REO,648,316,38,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,255,114,254,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,256,254,115,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-1,257,228,215,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,258,Variable16 Technology,1255,1282,42,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,259,Change Rate Finish16,1154,1309,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,260,259,258,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
-10,261,Change Rate Slope16,1056,1303,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,262,261,258,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
-10,263,Change Rate Start16,1153,1344,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,264,263,258,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
-10,265,Initial Change Rate16,1194,1385,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,266,265,258,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
-10,267,SCENARIO ON,1300,1328,48,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,268,267,258,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
-10,269,Reference Other Technology Variation,808,1113,77,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
-1,270,269,86,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,271,Current year,2468,543,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,272,DemoFeliX target year,2601,538,46,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,273,272,229,1,0,0,0,0,192,0,-1--1--1,,1|(2632,438)|
-1,274,271,229,1,0,0,0,0,192,0,-1--1--1,,1|(2452,444)|
-10,275,Current year,2673,169,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,276,DemoFeliX target year,2702,50,51,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,277,276,215,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,278,275,215,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,279,Relative income of skilled variation baseline,2704,351,68,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,280,279,229,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,281,Skilled fraction of secondary education graduates baseline,2841,79,76,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,282,281,215,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,283,Reference Other Technology baseline,939,1178,75,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,284,Current year,823,1200,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,285,DemoFeliX target year,1059,1091,51,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,286,284,86,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,287,Year2100,1035,1163,36,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,288,287,86,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,289,283,86,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,290,"100 percent",1649,280,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,291,290,163,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,292,INIT Species Abundance,339,273,52,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,293,292,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,294,Mean Species Abundance,334,319,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,295,294,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,296,Net Climate Change Impact on Economy Data,519,208,72,29,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
-1,297,118,128,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,298,Capital Int,469,470,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,299,298,128,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,300,Lookup Share of GFCF in GWP,493,564,60,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
-10,301,Lookup Share of CFC in GWP,496,686,59,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
-1,302,300,131,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,303,301,131,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,304,Gross World Product,628,682,50,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,305,304,131,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,306,Technology Data,848,593,60,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
-1,307,306,114,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,308,Time,652,177,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,309,308,296,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,310,Time,409,516,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,311,310,300,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,312,Time,404,731,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,313,312,301,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,314,OLDOutput in 1900,719,1547,55,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,315,OLDNet Capital Change,770,1717,64,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,316,Time,883,648,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,317,316,306,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,318,Labor Force Elasticity,1057,384,31,23,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,319,Labor Force on Economy Output,847,397,42,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,320,LFE Young,967,407,36,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,321,LFE Old,963,378,33,9,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,322,319,114,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,323,117,319,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,324,321,319,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,325,320,319,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,326,Labor Force input test young,975,-252,55,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,327,Labor Force input test medium,920,-205,45,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,328,Labor Force input test old,935,-148,45,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,329,Labor Force on Economy Output Data,965,469,59,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,330,Investment in Oil Technology,75,320,57,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,331,330,1,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,332,MAXOFR,1406,291,45,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,333,332,22,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,334,MAXOFD,1412,226,45,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,335,334,22,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,336,Oil Fraction Discoverable,1409,186,52,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,337,336,22,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,338,Oil Fraction Recoverable,1404,255,50,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,339,338,22,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,340,Investment in Oil Exploration,96,215,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,341,340,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,342,Investment in Oil Production,83,269,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-1,343,342,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,197,Global poverty rate,1168,558,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,198,149,197,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,199,192,197,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,200,173,171,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,201,Fraction of skilled secondary education graduates,1982,309,76,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,202,201,177,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,203,GWP per capita ratio for enrollment,1985,341,72,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,204,188,175,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,205,173,175,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,206,Real incomes per capita,1509,237,50,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,207,Real incomes parameter,1585,146,50,18,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,||B|255-0-0,0,0,0,0,0,0
+10,208,Adjustments for relative incomes of skilled,2156,469,69,27,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,209,208,173,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,210,207,206,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,211,206,160,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,212,GWP per Capita,1496,313,40,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,213,212,206,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,214,Skilled fraction of secondary education graduates,2221,347,76,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,215,Reference relative income of skilled,1965,555,67,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,216,215,173,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,217,Relative income of skilled variation,1965,641,68,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,218,217,215,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,219,GWP Indicator,285,473,53,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,220,101,219,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,221,USD to billionUSD,420,478,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,222,221,219,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,223,Net Climate Change Impact on Economy,-59,353,79,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,224,InitialREO,88,676,37,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,225,224,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,226,Ratio of capital,5,566,54,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,227,226,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,228,Ratio of technology,173,542,40,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,229,228,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,230,REOs,28,712,23,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,231,230,224,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,232,RCs,-86,574,18,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,233,232,226,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,234,Ts,255,545,11,10,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|||255-0-0,0,0,0,0,0,0
+1,235,234,228,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,236,Cs,258,724,12,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,237,236,115,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,238,Cu,319,710,12,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,239,238,115,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,240,Total REO,69,519,38,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,241,100,240,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,242,240,101,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,243,214,201,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,244,Variable16 Technology,676,1485,42,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,245,Change Rate Finish16,575,1512,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,246,245,244,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
+10,247,Change Rate Slope16,477,1506,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,248,247,244,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
+10,249,Change Rate Start16,574,1547,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,250,249,244,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
+10,251,Initial Change Rate16,615,1588,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,252,251,244,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
+10,253,SCENARIO ON,721,1531,48,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,254,253,244,0,0,0,0,0,0,0,-1--1--1,,1|(0,0)|
+10,255,Reference Other Technology Variation,229,1316,77,18,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,256,255,72,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,257,Current year,1889,746,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,258,DemoFeliX target year,2022,741,46,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,259,258,215,1,0,0,0,0,192,0,-1--1--1,,1|(2053,641)|
+1,260,257,215,1,0,0,0,0,192,0,-1--1--1,,1|(1873,647)|
+10,261,Current year,2094,372,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,262,DemoFeliX target year,2123,253,51,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,263,262,201,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,264,261,201,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,265,Relative income of skilled variation baseline,2125,554,68,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,266,265,215,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,267,Skilled fraction of secondary education graduates baseline,2262,282,76,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,268,267,201,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,269,Reference Other Technology baseline,360,1381,75,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,270,Current year,244,1403,54,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,271,DemoFeliX target year,480,1294,51,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,272,270,72,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,273,Year2100,456,1366,36,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,274,273,72,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,275,269,72,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,276,"100 percent",1070,483,53,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,277,276,149,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,278,INIT Species Abundance,-240,476,52,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,279,278,92,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,280,Mean Species Abundance,-245,522,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,281,280,92,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,282,Net Climate Change Impact on Economy Data,-60,411,72,29,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,283,104,114,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,284,Capital Int,-110,673,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,285,284,114,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,286,Lookup Share of GFCF in GWP,-86,767,60,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,287,Lookup Share of CFC in GWP,-83,889,59,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,288,286,117,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,289,287,117,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,290,Gross World Product,49,885,50,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,291,290,117,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,292,Technology Data,269,796,60,22,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,293,292,100,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,294,Time,73,380,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,295,294,282,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,296,Time,-170,719,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,297,296,286,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,298,Time,-175,934,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,299,298,287,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,300,OLDOutput in 1900,140,1750,55,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,301,OLDNet Capital Change,191,1920,64,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,302,Time,304,851,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,303,302,292,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,304,Labor Force Elasticity,478,587,31,23,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,305,Labor Force on Economy Output,268,600,42,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,306,LFE Young,388,610,36,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,307,LFE Old,384,581,33,9,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,308,305,100,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,309,103,305,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,310,307,305,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,311,306,305,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,312,Labor Force input test young,396,-49,55,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,313,Labor Force input test medium,341,-2,45,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,314,Labor Force input test old,356,55,45,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,315,Labor Force on Economy Output Data,386,672,59,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,316,Investment in Oil Technology,-504,523,57,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,317,316,1,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,318,MAXOFR,827,494,45,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,319,318,16,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,320,MAXOFD,833,429,45,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,321,320,16,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,322,Oil Fraction Discoverable,830,389,52,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,323,322,16,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,324,Oil Fraction Recoverable,825,458,50,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,325,324,16,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,326,Investment in Oil Exploration,-483,418,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,327,326,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,328,Investment in Oil Production,-496,472,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,329,328,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,330,Investment in Gas Exploration,-505,818,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,331,330,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,332,Investment in Gas Production,-498,762,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,333,332,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,334,Investment in Gas Technology,-508,867,69,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,335,334,1,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,336,Gas Fraction Discoverable,835,697,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,337,336,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,338,Gas Fraction Recoverable,830,757,53,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,339,338,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,340,MAXGFD,825,728,46,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,341,340,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,342,MAXGFR,827,786,45,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,343,342,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 \\\---/// Sketch information - do not modify anything except names
 V300  Do not put anything below this section - it will be ignored
 *Energy_Oil
-$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,74,0
-10,1,Identified Oil Resources,167,337,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-10,2,Cumulative Oil Production,629,337,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-1,3,5,2,4,0,0,22,0,0,0,-1--1--1,,1|(492,335)|
-1,4,5,1,100,0,0,22,0,0,0,-1--1--1,,1|(312,335)|
-11,5,0,406,335,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,6,Oil Production,406,352,51,10,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,7,Potential Oil Production,627,88,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,8,Cumulative Additions to Oil Production,873,716,56,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,9,Oil Production Rate,405,176,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,67,0
+10,1,Identified Oil Resources,1168,524,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,2,Cumulative Oil Production,1630,524,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,3,5,2,4,0,0,22,0,0,0,-1--1--1,,1|(1493,522)|
+1,4,5,1,100,0,0,22,0,0,0,-1--1--1,,1|(1313,522)|
+11,5,0,1407,522,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,6,Oil Production,1407,539,51,10,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,7,Potential Oil Production,1628,275,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,8,Cumulative Additions to Oil Production,1874,903,56,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,9,Oil Production Rate,1406,363,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,10,7,9,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,11,9,5,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,12,Potential Oil Production from Resources,873,305,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,13,Normal Oil Production Ratio,650,432,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,12,Potential Oil Production from Resources,1874,492,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,13,Normal Oil Production Ratio,1651,619,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,14,13,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,15,12,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,16,Potential Oil Production from Investment,627,26,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,16,Potential Oil Production from Investment,1628,213,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,17,16,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,18,Productivity of Investment in Oil Production,428,-125,59,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,19,Effective Investment in Oil Production,486,23,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,18,Productivity of Investment in Oil Production,1429,62,59,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,19,Effective Investment in Oil Production,1487,210,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
 1,20,18,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,21,19,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,22,Investment in Oil Production Delay,359,-60,63,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,23,Desired Investment in Oil Production,158,-124,70,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,22,Investment in Oil Production Delay,1360,127,63,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,23,Desired Investment in Oil Production,1159,63,70,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,24,18,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,25,12,23,1,0,0,0,0,64,0,-1--1--1,,1|(508,-271)|
-10,26,Oil Shortage,289,208,46,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,27,Undiscovered Oil Resources,-423,335,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-1,28,30,1,4,0,0,22,0,0,0,-1--1--1,,1|(23,335)|
-1,29,30,27,100,0,0,22,0,0,0,-1--1--1,,1|(-220,335)|
-11,30,0,-69,335,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,31,Oil Exploration,-69,357,53,10,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
-10,32,INIT UORN,-465,263,40,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,33,Total Oil Resources,873,876,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,34,Total Oil Recoverable Resource Remaining,873,549,79,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,25,12,23,1,0,0,0,0,64,0,-1--1--1,,1|(1509,-84)|
+10,26,Oil Shortage,1290,395,46,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,27,Undiscovered Oil Resources,578,522,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,28,30,1,4,0,0,22,0,0,0,-1--1--1,,1|(1024,522)|
+1,29,30,27,100,0,0,22,0,0,0,-1--1--1,,1|(780,522)|
+11,30,0,932,522,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,31,Oil Exploration,932,544,53,10,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,32,INIT UORN,536,450,40,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,33,Total Oil Resources,1874,1063,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,Total Oil Recoverable Resource Remaining,1874,736,79,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,35,8,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,36,34,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,37,8,33,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,38,Undiscovered Oil Resources,650,876,68,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,38,Undiscovered Oil Resources,1651,1063,68,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,39,38,33,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,40,Total Oil Discoverable Resources,1033,800,49,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,40,Total Oil Discoverable Resources,2034,987,49,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,41,33,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,42,8,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,43,Effect of Technology on Oil Discoveries,305,951,74,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,44,Effective Investment in Oil Exploration,-178,681,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-10,45,Investment in Oil Exploration Delay,-161,771,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,46,Potential Oil Exploration,-292,609,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,43,Effect of Technology on Oil Discoveries,1306,1138,74,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,44,Effective Investment in Oil Exploration,823,868,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,45,Investment in Oil Exploration Delay,840,958,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,46,Potential Oil Exploration,709,796,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,47,44,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,48,43,100,1,0,0,0,0,64,0,-1--1--1,,1|(-36,987)|
-10,49,Investment in Oil Exploration,35,620,59,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,48,43,100,1,0,0,0,0,64,0,-1--1--1,,1|(965,1174)|
+10,49,Investment in Oil Exploration,1036,807,59,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
 1,50,49,204,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,51,46,112,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,52,Desired Investment in Oil Exploration,168,693,70,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,53,Oil Fraction Discoverable,1218,800,56,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,54,Oil Fraction Recoverable,1197,549,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,55,MINOFD,1305,858,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,56,MAXOFD,1305,749,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,57,Ratio of Oil Fraction Discoverable to Undiscoverable,1403,800,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,52,Desired Investment in Oil Exploration,1169,880,70,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,53,Oil Fraction Discoverable,2219,987,56,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,54,Oil Fraction Recoverable,2198,736,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,55,MINOFD,2306,1045,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,56,MAXOFD,2306,936,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,57,Ratio of Oil Fraction Discoverable to Undiscoverable,2404,987,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
 1,58,55,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,59,56,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,60,57,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-12,61,48,1640,799,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,62,64,57,4,0,0,22,0,0,0,-1--1--1,,1|(1504,799)|
-1,63,64,61,100,0,0,22,0,0,0,-1--1--1,,1|(1595,799)|
-11,64,0,1554,799,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,65,Increase in Ratio of Oil Fraction Discoverable to Undiscoverable,1554,831,90,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,66,INIT RODU,1403,853,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
-10,67,Investment in Oil Discovery Technology,1754,830,80,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,68,Oil Discovery Technology Development Time,1652,916,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+12,61,48,2641,986,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,62,64,57,4,0,0,22,0,0,0,-1--1--1,,1|(2505,986)|
+1,63,64,61,100,0,0,22,0,0,0,-1--1--1,,1|(2596,986)|
+11,64,0,2555,986,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,65,Increase in Ratio of Oil Fraction Discoverable to Undiscoverable,2555,1018,90,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,66,INIT RODU,2404,1040,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,67,Investment in Oil Discovery Technology,2755,1017,80,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,68,Oil Discovery Technology Development Time,2653,1103,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,69,67,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,70,MINOFR,1305,611,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,71,MAXOFR,1305,484,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,72,Ratio of Oil Fraction Recoverable to Unrecoverable,1395,548,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-12,73,48,1632,544,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,74,76,72,4,0,0,22,0,0,0,-1--1--1,,1|(1496,544)|
-1,75,76,73,100,0,0,22,0,0,0,-1--1--1,,1|(1587,544)|
-11,76,0,1546,544,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,77,Increase in Ratio of Oil Fraction Recoverable to Unrecoverable,1546,576,87,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,78,INIT RORU,1395,598,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
-10,79,Investment in Oil Recovery Technology,1745,575,78,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,80,Oil Recovery Technology Development Time,1630,670,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,70,MINOFR,2306,798,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,71,MAXOFR,2306,671,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,72,Ratio of Oil Fraction Recoverable to Unrecoverable,2396,735,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,73,48,2633,731,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,74,76,72,4,0,0,22,0,0,0,-1--1--1,,1|(2497,731)|
+1,75,76,73,100,0,0,22,0,0,0,-1--1--1,,1|(2588,731)|
+11,76,0,2547,731,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,77,Increase in Ratio of Oil Fraction Recoverable to Unrecoverable,2547,763,87,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,78,INIT RORU,2396,785,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,79,Investment in Oil Recovery Technology,2746,762,78,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,80,Oil Recovery Technology Development Time,2631,857,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,81,79,77,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,82,70,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,83,71,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,84,72,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,85,Investment in Oil Technology,1900,688,59,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,86,Fraction Invested in Oil Discovery Technology,1900,902,83,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,85,Investment in Oil Technology,2901,875,59,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,86,Fraction Invested in Oil Discovery Technology,2901,1089,83,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,87,85,67,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,88,86,67,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,89,85,79,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,90,86,79,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,91,53,86,1,0,0,0,0,64,0,-1--1--1,,1|(1509,1017)|
-10,92,Table for FIODT,1900,993,58,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,91,53,86,1,0,0,0,0,64,0,-1--1--1,,1|(2510,1204)|
+10,92,Table for FIODT,2901,1180,58,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,93,92,86,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,94,Oil Revenue,1362,229,51,10,8,131,0,0,0,0,0,0,0,0,0,0,0,0
-10,95,Fraction of Oil Revenues Invested in Technology,2073,726,77,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,96,Average Oil Production,5,229,48,26,3,131,0,0,-1,0,0,0,0,0,0,0,0,0
-10,97,Oil Price,1361,125,32,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,94,Oil Revenue,2363,416,51,10,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,95,Fraction of Oil Revenues Invested in Technology,3074,913,77,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,96,Average Oil Production,1006,416,48,26,3,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,97,Oil Price,2362,312,32,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
 1,98,97,94,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,99,INIT COPN,630,265,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
-10,100,Productivity of Investment in Oil Exploration,-400,960,59,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,99,INIT COPN,1631,452,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,100,Productivity of Investment in Oil Exploration,601,1147,59,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,101,100,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,102,Relative Productivity of Investment in Oil Exploration,-222,1027,83,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,103,Oil Production Coverage,-121,283,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,102,Relative Productivity of Investment in Oil Exploration,779,1214,83,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,103,Oil Production Coverage,880,470,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,104,5,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,105,1,103,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,106,Unit Cost of Oil Exploration,8,759,55,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-1,107,100,106,1,0,0,0,0,64,0,-1--1--1,,1|(-121,902)|
-10,108,Productivity of Investment in Oil Exploration,932,-142,59,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,109,Oil Production Coverage,988,-84,57,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,110,Unit Cost of Oil Production,429,-207,55,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,106,Unit Cost of Oil Exploration,1009,946,55,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,107,100,106,1,0,0,0,0,64,0,-1--1--1,,1|(880,1089)|
+10,108,Productivity of Investment in Oil Exploration,1933,45,59,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,109,Oil Production Coverage,1989,103,57,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,110,Unit Cost of Oil Production,1430,-20,55,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,111,18,110,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,112,Oil Exploration Rate,-69,503,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,112,Oil Exploration Rate,932,690,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,113,112,31,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,114,Required Identified Oil Resources,264,432,69,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,114,Required Identified Oil Resources,1265,619,69,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,115,1,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,116,13,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,117,Adjustment for Identified Oil Resource,167,501,53,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,118,Identified Oil Resources Adjustment Time,78,421,61,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,117,Adjustment for Identified Oil Resource,1168,688,53,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,118,Identified Oil Resources Adjustment Time,1079,608,61,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
 1,119,1,117,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,120,114,117,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,121,118,117,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,122,Desired Oil Exploration Rate,167,606,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,122,Desired Oil Exploration Rate,1168,793,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,123,122,112,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,124,117,122,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,125,6,122,1,0,0,0,0,64,0,-1--1--1,,1|(383,530)|
+1,125,6,122,1,0,0,0,0,64,0,-1--1--1,,1|(1384,717)|
 1,126,122,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,127,106,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,128,Oil Cost,1361,-39,30,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
-10,129,Unit Cost of Oil Exploration,1276,-125,60,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,130,Unit Cost of Oil Production,1451,-125,60,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,128,Oil Cost,2362,148,30,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,129,Unit Cost of Oil Exploration,2277,62,60,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,130,Unit Cost of Oil Production,2452,62,60,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,131,129,128,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,132,130,128,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,133,Indicated Oil Price,1276,39,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,133,Indicated Oil Price,2277,226,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,134,128,133,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,135,Oil Desired Gross Margin,1193,-39,50,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,135,Oil Desired Gross Margin,2194,148,50,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
 1,136,135,133,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,137,Relative Productivity of Investment in Oil Production Compared to Exploration,686,-127,100,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
-10,138,Effect of Oil Demand and Supply on Price,1638,125,76,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,137,Relative Productivity of Investment in Oil Production Compared to Exploration,1687,60,100,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,138,Effect of Oil Demand and Supply on Price,2639,312,76,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,139,133,97,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,140,138,97,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,141,Potential Oil Production,1806,160,49,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
-10,142,Sensitivity of Oil Price to Supply and Demand,1638,38,83,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,141,Potential Oil Production,2807,347,49,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,142,Sensitivity of Oil Price to Supply and Demand,2639,225,83,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,143,141,138,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,144,Oil Demand to Supply Ratio,1963,124,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,144,Oil Demand to Supply Ratio,2964,311,53,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,145,141,144,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,146,Oil Gross Margin,1451,39,35,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,146,Oil Gross Margin,2452,226,35,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,147,97,146,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,148,128,146,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,149,Total Oil Demand,153,85,32,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,149,Total Oil Demand,1154,272,32,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,150,149,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,151,149,9,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,152,149,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,153,Total Oil Demand,1806,89,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,153,Total Oil Demand,2807,276,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,154,153,138,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,155,153,144,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,156,Total Oil Demand,327,377,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,156,Total Oil Demand,1328,564,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,157,156,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,158,Oil Revenue,1982,627,60,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,158,Oil Revenue,2983,814,60,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
 1,159,158,85,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,160,Time to Average Oil Production,139,170,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,160,Time to Average Oil Production,1140,357,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,161,160,198,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,162,Identified Oil Resources,650,716,50,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,163,Cumulative Oil Production,650,549,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,162,Identified Oil Resources,1651,903,50,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,163,Cumulative Oil Production,1651,736,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
 1,164,162,8,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,165,163,8,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,166,163,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,167,Total Oil Discoverable Resources,489,880,49,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,167,Total Oil Discoverable Resources,1490,1067,49,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
 1,168,167,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,169,Total Oil Recoverable Resource Remaining,313,498,83,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,169,Total Oil Recoverable Resource Remaining,1314,685,83,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
 1,170,169,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,171,53,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,172,54,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,173,Investment in Oil Production,234,-34,59,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,173,Investment in Oil Production,1235,153,59,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,174,23,173,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,175,173,210,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,176,Average Oil Production,1540,228,48,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,176,Average Oil Production,2541,415,48,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,177,176,94,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,178,5,199,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,179,96,103,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,180,INIT UORN,474,966,49,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,180,INIT UORN,1475,1153,49,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,181,180,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,182,Market Share Oil,-115,-124,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,183,Energy Demand,-115,88,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,182,Market Share Oil,886,63,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,183,Energy Demand,886,275,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,184,54,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
 1,185,2,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
 1,186,13,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
@@ -8031,197 +8920,197 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,74,0
 1,188,66,57,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
 1,189,78,72,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
 1,190,149,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,191,Oil Price per Barrel,1153,127,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,191,Oil Price per Barrel,2154,314,46,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,192,97,191,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,193,Mtoe per Barrel,1064,43,56,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,193,Mtoe per Barrel,2065,230,56,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,194,193,191,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-12,195,48,209,224,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,196,198,96,4,0,0,22,0,0,0,-1--1--1,,1|(92,224)|
-1,197,198,195,100,0,0,22,0,0,0,-1--1--1,,1|(171,224)|
-11,198,0,138,224,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,199,Change in Average Oil Production,138,248,71,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,200,96,199,1,0,0,0,0,64,0,-1--1--1,,1|(71,273)|
-12,201,48,42,674,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,202,203,201,100,0,0,22,0,0,0,-1--1--1,,1|(1,674)|
-11,203,0,-35,674,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,204,Change in Effective Investment in Oil Exploration,-35,706,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,205,44,203,1,0,0,0,0,64,0,-1--1--1,,1|(-134,631)|
-1,206,203,44,4,0,0,22,0,0,0,-1--1--1,,1|(-81,674)|
-12,207,48,272,22,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,208,210,19,4,0,0,22,0,0,0,-1--1--1,,1|(395,22)|
-1,209,210,207,100,0,0,22,0,0,0,-1--1--1,,1|(315,22)|
-11,210,0,355,22,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,211,Change in Effective Investment in Oil Production,355,54,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,212,19,211,1,0,0,0,0,64,0,-1--1--1,,1|(447,74)|
-10,213,Oil Productivity of Investment,728,-54,47,27,3,131,0,0,0,0,0,0,0,0,0,0,0,0
-12,214,48,902,-53,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,215,217,213,4,0,0,22,0,0,0,-1--1--1,,1|(804,-53)|
-1,216,217,214,100,0,0,22,0,0,0,-1--1--1,,1|(868,-53)|
-11,217,0,839,-53,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
-10,218,Change in Oil Productivity of Investment,839,-21,52,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,195,48,1210,411,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,196,198,96,4,0,0,22,0,0,0,-1--1--1,,1|(1093,411)|
+1,197,198,195,100,0,0,22,0,0,0,-1--1--1,,1|(1172,411)|
+11,198,0,1139,411,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,199,Change in Average Oil Production,1139,435,71,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,200,96,199,1,0,0,0,0,64,0,-1--1--1,,1|(1072,460)|
+12,201,48,1043,861,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,202,203,201,100,0,0,22,0,0,0,-1--1--1,,1|(1002,861)|
+11,203,0,966,861,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,204,Change in Effective Investment in Oil Exploration,966,893,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,205,44,203,1,0,0,0,0,64,0,-1--1--1,,1|(867,818)|
+1,206,203,44,4,0,0,22,0,0,0,-1--1--1,,1|(920,861)|
+12,207,48,1273,209,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,208,210,19,4,0,0,22,0,0,0,-1--1--1,,1|(1396,209)|
+1,209,210,207,100,0,0,22,0,0,0,-1--1--1,,1|(1316,209)|
+11,210,0,1356,209,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,211,Change in Effective Investment in Oil Production,1356,241,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,212,19,211,1,0,0,0,0,64,0,-1--1--1,,1|(1448,261)|
+10,213,Oil Productivity of Investment,1729,133,47,27,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,214,48,1903,134,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,215,217,213,4,0,0,22,0,0,0,-1--1--1,,1|(1805,134)|
+1,216,217,214,100,0,0,22,0,0,0,-1--1--1,,1|(1869,134)|
+11,217,0,1840,134,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,218,Change in Oil Productivity of Investment,1840,166,52,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
 1,219,109,217,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,220,108,217,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-1,221,213,218,1,0,0,0,0,64,0,-1--1--1,,1|(741,-14)|
+1,221,213,218,1,0,0,0,0,64,0,-1--1--1,,1|(1742,173)|
 1,222,213,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,223,toe per Mtoe,-280,687,46,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,223,toe per Mtoe,721,874,46,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,224,223,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,225,223,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,226,toe per Mtoe,542,-167,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,226,toe per Mtoe,1543,20,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,227,226,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,228,226,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,229,226,110,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,230,Max Unit Cost of Oil Exploration,185,759,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,230,Max Unit Cost of Oil Exploration,1186,946,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,231,230,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,232,Effectiveness of Investment in Oil Recovery Technology,1449,668,78,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,233,Effectiveness of Investment in Oil Discovery Technology,1456,915,80,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,234,Oil Production Indicator,489,507,52,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,235,Mtoe into EJ,489,565,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,232,Effectiveness of Investment in Oil Recovery Technology,2450,855,78,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,233,Effectiveness of Investment in Oil Discovery Technology,2457,1102,80,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,234,Oil Production Indicator,1490,694,52,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,235,Mtoe into EJ,1490,752,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
 1,236,6,234,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,237,235,234,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,238,Investment in Oil Exploration and Production Delay Variation,-247,892,98,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,238,Investment in Oil Exploration and Production Delay Variation,754,1079,98,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,239,238,45,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,240,Investment in Oil Exploration and Production Delay Variation,536,-56,98,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,240,Investment in Oil Exploration and Production Delay Variation,1537,131,98,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
 1,241,240,22,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,242,Max Unit Cost of Fossil Fuel Exploration Variation,329,733,83,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+10,242,Max Unit Cost of Fossil Fuel Exploration Variation,1330,920,83,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
 1,243,242,230,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,244,Relative Productivity of Investment in Oil Production Compared to Exploration Variation,744,-275,90,36,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,244,Relative Productivity of Investment in Oil Production Compared to Exploration Variation,1745,-88,90,36,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,245,244,137,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,246,Oil Discovery and Recovery Technology Development Time Variation,1728,765,104,27,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,246,Oil Discovery and Recovery Technology Development Time Variation,2729,952,104,27,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,247,246,80,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,248,246,68,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,249,Sensitivity of Oil Price to Supply and Demand Variation,1646,-55,88,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,249,Sensitivity of Oil Price to Supply and Demand Variation,2647,132,88,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,250,249,142,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,251,Relative Productivity of Investment in Oil Exploration Variation,86,1033,83,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,251,Relative Productivity of Investment in Oil Exploration Variation,1087,1220,83,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,252,251,102,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,253,Fraction of Oil Revenues Invested in Technology Variation,2015,844,90,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,253,Fraction of Oil Revenues Invested in Technology Variation,3016,1031,90,27,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
 1,254,253,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,255,Effectiveness of Investment in Oil Recovery Technology Variation,1211,701,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,256,Effectiveness of Investment in Oil Discovery Technology Variation,1216,947,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,255,Effectiveness of Investment in Oil Recovery Technology Variation,2212,888,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,256,Effectiveness of Investment in Oil Discovery Technology Variation,2217,1134,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,257,255,232,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,258,256,233,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,259,INIT Average Oil Production,-150,205,59,18,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,259,INIT Average Oil Production,851,392,59,18,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
 1,260,259,96,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,261,INIT EIOE,-153,588,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,261,INIT EIOE,848,775,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
 1,262,261,44,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,263,INIT EIOP,463,98,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,263,INIT EIOP,1464,285,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
 1,264,263,19,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,265,INIT OPI,737,25,30,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,265,INIT OPI,1738,212,30,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
 1,266,265,213,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
-10,267,Annual Change in Oil Reserves Variation,-511,637,77,18,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,268,SSP Energy Technology Variation Time,234,-239,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,267,Annual Change in Oil Reserves Variation,490,824,77,18,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,268,SSP Energy Technology Variation Time,1235,-52,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,269,268,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,270,SSP Energy Technology Variation Time,-347,743,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,270,SSP Energy Technology Variation Time,654,930,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,271,270,45,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,272,SSP Energy Technology Variation Time,1603,971,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,272,SSP Energy Technology Variation Time,2604,1158,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,273,272,68,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,274,SSP Energy Technology Variation Time,1570,734,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,274,SSP Energy Technology Variation Time,2571,921,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,275,274,80,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,276,SSP Energy Technology Variation Time,2114,803,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,276,SSP Energy Technology Variation Time,3115,990,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,277,276,95,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,278,SSP Energy Technology Variation Time,917,-279,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,278,SSP Energy Technology Variation Time,1918,-92,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,279,278,137,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,280,SSP Energy Demand Variation Time,1526,81,67,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,280,SSP Energy Demand Variation Time,2527,268,67,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,281,280,142,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,282,SSP Energy Production Variation Time,290,797,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,282,SSP Energy Production Variation Time,1291,984,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,283,282,230,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,284,SSP Energy Technology Variation Time,1370,726,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,284,SSP Energy Technology Variation Time,2371,913,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,285,284,232,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,286,SO Var S,1760,-11,35,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,287,SO S,1808,-60,20,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,288,E Var T,1538,-8,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,286,SO Var S,2761,176,35,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,287,SO S,2809,127,20,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,288,E Var T,2539,179,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,289,287,286,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,290,286,142,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,291,288,142,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,292,E Var T,599,-199,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,292,E Var T,1600,-12,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,293,292,137,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,294,RPOPE Var S,622,-231,46,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,295,RPOPE S,571,-282,32,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,294,RPOPE Var S,1623,-44,46,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,295,RPOPE S,1572,-95,32,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,296,295,294,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,297,294,137,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,298,E Var T,1467,741,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,298,E Var T,2468,928,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,299,298,232,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,300,EIOR Var S,1277,653,43,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,301,EIOR S,1178,634,28,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,300,EIOR Var S,2278,840,43,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,301,EIOR S,2179,821,28,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,302,301,300,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,303,300,232,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,304,ODR Var S,1856,769,41,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,305,ODR S,1936,769,26,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,304,ODR Var S,2857,956,41,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,305,ODR S,2937,956,26,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,306,305,304,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,307,304,68,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,308,304,80,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,309,E Var T,1628,773,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,309,E Var T,2629,960,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,310,309,80,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,311,309,68,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,312,E Var T,2219,682,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,313,FO Var S,2089,670,35,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,314,FO S,2116,630,21,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,312,E Var T,3220,869,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,313,FO Var S,3090,857,35,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,314,FO S,3117,817,21,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,315,314,313,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,316,313,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,317,312,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,318,E Var T,-198,730,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,319,IO S,-296,835,16,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
-10,320,IO Var S,-235,823,31,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,318,E Var T,803,917,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,319,IO S,705,1022,16,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,320,IO Var S,766,1010,31,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
 1,321,319,320,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,322,320,45,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,323,318,45,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,324,E Var T,400,-16,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,324,E Var T,1401,171,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,325,324,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,326,320,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,327,E Var T,86,798,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,327,E Var T,1087,985,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,328,327,230,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
-10,329,MFC Var S,145,821,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-12,330,48,-420,500,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
-1,331,333,27,4,0,0,22,0,0,0,-1--1--1,,1|(-420,397)|
-1,332,333,330,100,0,0,22,0,0,0,-1--1--1,,1|(-420,464)|
-11,333,0,-420,431,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
-10,334,Rate of New Discovery Oil,-368,431,49,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,335,URO S,-604,553,27,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
-10,336,URO Var S,-516,577,41,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
-10,337,Annual Change in Oil Reserves,-325,516,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,329,MFC Var S,1146,1008,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,330,48,581,687,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,331,333,27,4,0,0,22,0,0,0,-1--1--1,,1|(581,584)|
+1,332,333,330,100,0,0,22,0,0,0,-1--1--1,,1|(581,651)|
+11,333,0,581,618,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,334,Rate of New Discovery Oil,633,618,49,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,335,URO S,397,740,27,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,336,URO Var S,485,764,41,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,337,Annual Change in Oil Reserves,676,703,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
 1,338,335,336,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,339,337,334,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,340,E Var T,-278,399,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,341,SSP Energy Production Variation Time,-165,438,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,342,Mtoe per Barrel,-574,396,38,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,340,E Var T,723,586,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,341,SSP Energy Production Variation Time,836,625,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,342,Mtoe per Barrel,427,583,38,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,343,342,334,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,344,32,27,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
 1,345,336,337,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,346,267,337,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,347,341,337,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,348,340,337,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
-10,349,Carbon Price,393,-385,58,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,350,CO2 Intensity of Fuels,333,-333,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,351,Climate Policy Scenario,527,-335,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,349,Carbon Price,1394,-198,58,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,350,CO2 Intensity of Fuels,1334,-146,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,351,Climate Policy Scenario,1528,-148,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,352,351,110,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,353,350,110,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
 1,354,52,49,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,355,Energy Demand Data,-110,41,42,20,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,355,Energy Demand Data,891,228,42,20,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
 1,356,355,149,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,357,Market Share Oil Data,-90,-60,40,17,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,357,Market Share Oil Data,911,127,40,17,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
 1,358,357,149,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,359,Market Share Oil,158,124,55,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,360,Time,-217,-15,28,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,359,Market Share Oil,1159,311,55,18,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,360,Time,784,172,28,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,361,360,355,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,362,360,357,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,363,Carbon Price Global Data,419,-344,46,19,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,363,Carbon Price Global Data,1426,-139,46,19,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
 1,364,363,110,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,365,Time,505,-386,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,365,Time,1506,-199,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,366,365,363,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
 1,367,329,230,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-12,368,0,-614,55,30,30,8,0,0,0,-1,0,0,0,0,0,0,0,0,0
-10,369,Total Investment in Oil,1710,326,59,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
-10,370,Investment in Oil Exploration,1917,269,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,371,Investment in Oil Production,1919,336,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
-10,372,Investment in Oil Technology,1922,396,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,368,0,387,242,30,30,8,0,0,0,-1,0,0,0,0,0,0,0,0,0
+10,369,Total Investment in Oil,2711,513,59,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,370,Investment in Oil Exploration,2918,456,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,371,Investment in Oil Production,2920,523,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,372,Investment in Oil Technology,2923,583,64,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
 1,373,372,369,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,374,371,369,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,375,370,369,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-10,376,Share of Upstream Investment in Total Investment Oil,1610,402,69,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,376,Share of Upstream Investment in Total Investment Oil,2611,589,69,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
 1,377,376,369,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,378,287,138,1,0,0,0,0,192,0,-1--1--1,,1|(1747,45)|
-10,379,SO Init,1667,186,25,13,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,378,287,138,1,0,0,0,0,192,0,-1--1--1,,1|(2748,232)|
+10,379,SO Init,2668,373,25,13,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
 1,380,379,138,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
-1,381,256,65,1,0,0,0,0,192,0,-1--1--1,,1|(1534,914)|
+1,381,256,65,1,0,0,0,0,192,0,-1--1--1,,1|(2535,1101)|
 1,382,102,100,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,383,45,204,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,384,22,211,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
@@ -8230,6 +9119,395 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,74,0
 1,387,95,85,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,388,80,77,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 1,389,68,65,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Energy_Gas
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,78,0
+10,1,Identified Gas Resources,128,301,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,2,Cumulative Gas Production,590,301,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,3,5,2,4,0,0,22,0,0,0,-1--1--1,,1|(453,299)|
+1,4,5,1,100,0,0,22,0,0,0,-1--1--1,,1|(273,299)|
+11,5,0,367,299,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,6,Gas Production,367,316,56,10,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,7,Potential Gas Production,588,52,50,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,8,Cumulative Additions to Gas Production,834,680,78,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,9,Gas Production Rate,366,140,57,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,10,7,9,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,11,9,5,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,12,Potential Gas Production from Resources,834,269,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,13,Normal Gas Production Ratio,611,396,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,14,13,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,15,12,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,16,Potential Gas Production from Investment,588,-10,58,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,17,16,7,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,18,Productivity of Investment in Gas Production,389,-161,65,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,19,Effective Investment in Gas Production,396,-11,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,20,18,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,21,19,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,22,Investment in Gas Production Delay,282,-112,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,23,Desired Investment in Gas Production,119,-160,72,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,24,18,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,25,12,23,1,0,0,0,0,64,0,-1--1--1,,1|(469,-307)|
+10,26,Gas Shortage,250,172,51,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,27,Undiscovered Gas Resources,-415,300,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,28,30,1,4,0,0,22,0,0,0,-1--1--1,,1|(-15,299)|
+1,29,30,27,100,0,0,22,0,0,0,-1--1--1,,1|(-236,299)|
+11,30,0,-108,299,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,31,Gas Exploration,-108,316,58,10,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,32,INIT UGRN,-403,235,40,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,33,Total Gas Resources,834,840,40,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,Total Gas Recoverable Resource Remaining,834,513,77,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,35,8,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,36,34,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,37,8,33,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,38,Undiscovered Gas Resources,611,840,62,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,39,38,33,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,40,Total Gas Discoverable Resources,994,764,49,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,41,33,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,42,8,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,43,Effect of Technology on Gas Discoveries,246,956,74,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,44,Effective Investment in Gas Exploration,-200,657,57,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,45,Investment in Gas Exploration Delay,-181,570,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,46,Potential Gas Exploration,-331,573,50,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,47,44,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,48,43,100,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,49,Investment in Gas Exploration,-30,571,65,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,50,49,213,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,51,46,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,52,Desired Investment in Gas Exploration,129,657,74,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,53,Gas Fraction Discoverable,1179,764,56,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,54,Gas Fraction Recoverable,1158,513,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,55,MINGFD,1263,828,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,56,MAXGFD,1263,696,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,57,Ratio of Gas Fraction Discoverable to Undiscoverable,1364,764,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,58,55,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,59,56,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,60,57,53,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,61,48,1601,763,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,62,64,57,4,0,0,22,0,0,0,-1--1--1,,1|(1465,763)|
+1,63,64,61,100,0,0,22,0,0,0,-1--1--1,,1|(1556,763)|
+11,64,0,1515,763,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,65,Increase in Ratio of Gas Fraction Discoverable to Undiscoverable,1515,795,90,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,66,INIT RGDU,1364,817,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,67,Investment in Gas Discovery Technology,1715,794,80,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,68,Gas Discovery Technology Development Time,1613,880,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,69,67,65,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,70,MINGFR,1263,570,39,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,71,MAXGFR,1263,442,43,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,72,Ratio of Gas Fraction Recoverable to Unrecoverable,1356,512,58,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,73,48,1593,508,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,74,76,72,4,0,0,22,0,0,0,-1--1--1,,1|(1457,508)|
+1,75,76,73,100,0,0,22,0,0,0,-1--1--1,,1|(1548,508)|
+11,76,0,1507,508,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,77,Increase in Ratio of Gas Fraction Recoverable to Unrecoverable,1507,540,87,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,78,INIT RGRU,1356,562,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,79,Investment in Gas Recovery Technology,1706,539,78,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,80,Gas Recovery Technology Development Time,1591,634,69,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,81,79,77,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,82,70,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,83,71,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,84,72,54,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,85,Investment in Gas Technology,1984,670,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,86,Fraction Invested in Gas Discovery Technology,2021,882,71,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,87,85,67,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,88,86,67,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,89,85,79,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,90,86,79,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,91,53,86,1,0,0,0,0,64,0,-1--1--1,,1|(1539,1025)|
+10,92,Table for FIGDT,2025,1002,58,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,93,92,86,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,94,Gas Revenue,1370,196,56,10,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,95,Fraction of Gas Revenues Invested in Technology,2054,745,77,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,96,Average Gas Production,26,200,48,26,3,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,97,Gas Price,1369,93,37,10,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,98,97,94,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,99,INIT CGPN,591,229,40,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,100,Productivity of Investment in Gas Exploration,-315,941,65,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,101,100,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,102,Relative Productivity of Investment in Gas Exploration,-137,1015,83,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,103,Gas Production Coverage,-126,250,57,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,104,5,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,105,1,103,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,106,Unit Cost of Gas Exploration,-17,787,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,107,100,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,108,Productivity of Investment in Gas Exploration,818,-219,65,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,109,Gas Production Coverage,862,-145,62,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,110,108,221,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,111,109,221,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,112,Unit Cost of Gas Production,390,-243,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,113,18,112,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,114,Gas Exploration Rate,-108,467,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,115,114,31,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,116,Required Identified Gas Resources,225,396,69,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,117,1,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,118,13,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,119,Adjustment for Identified Gas Resource,128,465,53,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,120,Identified Gas Resources Adjustment Time,39,385,61,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,121,1,119,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,122,116,119,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,123,120,119,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,124,Desired Gas Exploration Rate,128,570,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,125,124,114,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,126,119,124,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,127,6,124,1,0,0,0,0,64,0,-1--1--1,,1|(344,494)|
+1,128,124,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,129,106,52,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,130,Gas Cost,1369,-72,35,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,131,Unit Cost of Gas Exploration,1284,-158,65,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,132,Unit Cost of Gas Production,1459,-158,65,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,133,131,130,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,134,132,130,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,135,Indicated Gas Price,1284,6,51,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,136,130,135,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,137,Desired Gas Gross Margin,1201,-72,50,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,138,137,135,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,139,Relative Productivity of Investment in Gas Production to Exploration,642,-162,92,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,140,Effect of Gas Demand and Supply on Price,1646,91,74,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,141,135,97,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,142,140,97,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,143,Potential Gas Production,1814,126,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,144,Sensitivity of Gas Price to Supply and Demand,1646,4,71,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,145,143,140,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,146,Gas Demand to Supply Ratio,1971,90,58,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,147,143,146,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,148,Gas Gross Margin,1460,6,40,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,149,97,148,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,150,130,148,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,151,Total Gas Demand,119,52,36,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,152,151,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,153,151,9,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,154,151,26,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,155,Total Gas Demand,1814,55,41,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,156,155,140,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,157,155,146,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,158,52,49,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,159,Total Gas Demand,288,341,41,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,160,159,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,161,Gas Revenue,2033,594,44,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,162,161,85,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,163,Time to Average Gas Production,68,144,61,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,164,163,207,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,165,Identified Gas Resources,611,680,56,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,166,Cumulative Gas Production,611,513,63,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,167,165,8,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,168,166,8,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,169,166,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,170,Total Gas Discoverable Resources,423,826,49,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,171,170,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,172,Total Gas Recoverable Resource Remaining,274,462,84,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,173,172,116,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,174,53,40,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,175,54,34,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,176,Investment in Gas Production,198,-70,65,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,177,23,176,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,178,176,201,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,179,Average Gas Production,1548,195,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,180,179,94,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,181,5,208,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,182,96,103,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,183,INIT UGRN,424,912,49,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+1,184,183,43,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,185,Market Share Gas,-132,-160,55,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,186,Energy Demand,-137,67,37,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,187,54,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,188,2,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,189,13,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,190,99,2,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,191,66,57,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,192,78,72,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+1,193,151,1,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,194,Gas Price per MBtu,1149,94,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,195,Mtoe per Btu,1051,5,47,10,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,196,195,194,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,197,97,194,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,198,48,196,-20,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,199,201,19,4,0,0,22,0,0,0,-1--1--1,,1|(308,-20)|
+1,200,201,198,100,0,0,22,0,0,0,-1--1--1,,1|(235,-20)|
+11,201,0,271,-20,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,202,Change in Effective Investment in Gas Production,271,12,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,203,19,202,1,0,0,0,0,64,0,-1--1--1,,1|(333,48)|
+12,204,48,228,199,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,205,207,96,4,0,0,22,0,0,0,-1--1--1,,1|(111,199)|
+1,206,207,204,100,0,0,22,0,0,0,-1--1--1,,1|(189,199)|
+11,207,0,154,199,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,208,Change in Average Gas Production,154,223,71,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,209,96,208,1,0,0,0,0,64,0,-1--1--1,,1|(76,239)|
+12,210,48,22,653,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,211,213,44,4,0,0,22,0,0,0,-1--1--1,,1|(-101,653)|
+1,212,213,210,100,0,0,22,0,0,0,-1--1--1,,1|(-17,653)|
+11,213,0,-53,653,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,214,Change in Effective Investment in Gas Exploration,-53,685,71,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,215,44,214,1,0,0,0,0,64,0,-1--1--1,,1|(-140,703)|
+10,216,Gas Productivity of Investment,695,-80,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,217,216,18,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,218,48,864,-91,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,219,221,216,4,0,0,22,0,0,0,-1--1--1,,1|(761,-91)|
+1,220,221,218,100,0,0,22,0,0,0,-1--1--1,,1|(827,-91)|
+11,221,0,794,-91,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,222,Change in Gas Productivity of Investment,794,-59,55,27,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,223,216,222,1,0,0,0,0,64,0,-1--1--1,,1|(720,-41)|
+10,224,toe per Mtoe,-237,791,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,225,224,46,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,226,224,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,227,toe per Mtoe,513,-203,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,228,227,112,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,229,227,23,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,230,227,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,231,Max Unit Cost of Gas Exploration,161,757,60,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,232,231,106,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,233,Effectiveness of Investment in Gas Recovery Technology,1406,635,78,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,234,Effectiveness of Investment in Gas Discovery Technology,1417,884,80,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,235,Gas Production Indicator,444,476,57,18,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,236,Mtoe into EJ,422,554,55,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,237,6,235,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,238,236,235,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,239,Max Unit Cost of Fossil Fuel Exploration Variation,306,715,83,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,240,239,231,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,241,Relative Productivity of Investment in Gas Exploration Variation,48,1014,83,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,242,Effectiveness of Investment in Gas Recovery Technology Variation,1187,661,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,243,Effectiveness of Investment in Gas Discovery Technology Variation,1182,870,98,27,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,244,241,102,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,245,243,234,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,246,242,233,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,247,Fraction of Gas Revenues Invested in Technology Variation,2175,827,77,27,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,248,247,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,249,INIT Average Gas Production,-97,157,65,18,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,250,249,96,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,251,INIT EIGE,-211,725,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,252,251,44,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,253,INIT EIGP,417,67,36,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,254,253,19,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,255,INIT GPI,692,-11,30,10,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,256,255,216,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,257,Annual Growth in Gas Reserves Variation,-499,582,79,18,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,258,SSP Energy Technology Variation Time,120,-264,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,259,258,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,260,SSP Energy Technology Variation Time,-91,527,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,261,260,45,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,262,SSP Energy Technology Variation Time,1545,956,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,263,262,68,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,264,SSP Energy Technology Variation Time,1567,700,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,265,264,80,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,266,SSP Energy Technology Variation Time,2251,675,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,267,266,95,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,268,SSP Energy Technology Variation Time,719,-220,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,269,268,139,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,270,SSP Energy Demand Variation Time,1845,-73,67,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,271,270,144,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,272,SSP Energy Production Variation Time,208,815,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,273,272,231,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,274,SSP Energy Technology Variation Time,1378,691,77,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,275,274,233,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,276,E Var T,622,-114,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,277,276,139,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,278,E Var T,1481,708,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,279,EIGR Var S,1218,615,43,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,280,EIGR S,1090,600,28,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,281,280,279,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,282,279,233,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,283,278,233,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,284,E Var T,1655,957,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,285,284,68,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,286,E Var T,1724,619,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,287,286,80,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,288,E Var T,2128,675,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,289,FG Var S,2245,747,35,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+10,290,FG S,2329,744,21,10,8,3,0,2,0,0,0,0,0-0-0,0-0-0,||B|255-0-255,0,0,0,0,0,0
+1,291,288,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,292,289,95,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,293,290,289,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,294,E Var T,-151,610,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,295,294,45,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,296,E Var T,313,-142,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,297,296,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,298,E Var T,128,791,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,299,298,231,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,300,MFC Var S,288,780,51,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,301,300,231,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,302,48,-422,486,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,303,305,27,4,0,0,22,0,0,0,-1--1--1,,1|(-422,367)|
+1,304,305,302,100,0,0,22,0,0,0,-1--1--1,,1|(-422,445)|
+11,305,0,-422,406,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,306,Rate of New Discovery Gas,-367,406,54,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,307,Initial World Stock of Gas Billion Cubic meter,-458,174,74,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,308,Mtoe per Billion Cubic meter,-567,253,57,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,309,307,32,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,310,308,32,1,0,0,0,0,128,0,-1--1--1,,1|(-500,219)|
+1,311,308,306,1,0,0,0,0,128,0,-1--1--1,,1|(-512,379)|
+10,312,Annual Growth in Gas Reserves,-325,476,61,18,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,313,257,312,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,314,URG S,-612,545,27,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,315,URG Var S,-510,513,41,10,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,316,E Var T,-271,420,38,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,317,SSP Energy Production Variation Time,-705,444,75,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,318,316,312,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,319,317,312,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,320,314,315,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,321,315,312,1,0,0,0,0,128,0,-1--1--1,,1|(-409,509)|
+1,322,32,27,0,0,0,0,0,64,1,-1--1--1,,1|(0,0)|
+10,323,Carbon Price,433,-460,58,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,324,CO2 Intensity of Fuels,286,-340,54,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,325,Climate Policy Scenario,496,-361,58,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,326,325,112,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,327,324,112,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,328,Energy Demand Data,-143,5,55,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,329,Market Share Gas Data,-131,-80,35,20,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+10,330,Time,-235,-63,29,10,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,331,330,329,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,332,329,151,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,333,328,151,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,334,IG Var S,-383,719,33,15,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,335,IG S,-450,760,20,13,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,336,335,334,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,337,334,45,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,338,334,22,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,339,RPGPE S,488,-284,32,12,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+10,340,RPGPE Var S,549,-230,43,16,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,341,340,139,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,342,339,340,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,343,Gas Discovery and Recovery Technology Development Time Variation,1664,728,75,14,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,344,343,80,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,345,343,68,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,346,GDR Var S,1757,671,42,22,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,347,346,68,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,348,346,80,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,349,GDR S,1823,720,27,10,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,350,349,346,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,351,Sensitivity of Gas Price to Supply and Demand Variation,1643,-94,69,29,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,352,351,144,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,353,Relative Productivity of Investment in Gas Production Compared to Exploration Variation,630,-302,87,38,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,354,353,139,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,355,Investment in Gas Exploration and Production Delay Variation,-499,687,63,38,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|||255-0-255,0,0,0,0,0,0
+1,356,355,45,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,357,Investment in Gas Exploration and Production Delay Variation,439,-77,66,27,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||255-128-192,0,0,0,0,0,0
+1,358,357,22,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,359,Carbon Price Global Data,385,-370,53,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,360,359,112,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,361,Total Investment in Gas,1554,323,59,18,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,362,Share of Upstream Investment in Total Investment Gas,1651,420,69,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,363,362,361,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,364,Investment in Gas Production,1829,237,60,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,365,Investment in Gas Exploration,1835,290,67,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,366,Investment in Gas Technology,1837,355,51,29,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,367,364,361,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,368,365,361,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,369,366,361,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,370,0,2198,-23,308,232,8,15,0,0,2,0,0,0,0,0,0,0,0,0
+Gas Production[WestEu],Graph
+12,371,0,2197,421,304,205,8,15,0,0,2,0,0,0,0,0,0,0,0,0
+Total Investment in Gas[WestEu],Graph
+10,372,SG Init,1682,165,30,11,3,3,0,7,-1,0,0,0,9-81-45,9-81-45,|||255-255-255,0,0,0,0,0,0
+1,373,312,306,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,374,102,100,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,375,45,214,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,376,22,202,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,377,139,18,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,378,144,140,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,379,233,77,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,380,80,77,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,381,234,65,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,382,68,65,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,383,95,85,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
 \\\---/// Sketch information - do not modify anything except names
 V300  Do not put anything below this section - it will be ignored
 *Biodiversity
@@ -8484,10 +9762,11 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,60,0
 :VAR Mean Years of Schooling YQL[Regions]
 :DATASET *2
 :L<%^E!@
+1:felix_reg_gas_v4.0.4_2024.vdfx
+1:felix_reg_v4.0.4_2024.vdfx
 1:Reg_Data.vdfx
-1:felix_reg_oil_inv_v3.0.4_2024.vdfx
 4:Time
-5:"$ into $thousand"
+5:Fraction of Gas Revenues Invested in Technology Variation[Regions]
 6:"15-19"
 6:"20-24"
 6:"25-29"
@@ -8496,14 +9775,14 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,60,0
 6:"40-44"
 6:"45-49"
 6:female
-6:LAC
 6:male
 6:noEd
 6:Oil
 6:skill
 6:unskill
-9:felix_reg_v3.0.4_2024
-19:74,2
+6:WestEu
+9:felix_reg_v4.0.4_2024
+19:78,3
 24:1900
 25:2100
 26:2100
