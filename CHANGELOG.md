@@ -1,8 +1,14 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 5.4.4
+- Based on version 5.3.4
+- Recalibrate parameters in coal module to match historic trends of coal production
+- Add import matrix of coal, and feed into export demand from the exporters, in this case, coal demand include both local demand and export demand 
+- 
+
 ## Version 5.3.4
 - Based on version 5.2.4
-- Recalibrate parameters in nature gas module to match historic trends of oil production
+- Recalibrate parameters in nature gas module to match historic trends of gas production
 - Add import matrix of gas, and feed into export demand from the exporters, in this case, gas demand include both local demand and export demand 
 - 
 

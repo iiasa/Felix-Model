@@ -15,6 +15,18 @@ data_input:
     dependency_module: energy
     dependency_file: 
       - 4_1_1_TOTAL_ELECTRICITY_OUTPUT_fact.json
+  - datasource: iea
+    root_path: data_regionalization_raw
+    variable: tfc_int_ind
+    download_via: manually
+    data_file: 
+    concordance: 
+    dependency: True
+    dependency_datasource: world_bank
+    dependency_module: gdp
+    dependency_file: 
+      - NV_IND_TOTL_KD_fact.json
+    dependency_concordance: iea_tfc_countries_to_world_bank_countries.csv
 data_output:
   root_path: data_regionalization_clean
 dimension:

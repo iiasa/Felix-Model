@@ -22,6 +22,32 @@ data_input:
       - NY_GDP_MKTP_PP_KD_fact.json
     concordance: world_bank_countries_to_5_un_regions.csv
   - datasource: world_bank
+    variable: gdp_ind_share
+    text: Share of industrial value added in gdp
+    unit: 
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NV_IND_TOTL_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
+  - datasource: world_bank
+    variable: gdp_ind_share_app2
+    text: Share of industrial value added in gdp by approach2
+    unit: 
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NV_IND_TOTL_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
+  - datasource: world_bank
     variable: gdp_per_capita_ppp
     text: GDP per capita, PPP (constant 2017 international $)
     root_path: data_regionalization_raw

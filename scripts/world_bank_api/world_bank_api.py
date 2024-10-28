@@ -234,8 +234,8 @@ def get_data_cube(
 
 # Get datacube for a specified dataset
 logging.info("Specify id for the dataset and output path")
-endpoint = "EG.ELC.LOSS.ZS"
-module = "energy"
+endpoint = "NV.IND.TOTL.KD"
+module = "gdp"
 version = "nov2023"
 path_data_output = path_raw_data_folder.parent.parent / f"version_{version}" / module
 

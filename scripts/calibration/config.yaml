@@ -133,6 +133,58 @@ data_input:
           EastEu: 4220.40456644884
           LAC: 5514.78354912169
           WestEu: 34356.4429130738
+  - variable: oil_demand_cap
+    text: Oil Demand per Capita
+    parameter:
+      - L0
+      - L
+      - k
+      - x0
+    ref:
+      Africa: 0.14320586
+      AsiaPacific: 0.32953746
+      EastEu: 0.61059506
+      LAC: 0.62041483
+      WestEu: 2.31809210
+      World: 0.58180131
+    dependency: True
+    dependency_variable: 
+      - dep_variable: gdp_per_cap
+        dep_text: GWP per Capita # exactly the name in the historic data file
+        dep_ref:
+          Africa: 1273.36
+          AsiaPacific: 2677.24
+          EastEu: 4220.4
+          LAC: 5514.78
+          WestEu: 34356.4
+          World: 6584.47
+  - variable: oil_demand_local
+    text: Oil Demand Local
+    parameter:
+      - L0
+      - L
+      - k
+      - x0
+    dependency: True
+    dependency_variable: 
+      - dep_variable: gdp_per_cap
+        dep_text: GWP per Capita # exactly the name in the historic data file
+        dep_ref:
+          Africa: 1273.36
+          AsiaPacific: 2677.24
+          EastEu: 4220.4
+          LAC: 5514.78
+          WestEu: 34356.4
+          World: 6584.47
+      - dep_variable: pop
+        dep_text: Population Data # exactly the name in the historic data file
+        dep_ref:
+          Africa: 1
+          AsiaPacific: 1
+          EastEu: 1
+          LAC: 1
+          WestEu: 1
+          World: 1
 data_output:
   root_path: data_regionalization_clean
 dimension:
