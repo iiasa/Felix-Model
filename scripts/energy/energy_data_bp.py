@@ -201,7 +201,7 @@ logging.info(f"Finish reading concordance table")
 
 
 logging.info("Pre-specify name of variable and data sources")
-variable = "coal consumption"
+variable = "geo biomass other"
 data_source = "bp"
 
 logging.info("Extract raw fact data")

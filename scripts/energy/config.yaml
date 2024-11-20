@@ -27,6 +27,36 @@ data_input:
     dependency_file: 
       - NV_IND_TOTL_KD_fact.json
     dependency_concordance: iea_tfc_countries_to_world_bank_countries.csv
+  - datasource: irena
+    root_path: data_regionalization_raw
+    variable: irena_data
+    download_via: manually
+    data_file:
+      - IRENA_Stats_extract_2024 H2.xlsx
+    concordance: irena_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: irena
+    root_path: data_regionalization_raw
+    variable: irena_invest
+    download_via: manually
+    data_file:
+      - IRENA_RE_Public_Investment_July2022.xlsx
+    concordance: irena_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: iea
+    root_path: data_regionalization_raw
+    variable: domestic_production
+    download_via: manually
+    data_file:
+    concordance: iea_countries_to_5_un_regions.csv
+    dependency: False
+  - datasource: iea
+    root_path: data_regionalization_raw
+    variable: energy_supply
+    download_via: manually
+    data_file:
+    concordance: iea_countries_to_5_un_regions.csv
+    dependency: False
 data_output:
   root_path: data_regionalization_clean
 dimension:

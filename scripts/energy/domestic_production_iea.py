@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created: Friday 08 November 2024
-Description: Scripts to aggregate energy supply data by source and region from IEA to FeliX regions
+Description: Scripts to aggregate domestic production data by source and region from IEA to FeliX regions
 Scope: FeliX model regionalization, module energy 
 Author: Quanliang Ye
 Institution: Radboud University
@@ -23,7 +23,7 @@ file_timestamp = timestamp.ctime()
 # predefine the data source of energy
 # data sources are wittgensteinwittgenstein, world_bank, unpd
 data_source = "iea"
-variable = "energy_supply"
+variable = "domestic_production"
 download_method = "manually"
 
 # read config.yaml file
@@ -100,7 +100,7 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_energy_sup = pd.DataFrame()
+raw_dom_prod = pd.DataFrame()
 if raw_data_info["datasource"] == "wittgenstein":
     logging.info("1 data source is wittgenstein")
 elif raw_data_info["datasource"] == "world_bank":
@@ -113,7 +113,7 @@ elif raw_data_info["datasource"] == "iea":
     for raw_data_file in path_raw_data_folder.glob("*"):
         location = str(raw_data_file).split("- ")[-1][:-4]
         logging.info(f"Read raw data of {location}")
-        raw_energy_sup_location = pd.read_csv(
+        raw_dom_prod_location = pd.read_csv(
             raw_data_file,
             skiprows=3,
             encoding="utf-8",
@@ -123,18 +123,18 @@ elif raw_data_info["datasource"] == "iea":
             }
         )
 
-        raw_energy_sup_location["country"] = location
+        raw_dom_prod_location["country"] = location
 
-        raw_energy_sup = pd.concat(
-            [raw_energy_sup, raw_energy_sup_location],
+        raw_dom_prod = pd.concat(
+            [raw_dom_prod, raw_dom_prod_location],
             ignore_index=True,
         )
-        del raw_energy_sup_location
+        del raw_dom_prod_location
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_energy_sup_dep = pd.DataFrame()
+    raw_dom_prod_dep = pd.DataFrame()
     if raw_data_info["datasource"] == "wittgenstein":
         logging.info("1 data source is wittgenstein")
     elif raw_data_info["datasource"] == "world_bank":
@@ -189,7 +189,6 @@ def data_cleaning(
     else:
         logging.warning(f"Download method is not manually")
         raise KeyError
-    raw_data_merge.to_csv("test_raw_data_merge.csv")
 
     raw_data_merge.columns = raw_data_merge.columns.str.lower()
     logging.info("Specify energy sources")
@@ -201,7 +200,7 @@ def data_cleaning(
     years = np.unique(raw_data_merge["year"])
 
     raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_energy_sup = []
+    cleaned_dom_prod = []
     for region in regions:
         for year in years:
             try:
@@ -218,12 +217,12 @@ def data_cleaning(
                     "value": raw_data_region[energy_source].sum(),
                 }
 
-                cleaned_energy_sup.append(entry)
+                cleaned_dom_prod.append(entry)
                 del entry, energy_source
             del raw_data_region
 
-    cleaned_energy_sup = pd.DataFrame(cleaned_energy_sup)
-    return cleaned_energy_sup
+    cleaned_dom_prod = pd.DataFrame(cleaned_dom_prod)
+    return cleaned_dom_prod
 
 
 # Define data restructuring function
@@ -235,11 +234,11 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1950,1951,1952,...
-        Total Energy Supply by source[Africa,energy source 1],x,x,x,...
-        Total Energy Supply by source[Africa,energy source 1],x,x,x,...
+        Domestic production by source[Africa,energy source 1],x,x,x,...
+        Domestic production by source[Africa,energy source 1],x,x,x,...
         ...
-        Total Energy Supply by source[WestEu,energy source n-1],x,x,x,...
-        Total Energy Supply by source[WestEu,energy source n],x,x,x,...
+        Domestic production by source[WestEu,energy source n-1],x,x,x,...
+        Domestic production by source[WestEu,energy source n],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -267,17 +266,17 @@ def data_restructure(
     for region in regions:
         for energy_source in energy_sources:
             entry = {
-                "parameter (unit: TJ)": f"Total Energy Supply by source",
+                "parameter (unit: TJ)": f"Domestic production by source",
                 "region": region,
                 "energy_source": energy_source,
             }
             for year in range(1900, 2101):
                 if year in years:
                     try:
-                        cleaned_energy_sup = clean_data_groups.get_group(
+                        cleaned_dom_prod = clean_data_groups.get_group(
                             (region, energy_source, year)
                         )
-                        entry[year] = cleaned_energy_sup["value"].values[0]
+                        entry[year] = cleaned_dom_prod["value"].values[0]
                     except KeyError:
                         entry[year] = np.nan
                 else:
@@ -294,15 +293,15 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_energy_sup = data_cleaning(raw_energy_sup, concordance_table)
+cleaned_dom_prod = data_cleaning(raw_dom_prod, concordance_table)
 logging.info("Finish data cleaning")
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_energy_sup = data_restructure(cleaned_energy_sup)
+restructured_dom_prod = data_restructure(cleaned_dom_prod)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_energy_sup.to_csv(
+restructured_dom_prod.to_csv(
     path_clean_data_folder.joinpath(
         f"{variable}_by_source_time_series_{data_source}.csv"
     ),

@@ -1,5 +1,16 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 7.0.4
+- Based on version 6.0.4
+- Add solar energy module 
+- solar energy prices per kWh are obtained from IRENA
+- 
+
+## Version 6.0.4
+- Based on version 5.4.4
+- Add biomass module 
+- Historic biomass energy production from IEA, using domestic production data
+
 ## Version 5.4.4
 - Based on version 5.3.4
 - Recalibrate parameters in coal module to match historic trends of coal production
