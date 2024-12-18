@@ -1,5 +1,30 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.0.4
+- Based on version 8.3.4
+- Add Market share module
+- 
+
+## Version 8.3.4
+- Based on version 8.2.4
+- Modify the fossil fuel energy modules, to make sure regional data follow the associated data in the global version
+- 
+
+## Version 8.2.4
+- Based on version 8.1.4
+- Correct net-import roles for regions, i.e., when one certain region is regarded as net importer, no export exists for this region; Roles of net import depend on their historic demand and production data.
+- adjust initial values of some stock variables
+
+## Version 8.1.4
+- Based on version 8.0.4
+- Update biomass production module according to global average prices of biomass energy
+
+## Version 8.0.4
+- Based on version 7.0.4
+- Add wind energy module 
+- solar energy prices per kWh are obtained from IRENA
+- 
+
 ## Version 7.0.4
 - Based on version 6.0.4
 - Add solar energy module 
