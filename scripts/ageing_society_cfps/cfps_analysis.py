@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created: Wednesday 08 January 2025
-Description: Scripts to analyze corelationships between consumption and household education and age
-Scope: Ageing society project, module cfps_data
+Description: Scripts to analyze corelationships between consumption and household education and age from CFPS data
+Scope: Ageing society project, module ageing_society
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -19,6 +19,15 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv("CURRENT_VERSION")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -34,9 +43,11 @@ logging.basicConfig(
     ],
 )
 
-# Configure paths
-root_path = Path("./cfps_data")
-path_data_clean = root_path / "cfps_clean"
+logging.info("Configure module")
+current_module = "ageing_society"
+
+logging.info("Configure paths")
+path_data_clean = data_home / "clean_data" / current_module / current_version
 
 # specify a survey year
 year = "2020"

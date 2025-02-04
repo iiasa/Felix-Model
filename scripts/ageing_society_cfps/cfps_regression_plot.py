@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created: Tuesday 14 January 2025
-Description: Scripts to make plots to show data
-Scope: Ageing society project, module cfps_data
+Description: Scripts to make plots to show CFPS data
+Scope: Ageing society project, module ageing_society
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl

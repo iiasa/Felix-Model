@@ -2,7 +2,7 @@
 """
 Created: Tuesday 03 December 2024
 Description: Scripts to fill missing data, matching personal education and age of CFPS data
-Scope: Ageing society project, module cfps_data
+Scope: Ageing society project, module ageing_society
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -16,6 +16,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv("CURRENT_VERSION")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -31,13 +40,20 @@ logging.basicConfig(
     ],
 )
 
-# Configure paths
-root_path = Path("./cfps_data")
-path_data_raw = root_path / "cfps_raw"
-path_data_clean = root_path / "cfps_clean"
+logging.info("Configure module")
+current_module = "ageing_society"
 
+logging.info("Configure paths")
+path_data_raw = data_home / "raw_data" / current_module / current_version
+path_data_clean = data_home / "clean_data" / current_module / current_version
+
+if not path_data_clean.exists():
+    path_data_clean.mkdir(parents=True, exist_ok=True)
+
+logging.info("Configure data years")
 years = ["2014", "2016", "2018", "2020"]
 
+logging.info("Read available data")
 raw_person = pd.DataFrame()
 for year in years:
     for file_path in (path_data_raw / f"cfps_{year}").glob("*"):
@@ -75,6 +91,7 @@ for year in years:
             ).rename(columns={"cfps_age": f"age_in_{year}"})
 
     # process missing age data
+    logging.info("Process missing age data")
     for year_ in years:
         if year_ != year:
             raw_person_[f"age_in_{year_}"] = (
@@ -87,7 +104,7 @@ for year in years:
 raw_person = raw_person.groupby("pid", as_index=False).max()
 del raw_adult, raw_child
 
-# process missing education data
+logging.info("Process missing education data")
 edu_columns = [f"cfps{year}edu" for year in years]
 # Step 1, replace all incorrectly reported data with NaN, incorrectly reported data including:
 # -9: Missing Data; -1: I Don't Know; 9: No Need for Education
@@ -683,10 +700,12 @@ for count_num in range(5):
     raw_person_edu = raw_person_groups.get_group(count_num).reset_index(drop=True)
 
     if count_num == 0:
+        logging.info("No education data available in all years")
         # no education data avaliable in all four years,
         # put a 0 value
         raw_person_edu.loc[:, edu_columns] = 0
     elif count_num == 1:
+        logging.info("Only one year with education data")
         # only one year with education data
         raw_person_edu["edu_avai"] = raw_person_edu[edu_columns].apply(
             lambda row: pd.to_numeric(row, errors="coerce").max(), axis=1
@@ -694,8 +713,10 @@ for count_num in range(5):
 
         raw_person_edu = filling_edu_base_one(raw_person_education=raw_person_edu)
     elif count_num == 2:
+        logging.info("Two year data available")
         raw_person_edu = filling_edu_base_two(raw_person_education=raw_person_edu)
     elif count_num == 3:
+        logging.info("Three year data available")
         raw_person_edu = filling_edu_base_three(raw_person_education=raw_person_edu)
 
     raw_person_edu_adj = pd.concat(
@@ -705,5 +726,5 @@ for count_num in range(5):
 
 # save filled data
 logging.info("Save filled data")
-file_name = "person_info_full_cfps.csv"
+file_name = "cfps_person_info_full.csv"
 raw_person_edu_adj.to_csv(path_data_clean / file_name, index=False)

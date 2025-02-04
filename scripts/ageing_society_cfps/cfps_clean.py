@@ -2,7 +2,7 @@
 """
 Created: Tuesday 03 December 2024
 Description: Scripts to match personal education and age of CFPS data
-Scope: Ageing society project, module cfps_data
+Scope: Ageing society project, module ageing_society
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -16,6 +16,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv("CURRENT_VERSION")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -31,14 +40,21 @@ logging.basicConfig(
     ],
 )
 
-# Configure paths
-root_path = Path("./cfps_data")
-path_data_raw = root_path / "cfps_raw"
-path_data_clean = root_path / "cfps_clean"
+logging.info("Configure module")
+current_module = "ageing_society"
 
+logging.info("Configure paths")
+path_data_raw = data_home / "raw_data" / current_module / current_version
+path_data_clean = data_home / "clean_data" / current_module / current_version
+
+if not path_data_clean.exists():
+    path_data_clean.mkdir(parents=True, exist_ok=True)
+
+logging.info("Specify file name of input data")
 file_name_cleaned_person = "person_info_full_cfps.csv"
 cleaned_person = pd.read_csv(path_data_clean / file_name_cleaned_person)
 
+logging.info("Configure data years")
 years = ["2014", "2016", "2018", "2020"]
 
 for year in years:

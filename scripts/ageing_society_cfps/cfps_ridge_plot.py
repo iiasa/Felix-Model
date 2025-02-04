@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created: Friday 10 January 2025
-Description: Scripts to make plots to show data
-Scope: Ageing society project, module cfps_data
+Description: Scripts to make plots to show CFPS data
+Scope: Ageing society project, module ageing_society
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -22,8 +22,17 @@ from sklearn.pipeline import make_pipeline
 import matplotlib.patches as patches
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 from cmcrameri import cm
+
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv("CURRENT_VERSION")
 
 
 timestamp = datetime.datetime.now()
@@ -40,9 +49,11 @@ logging.basicConfig(
     ],
 )
 
-# Configure paths
-root_path = Path("./cfps_data")
-path_data_clean = root_path / "cfps_clean"
+logging.info("Configure module")
+current_module = "ageing_society"
+
+logging.info("Configure paths")
+path_data_clean = data_home / "clean_data" / current_module / current_version
 
 # specify a survey year
 year = "2020"
@@ -114,21 +125,6 @@ bandwidth = 1
 
 fig, axs = plt.subplots(nrows=num_cohorts, ncols=1, figsize=(8, 8))
 axs = axs.flatten()  # needed to access each individual axis
-
-# logging.info("Add backgrounf lines")
-
-
-# def add_line(xpos, ypos, fig=fig):
-#     line = Line2D(xpos, ypos, color="lightgrey", lw=0.5, transform=fig.transFigure)
-#     fig.lines.append(line)
-
-
-# add_line([4.95 / 12.9, 4.95 / 12.9], [0.11, 0.88])
-# add_line([6.61 / 12.9, 6.61 / 12.9], [0.11, 0.88])
-# add_line([8.28 / 12.9, 8.28 / 12.9], [0.11, 0.88])
-# add_line([9.95 / 12.9, 9.95 / 12.9], [0.11, 0.88])
-# add_line([11.58 / 12.9, 11.58 / 12.9], [0.11, 0.88])
-
 
 for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     # subset the data for each word
@@ -312,94 +308,3 @@ add_arrow((legend_subset_mean - 0.4, 0), (legend_subset_mean - 1, -0.11), subax)
 
 plt.savefig("figure_household_size.png", dpi=300, bbox_inches="tight")
 plt.show()
-
-
-# sns.set_theme(style="white", rc={"axes.facecolor": (0, 0, 0, 0)})
-
-# # Create the data
-# rs = np.random.RandomState(1979)
-# x = rs.randn(500)
-# g = np.tile(list("ABCDEFGHIJ"), 50)
-# df = pd.DataFrame(dict(x=x, g=g))
-# m = df.g.map(ord)
-# df["x"] += m
-
-# fam_consum_age_cohorts = pd.DataFrame()
-# for pos, age_cohort in enumerate(age_cohorts):
-#     try:
-#         age_start = int(age_cohort.split("-")[0])
-#     except ValueError:
-#         age_start = int(age_cohort.split("+")[0])
-#     try:
-#         age_end = int(age_cohort.split("-")[-1])
-#     except ValueError:
-#         age_end = 150
-
-#     # subset the data for each word
-#     subset_fam_consum = fam_consum[
-#         (fam_consum["average_age"] >= age_start)
-#         & (fam_consum["average_age"] < age_end + 1)
-#     ].reset_index(drop=True)
-#     subset_fam_consum["age_cohort"] = age_cohort
-#     fam_consum_age_cohorts = pd.concat(
-#         [fam_consum_age_cohorts, subset_fam_consum],
-#         ignore_index=True,
-#     )
-#     del age_cohort, pos
-
-# num_cohorts = len(np.unique(fam_consum_age_cohorts["age_cohort"]))
-
-
-# # Initialize the FacetGrid object
-# pal = sns.cubehelix_palette(n_colors=num_cohorts, rot=-0.25, light=0.7)
-# g = sns.FacetGrid(
-#     fam_consum_age_cohorts[["household_size", "age_cohort"]],
-#     row="age_cohort",
-#     hue="age_cohort",
-#     aspect=15,
-#     height=0.5,
-#     palette=pal,
-# )
-
-# # Draw the densities in a few steps
-# g.map(
-#     sns.kdeplot,
-#     "household_size",
-#     bw_adjust=0.5,
-#     clip_on=False,
-#     fill=True,
-#     alpha=1,
-#     linewidth=1.5,
-# )
-# g.map(sns.kdeplot, "household_size", clip_on=False, color="w", lw=2, bw_adjust=0.5)
-
-# # passing color=None to refline() uses the hue mapping
-# g.refline(y=0, linewidth=2, linestyle="-", color=None, clip_on=False)
-
-
-# # Define and use a simple function to label the plot in axes coordinates
-# def label(x, color, label):
-#     ax = plt.gca()
-#     ax.text(
-#         0,
-#         0.2,
-#         label,
-#         fontweight="bold",
-#         color=color,
-#         ha="left",
-#         va="center",
-#         transform=ax.transAxes,
-#     )
-
-
-# g.map(label, "household_size")
-
-# # Set the subplots to overlap
-# g.figure.subplots_adjust(hspace=-0.25)
-
-# # Remove axes details that don't play well with overlap
-# g.set_titles("")
-# g.set(yticks=[], ylabel="")
-# g.despine(bottom=True, left=True)
-
-# plt.show()
