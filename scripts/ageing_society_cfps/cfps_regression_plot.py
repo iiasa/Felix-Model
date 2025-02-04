@@ -15,101 +15,60 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-# Sample data
-data = {
-    "household_id": range(1, 21),
-    "average_age": [
-        21,
-        22,
-        24,
-        25,
-        27,
-        30,
-        32,
-        37,
-        39,
-        42,
-        43,
-        46,
-        48,
-        50,
-        53,
-        56,
-        59,
-        62,
-        64,
-        67,
-    ],
-    "household_size": [2, 3, 4, 2, 3, 5, 4, 6, 5, 3, 4, 5, 6, 3, 2, 4, 5, 4, 3, 2],
-    "total_consum": [
-        2323,
-        2324,
-        2463,
-        4324,
-        3425,
-        4324,
-        6352,
-        9283,
-        10233,
-        13445,
-        14523,
-        13243,
-        12002,
-        10233,
-        9839,
-        9723,
-        8793,
-        7643,
-        7233,
-        6523,
-    ],
-    "food_consum": [
-        1300,
-        1400,
-        1500,
-        2000,
-        2100,
-        2200,
-        2500,
-        3000,
-        3500,
-        4000,
-        4500,
-        4200,
-        4000,
-        3800,
-        3700,
-        3600,
-        3400,
-        3200,
-        3100,
-        3000,
-    ],
-    "energy_consum": [
-        1023,
-        924,
-        963,
-        2324,
-        1325,
-        2124,
-        3852,
-        6283,
-        6733,
-        9445,
-        10023,
-        9043,
-        8002,
-        6433,
-        6139,
-        6123,
-        5393,
-        4443,
-        4133,
-        3523,
-    ],
-}
-df = pd.DataFrame(data)
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv("CURRENT_VERSION")
+
+
+timestamp = datetime.datetime.now()
+file_timestamp = timestamp.ctime()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the logging level
+    format="%(asctime)s - %(levelname)s - %(message)s",  # Specify the log message format
+    datefmt="%Y-%m-%d %H:%M:%S",  # Specify the date format
+    handlers=[
+        logging.StreamHandler(),  # Log to console
+        logging.FileHandler("app.log"),  # Log to a file
+    ],
+)
+
+logging.info("Configure module")
+current_module = "ageing_society"
+
+logging.info("Configure paths")
+path_data_clean = data_home / "clean_data" / current_module / current_version
+
+# specify a survey year
+year = "2020"
+
+logging.info(f"Load cleaned survey data for the year {year}")
+input_file_name = f"cfps_household_consum_with_average_age_size_{year}.csv"
+fam_consum = pd.read_csv(path_data_clean / input_file_name)
+
+logging.info("Specify categories of consumption")
+consum_columns = [
+    "daily",  # Household equipment and daily necessities expenditure
+    "dress",  # Clothing and shoes expenditure
+    "eec",  # Education and entertainment expenditure
+    "food",  # Food expenditure
+    "house",  # Residential expenditure
+    "med",  # Health care expenditure
+    "trco",  # Transportation and communication expenditure
+    "other",  # Other expenditure
+]
+
+logging.info("Specific age cohort")
+age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
+
+exit()
 # Define age groups
 bins = [20, 30, 40, 50, 60, 70]
 labels = ["20-29", "30-39", "40-49", "50-59", "60-69"]
