@@ -43,9 +43,14 @@ logging.basicConfig(
 logging.info("Configure module")
 current_module = "ageing_society"
 
+logging.info("Specify data source")
+data_source = "cfps"
+
 logging.info("Configure paths")
-path_data_raw = data_home / "raw_data" / current_module / current_version
-path_data_clean = data_home / "clean_data" / current_module / current_version
+path_data_raw = data_home / "raw_data" / current_module / current_version / data_source
+path_data_clean = (
+    data_home / "clean_data" / current_module / current_version / data_source
+)
 
 if not path_data_clean.exists():
     path_data_clean.mkdir(parents=True, exist_ok=True)
@@ -63,6 +68,7 @@ for year in years:
             raw_child = pd.read_stata(file_path, convert_categoricals=False)
         elif "famecon" in str(file_path):
             raw_famecon = pd.read_stata(file_path, convert_categoricals=False)
+
     try:
         raw_person_ = pd.concat(
             [

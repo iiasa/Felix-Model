@@ -83,6 +83,10 @@ logging.info("Specific age cohort")
 age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
 
 
+logging.info("Specify the dependent variable")
+dependent_vari = "household_size"
+
+
 #########################################################################
 # ridge plot
 #########################################################################
@@ -109,7 +113,6 @@ for age_cohort in age_cohorts:
 num_cohorts = len(np.unique(fam_consum_no_nan["age_cohort"]))
 
 logging.info("Make the plot")
-
 
 logging.info("Specify colormap and colors")
 darkgreen = "#9BC184"
@@ -138,7 +141,7 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     ].reset_index(drop=True)
 
     sns.kdeplot(
-        subset_fam_consum["household_size"],
+        subset_fam_consum[dependent_vari],
         shade=True,
         bw_adjust=bandwidth,
         ax=axs[pos],
@@ -148,8 +151,8 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     )
 
     # national mean reference line
-    median_hh_size_chn = fam_consum["household_size"].median()
-    axs[pos].axvline(median_hh_size_chn, color="#525252", linestyle="--")
+    median_dep_vari_size_chn = fam_consum[dependent_vari].median()
+    axs[pos].axvline(median_dep_vari_size_chn, color="#525252", linestyle="--")
 
     # display average number of bedrooms on left
     axs[pos].text(
@@ -163,7 +166,7 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
 
     # compute quantiles
     quantiles = np.percentile(
-        subset_fam_consum["household_size"], [2.5, 10, 25, 75, 90, 97.5]
+        subset_fam_consum[dependent_vari], [2.5, 10, 25, 75, 90, 97.5]
     )
     quantiles = quantiles.tolist()
 
@@ -180,8 +183,8 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
         )
 
     # mean value as a reference
-    median_hh_size = subset_fam_consum["household_size"].median()
-    axs[pos].scatter([median_hh_size], [0.2], color="black", s=10)
+    median_dep_vari_size = subset_fam_consum[dependent_vari].median()
+    axs[pos].scatter([median_dep_vari_size], [0.2], color="black", s=10)
 
     # set title and labels
     axs[pos].set_xlim(0, 12)
@@ -196,9 +199,9 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
 
     # remove axis
     axs[pos].set_axis_off()
-
+# ---------------------------------------------------------------------------------
 # reference line label
-text = f"Median Line, {round(median_hh_size_chn,1)} persons per household"
+text = f"Median Line, {round(median_dep_vari_size_chn,1)} persons per household"
 fig.text(0.29, 0.88, text, ha="left", fontsize=font_size)
 
 # number of bedrooms label
@@ -228,14 +231,14 @@ legend_subset = fam_consum_no_nan[
     fam_consum_no_nan["age_cohort"] == "35-39"
 ].reset_index(drop=True)
 sns.kdeplot(
-    legend_subset["household_size"],
+    legend_subset[dependent_vari],
     shade=True,
     ax=subax,
     bw_adjust=2,
     color="grey",
     edgecolor="lightgrey",
 )
-quantiles = np.percentile(legend_subset["household_size"], [2.5, 10, 25, 75, 90, 97.5])
+quantiles = np.percentile(legend_subset[dependent_vari], [2.5, 10, 25, 75, 90, 97.5])
 quantiles = quantiles.tolist()
 for j in range(len(quantiles) - 1):
     subax.fill_between(
@@ -249,7 +252,7 @@ for j in range(len(quantiles) - 1):
     )
 subax.set_xlim(-0.9, 12)
 subax.set_ylim(-0.2, 0.4)
-legend_subset_mean = legend_subset["household_size"].median()
+legend_subset_mean = legend_subset[dependent_vari].median()
 subax.scatter([legend_subset_mean], [0.05], color="black", s=10)
 subax.text(0, 0.32, "Legend", ha="left", fontsize=font_size, weight="bold")
 subax.text(
@@ -309,7 +312,7 @@ subax.text(
     fontsize=font_size,
 )
 add_arrow((legend_subset_mean - 0.4, 0), (legend_subset_mean - 1, -0.11), subax)  # 50%
+# ---------------------------------------------------------------------------------
 
-
-plt.savefig("figure_household_size.png", dpi=300, bbox_inches="tight")
+plt.savefig(f"figure_{dependent_vari}.png", dpi=300, bbox_inches="tight")
 plt.show()

@@ -46,8 +46,14 @@ logging.basicConfig(
 logging.info("Configure module")
 current_module = "ageing_society"
 
+logging.info("Configure data source")
+data_source = "cfps"
+
+
 logging.info("Configure paths")
-path_data_clean = data_home / "clean_data" / current_module / current_version
+path_data_clean = (
+    data_home / "clean_data" / current_module / current_version / data_source
+)
 
 # specify a survey year
 year = "2020"
@@ -64,6 +70,7 @@ consum_columns = [
     "med",  # Health care expenditure
     "trco",  # Transportation and communication expenditure
     "other",  # Other expenditure
+    "pce",  # total consumption
 ]
 
 
@@ -161,73 +168,6 @@ def cal_educational_level(household_row: pd.Series):
         pd.DataFrame() with two new columns representing maximal and weighted average educational level
 
     """
-    # logging.info("Specify column names with educational levels")
-    # person_edu_columns = [
-    #     column_name
-    #     for column_name in household_data.columns
-    #     if "edu_pid_" in column_name
-    # ]
-    # logging.info("Specify column names of age")
-    # age_columns = [
-    #     column_name
-    #     for column_name in household_data.columns
-    #     if "age_in_" in column_name
-    # ]
-
-    # # Define a function to calculate weight based on age
-    # def calculate_weight(age):
-    #     if pd.isna(age):
-    #         return np.nan
-    #     elif age >= 65:
-    #         return 0.7
-    #     elif age >= 20:
-    #         return 1
-    #     elif age >= 10:
-    #         return 0.5
-    #     elif age < 10:
-    #         return 0.3
-
-    # logging.info("Apply weights according to person's age")
-    # for age_column in age_columns:
-    #     household_data[f"weight_{age_column}"] = household_data[age_column].apply(
-    #         calculate_weight
-    #     )
-
-    # logging.info("Calculate maximal and weighted average educational level")
-    # for pos, (person_column, age_column) in enumerate(
-    #     zip(person_columns, age_columns), start=1
-    # ):
-    #     weight_column = f"weight_{age_column}"
-    #     total_weights = household_data[
-    #         [f"weight_{age_col}" for age_col in age_columns]
-    #     ].sum(axis=1)
-    #     for category in consum_columns:
-    #         household_data[f"{person_column}_{category}"] = (
-    #             household_data[category] * household_data[weight_column] / total_weights
-    #         )
-
-    # logging.info("Reshape the household dataset")
-    # per_capita_consum_data = []
-    # for pos, (person_column, age_column) in enumerate(
-    #     zip(person_columns, age_columns), start=1
-    # ):
-    #     temp_household_data = household_data[
-    #         [f"fid{year[2:]}", f"provcd{year[2:]}", person_column, age_column]
-    #         + [f"{person_column}_{consum_column}" for consum_column in consum_columns]
-    #     ].copy()
-
-    #     temp_household_data.columns = [
-    #         f"fid{year[2:]}",
-    #         f"provcd{year[2:]}",
-    #         "pid",
-    #         f"age_in_{year}",
-    #     ] + [f"{consum_column}_per_capita" for consum_column in consum_columns]
-    #     per_capita_consum_data.append(temp_household_data)
-
-    # reshaped_per_capita_consum_data = (
-    #     pd.concat(per_capita_consum_data).dropna(subset=["pid"]).set_index("pid")
-    # )
-
     # return reshaped_per_capita_consum_data
     age_columns = [
         column_name for column_name in household_row.keys() if "age_in_" in column_name
@@ -270,9 +210,9 @@ def weighted_per_capita_consum(household_data: pd.DataFrame):
         The family consumption DataFrame
 
     Return:
-        household_size
-    """
+        Per capita consumption data
 
+    """
     logging.info("Specify column names with personal id (pid)")
     person_columns = [
         column_name
@@ -283,9 +223,25 @@ def weighted_per_capita_consum(household_data: pd.DataFrame):
     age_columns = [
         column_name for column_name in household_data.columns if "age_in" in column_name
     ]
+    logging.info("Specify column names of educational levels")
+    edu_columns = [
+        column_name
+        for column_name in household_data.columns
+        if "edu_pid_" in column_name
+    ]
 
     # Define a function to calculate weight based on age
     def calculate_weight(age):
+        """
+        To assign a weight to each person based on the age
+
+        Input parameter:
+            - age: int
+                Age of the person
+
+        Return:
+            - weight value
+        """
         if pd.isna(age):
             return np.nan
         elif age >= 65:
@@ -304,8 +260,8 @@ def weighted_per_capita_consum(household_data: pd.DataFrame):
         )
 
     logging.info("Calculate per-capita consumption for each person and category")
-    for pos, (person_column, age_column) in enumerate(
-        zip(person_columns, age_columns), start=1
+    for pos, (person_column, age_column, edu_column) in enumerate(
+        zip(person_columns, age_columns, edu_columns), start=1
     ):
         weight_column = f"weight_{age_column}"
         total_weights = household_data[
@@ -315,14 +271,21 @@ def weighted_per_capita_consum(household_data: pd.DataFrame):
             household_data[f"{person_column}_{category}"] = (
                 household_data[category] * household_data[weight_column] / total_weights
             )
+        del person_column, age_column, edu_column
 
     logging.info("Reshape the household dataset")
     per_capita_consum_data = []
-    for pos, (person_column, age_column) in enumerate(
-        zip(person_columns, age_columns), start=1
+    for pos, (person_column, age_column, edu_column) in enumerate(
+        zip(person_columns, age_columns, edu_columns), start=1
     ):
         temp_household_data = household_data[
-            [f"fid{year[2:]}", f"provcd{year[2:]}", person_column, age_column]
+            [
+                f"fid{year[2:]}",
+                f"provcd{year[2:]}",
+                person_column,
+                age_column,
+                edu_column,
+            ]
             + [f"{person_column}_{consum_column}" for consum_column in consum_columns]
         ].copy()
 
@@ -331,8 +294,11 @@ def weighted_per_capita_consum(household_data: pd.DataFrame):
             f"provcd{year[2:]}",
             "pid",
             f"age_in_{year}",
+            f"edu_in_{year}",
         ] + [f"{consum_column}_per_capita" for consum_column in consum_columns]
         per_capita_consum_data.append(temp_household_data)
+
+        del person_column, age_column, edu_column
 
     reshaped_per_capita_consum_data = (
         pd.concat(per_capita_consum_data).dropna(subset=["pid"]).set_index("pid")
