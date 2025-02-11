@@ -1,5 +1,11 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+
+## Version 9.1.4
+- Based on version 9.0.4
+- Market module has been calibrated based on shares of different energy sources in total supply
+- next step is to implement demand-market-production mechanism
+
 ## Version 9.0.4
 - Based on version 8.3.4
 - Add Market share module
