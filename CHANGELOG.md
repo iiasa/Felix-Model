@@ -1,5 +1,8 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.2.4
+- Based on version 9.1.4
+- Energy demand as a function of gdp per capita
 
 ## Version 9.1.4
 - Based on version 9.0.4
