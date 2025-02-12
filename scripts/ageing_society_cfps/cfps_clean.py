@@ -47,16 +47,14 @@ logging.info("Configure data source")
 data_source = "cfps"
 
 logging.info("Configure paths")
-path_data_raw = data_home / "raw_data" / current_module / current_version / data_source
-path_data_clean = (
-    data_home / "clean_data" / current_module / current_version / data_source
-)
+path_data_raw = data_home / "raw_data" / current_module / current_version
+path_data_clean = data_home / "clean_data" / current_module / current_version
 
 if not path_data_clean.exists():
     path_data_clean.mkdir(parents=True, exist_ok=True)
 
 logging.info("Specify file name of input data")
-file_name_cleaned_person = "cfps_person_info_full.csv"
+file_name_cleaned_person = "person_info_full_cfps.csv"
 cleaned_person = pd.read_csv(path_data_clean / file_name_cleaned_person)
 
 logging.info("Configure data years")

@@ -1,7 +1,7 @@
 
 # Ageing society (by Q. Ye)
 - Data cleaning for CFPS
-- Data cleaning for EuroSTAT
+- Data cleaning for EuroSTAT. Note: data from EuroStat is in PPS (Purchasing power standard)
 
 
 # FeliX3_YoGL_v25 (by Q. Ye)

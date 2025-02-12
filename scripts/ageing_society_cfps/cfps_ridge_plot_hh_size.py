@@ -52,13 +52,8 @@ logging.basicConfig(
 logging.info("Configure module")
 current_module = "ageing_society"
 
-logging.info("Configure data source")
-data_source = "cfps"
-
 logging.info("Configure paths")
-path_data_clean = (
-    data_home / "clean_data" / current_module / current_version / data_source
-)
+path_data_clean = data_home / "clean_data" / current_module / current_version
 
 # specify a survey year
 year = "2020"
