@@ -1,5 +1,14 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.4.4
+- Based on version 9.3.4
+- Gas denmand local is as a share in total energy demand according to market share
+
+## Version 9.3.4
+- Based on version 9.2.4
+- Total energy demand as a function of gdp per capita
+- Oil denmand local is as a share in total energy demand according to market share
+
 ## Version 9.2.4
 - Based on version 9.1.4
 - Energy demand as a function of gdp per capita
