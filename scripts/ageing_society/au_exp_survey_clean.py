@@ -11,6 +11,7 @@ Email: yequanliang@iiasa.sc.at
 import datetime
 import logging
 from pathlib import Path
+import numpy as np
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -51,21 +52,6 @@ path_data_clean = (
 
 if not path_data_clean.exists():
     path_data_clean.mkdir(parents=True, exist_ok=True)
-
-# logging.info("Specify consumption categories")
-# exp_categories = [
-#     "Consumption expenditures",
-#     "Food",
-#     "Housing",
-#     "Fuel, light & water charges",
-#     "Furniture & household utensils",
-#     "Clothing & footwear",
-#     "Medical care",
-#     "Transportation & communication",
-#     "Education",
-#     "Culture & recreation",
-#     "Other consumption expenditures",
-# ]
 
 logging.info("Start cleaning procedure")
 cleaned_exp_full = pd.DataFrame()
@@ -121,29 +107,60 @@ for data_path in path_data_raw.glob("*.xls*"):
     index_household_size = (
         list(raw_hh_size["item"]).index("Estimated number in population") - 1
     )
-    print(index_household_size)
 
     logging.info("Extract data based on unique age cohorts")
     raw_exp_unique = pd.DataFrame(
         {"item": ["household_size"] + list(raw_exp.iloc[index_range_exp, 0])}
     )
-
     for pos, age_cohort_true in enumerate(raw_exp.columns.str.contains("5")):
         if age_cohort_true:
             age_cohort_original = list(raw_exp.columns)[pos]
-            if len(age_cohort_original) > 5:
-                age_cohort_ = f"{age_cohort_original[:2]}+"
-            else:
+
+            if int(age_cohort_original[:2]) < 65:
                 age_cohort_ = (
                     f"{int(age_cohort_original[:2])}-{int(age_cohort_original[:2])+9}"
                 )
+            else:
+                if int(year) > 2010:
+                    age_cohort_original = "Total"
+                    pos = list(raw_exp.columns).index(age_cohort_original)
+                    age_cohort_ = "65+"
+                else:
+                    age_cohort_ = "65+"
+
             raw_exp_unique[age_cohort_] = [
                 raw_hh_size.loc[index_household_size, age_cohort_original]
             ] + list(raw_exp.iloc[index_range_exp, pos])
 
             del age_cohort_
+
     raw_exp_unique = raw_exp_unique.reset_index(drop=True)
     del raw_exp
+    if int(year) > 2010:
+        logging.info("Aggregate some types of expenditure")
+        exp_cats_agg = [
+            {"parent": "Household furnishings and equipment", "child": "Communication"},
+            {"parent": "Miscellaneous goods and services", "child": "Education"},
+        ]
+        for exp_cat_agg in exp_cats_agg:
+            exp_cat_parent = exp_cat_agg["parent"]
+            exp_cat_child = exp_cat_agg["child"]
+
+            index_parent = raw_exp_unique[
+                raw_exp_unique["item"] == exp_cat_parent
+            ].index[0]
+            index_child = raw_exp_unique[raw_exp_unique["item"] == exp_cat_child].index[
+                0
+            ]
+
+            raw_exp_unique.loc[index_parent, raw_exp_unique.columns[1:]] = np.array(
+                raw_exp_unique.loc[index_parent, raw_exp_unique.columns[1:]],
+                dtype=float,
+            ) + np.array(
+                raw_exp_unique.loc[index_child, raw_exp_unique.columns[1:]], dtype=float
+            )
+            raw_exp_unique = raw_exp_unique.drop(index_child).reset_index(drop=True)
+            del index_parent, index_child, exp_cat_parent, exp_cat_child
 
     logging.info("Calculate the per-capita expenditure")
     cleaned_exp_per_capita = pd.DataFrame()
@@ -155,8 +172,11 @@ for data_path in path_data_raw.glob("*.xls*"):
             househouse_size = raw_exp_unique.iloc[0, pos]
 
             exp_age_cohort["value"] = (
-                exp_age_cohort[column] / househouse_size * 365 / 7
+                np.array(exp_age_cohort[column]) / househouse_size * 365 / 7
             )  # convert to annual expenditure
+            exp_age_cohort["value"] = pd.to_numeric(
+                exp_age_cohort["value"], errors="coerce"
+            )
             exp_age_cohort["age_cohort"] = column
             exp_age_cohort["household_size"] = househouse_size
 
@@ -174,5 +194,6 @@ for data_path in path_data_raw.glob("*.xls*"):
 
 # save data
 logging.info("Save cleaned data")
+cleaned_exp_full["country"] = "australia"
 file_name = f"{data_source}_household_data_all.csv"
 cleaned_exp_full.to_csv(path_data_clean / file_name, index=False)

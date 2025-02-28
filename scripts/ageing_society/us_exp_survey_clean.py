@@ -114,12 +114,14 @@ for data_path in path_data_raw.glob("*.xlsx"):
     item_list = list(raw_exp_unique["item"])
     item_maping = {
         "household_size": item_list.index("People"),
-        "total_mean": item_list.index("Average annual expenditures") + 1,
-        "total_se": item_list.index("Average annual expenditures") + 2,
+        "total": item_list.index("Average annual expenditures") + 1,
+        # "total_mean": item_list.index("Average annual expenditures") + 1,
+        # "total_se": item_list.index("Average annual expenditures") + 2, # se is standard error
     }  # to map the item name and item index of key information and expenditure categories
     for item_ in exp_categories:
-        item_maping[f"{item_.lower()}_mean"] = item_list.index(item_) + 1
-        item_maping[f"{item_.lower()}_se"] = item_list.index(item_) + 3
+        # item_maping[f"{item_.lower()}_mean"] = item_list.index(item_) + 1
+        # item_maping[f"{item_.lower()}_se"] = item_list.index(item_) + 3
+        item_maping[item_.lower()] = item_list.index(item_) + 1
     raw_exp_item = (
         raw_exp_unique.iloc[list(item_maping.values()), :]
         .reset_index(drop=True)
@@ -154,5 +156,6 @@ for data_path in path_data_raw.glob("*.xlsx"):
 
 # save data
 logging.info("Save cleaned data")
+cleaned_exp_full["country"] = "usa"
 file_name = f"{data_source}_household_data_all.csv"
 cleaned_exp_full.to_csv(path_data_clean / file_name, index=False)

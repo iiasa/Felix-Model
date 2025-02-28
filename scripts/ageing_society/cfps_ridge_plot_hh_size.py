@@ -80,8 +80,14 @@ consum_columns = [
 ]
 
 logging.info("Specific age cohort")
-age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
-
+# age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
+age_cohorts = [
+    "0-19",
+    "20-34",
+    "34-49",
+    "50-64",
+    "65+",
+]
 
 logging.info("Specify the dependent variable")
 dependent_vari = "household_size"
@@ -175,7 +181,7 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
         axs[pos].fill_between(
             [quantiles[j], quantiles[j + 1]],  # lower bound  # upper bound
             0,  # max y=0
-            0.4,  # max y=0.0002
+            0.2,  # max y=0.0002
             color="white",
             alpha=0.7,
             edgecolor=colors[j],
@@ -219,100 +225,100 @@ fig.text(
 text = "Household size (persons per household)"
 fig.text(0.5, 0.07, text, ha="center", fontsize=font_size)
 
-subax = inset_axes(
-    parent_axes=axs[num_cohorts - 2],  # the number_cohorts-2 row
-    width="60%",
-    height="250%",
-    loc=4,
-)
-subax.set_xticks([])
-subax.set_yticks([])
-legend_subset = fam_consum_no_nan[
-    fam_consum_no_nan["age_cohort"] == "35-39"
-].reset_index(drop=True)
-sns.kdeplot(
-    legend_subset[dependent_vari],
-    shade=True,
-    ax=subax,
-    bw_adjust=2,
-    color="grey",
-    edgecolor="lightgrey",
-)
-quantiles = np.percentile(legend_subset[dependent_vari], [2.5, 10, 25, 75, 90, 97.5])
-quantiles = quantiles.tolist()
-for j in range(len(quantiles) - 1):
-    subax.fill_between(
-        [quantiles[j], quantiles[j + 1]],  # lower bound  # upper bound
-        0,  # max y=0
-        0.1,  # max y=0.00004
-        color="white",
-        alpha=0.7,
-        edgecolor=colors[j],
-        linewidth=line_width,
-    )
-subax.set_xlim(-0.9, 12)
-subax.set_ylim(-0.2, 0.4)
-legend_subset_mean = legend_subset[dependent_vari].median()
-subax.scatter([legend_subset_mean], [0.05], color="black", s=10)
-subax.text(0, 0.32, "Legend", ha="left", fontsize=font_size, weight="bold")
-subax.text(
-    7,
-    0.15,
-    "Distribution\nof hosuehold size",
-    ha="left",
-    fontsize=font_size,
-)
+# subax = inset_axes(
+#     parent_axes=axs[num_cohorts - 2],  # the number_cohorts-2 row
+#     width="60%",
+#     height="250%",
+#     loc=4,
+# )
+# subax.set_xticks([])
+# subax.set_yticks([])
+# legend_subset = fam_consum_no_nan[
+#     fam_consum_no_nan["age_cohort"] == "35-39"
+# ].reset_index(drop=True)
+# sns.kdeplot(
+#     legend_subset[dependent_vari],
+#     shade=True,
+#     ax=subax,
+#     bw_adjust=2,
+#     color="grey",
+#     edgecolor="lightgrey",
+# )
+# quantiles = np.percentile(legend_subset[dependent_vari], [2.5, 10, 25, 75, 90, 97.5])
+# quantiles = quantiles.tolist()
+# for j in range(len(quantiles) - 1):
+#     subax.fill_between(
+#         [quantiles[j], quantiles[j + 1]],  # lower bound  # upper bound
+#         0,  # max y=0
+#         0.1,  # max y=0.00004
+#         color="white",
+#         alpha=0.7,
+#         edgecolor=colors[j],
+#         linewidth=line_width,
+#     )
+# subax.set_xlim(-0.9, 12)
+# subax.set_ylim(-0.2, 0.4)
+# legend_subset_mean = legend_subset[dependent_vari].median()
+# subax.scatter([legend_subset_mean], [0.05], color="black", s=10)
+# subax.text(0, 0.32, "Legend", ha="left", fontsize=font_size, weight="bold")
+# subax.text(
+#     7,
+#     0.15,
+#     "Distribution\nof hosuehold size",
+#     ha="left",
+#     fontsize=font_size,
+# )
 
 
-logging.info("Add percentages and arrows in the legend")
+# logging.info("Add percentages and arrows in the legend")
 
 
-def add_arrow(head_pos, tail_pos, ax):
-    style = "Simple, tail_width=0.01, head_width=1.5, head_length=2.5"
-    kw = dict(arrowstyle=style, color="k", linewidth=line_width)
-    arrow = patches.FancyArrowPatch(
-        tail_pos, head_pos, connectionstyle="arc3,rad=.5", **kw
-    )
-    ax.add_patch(arrow)
+# def add_arrow(head_pos, tail_pos, ax):
+#     style = "Simple, tail_width=0.01, head_width=1.5, head_length=2.5"
+#     kw = dict(arrowstyle=style, color="k", linewidth=line_width)
+#     arrow = patches.FancyArrowPatch(
+#         tail_pos, head_pos, connectionstyle="arc3,rad=.5", **kw
+#     )
+#     ax.add_patch(arrow)
 
 
-subax.text(
-    legend_subset_mean + 1,
-    0.16,
-    "Median",
-    ha="center",
-    fontsize=font_size,
-)
-add_arrow((legend_subset_mean, 0.06), (legend_subset_mean + 0.3, 0.15), subax)  # median
+# subax.text(
+#     legend_subset_mean + 1,
+#     0.16,
+#     "Median",
+#     ha="center",
+#     fontsize=font_size,
+# )
+# add_arrow((legend_subset_mean, 0.06), (legend_subset_mean + 0.3, 0.15), subax)  # median
 
 
-subax.text(
-    8.1,
-    -0.16,
-    "95% of sizes",
-    ha="center",
-    fontsize=font_size,
-)
-add_arrow((6.5, 0), (7, -0.11), subax)  # 95%
+# subax.text(
+#     8.1,
+#     -0.16,
+#     "95% of sizes",
+#     ha="center",
+#     fontsize=font_size,
+# )
+# add_arrow((6.5, 0), (7, -0.11), subax)  # 95%
 
-subax.text(
-    5,
-    -0.16,
-    "80% of sizes",
-    ha="center",
-    fontsize=font_size,
-)
-add_arrow((4.9, 0), (5, -0.11), subax)  # 80%
+# subax.text(
+#     5,
+#     -0.16,
+#     "80% of sizes",
+#     ha="center",
+#     fontsize=font_size,
+# )
+# add_arrow((4.9, 0), (5, -0.11), subax)  # 80%
 
-subax.text(
-    1,
-    -0.17,
-    "50% of sizes \n within this range",
-    ha="center",
-    fontsize=font_size,
-)
-add_arrow((legend_subset_mean - 0.4, 0), (legend_subset_mean - 1, -0.11), subax)  # 50%
-# ---------------------------------------------------------------------------------
+# subax.text(
+#     1,
+#     -0.17,
+#     "50% of sizes \n within this range",
+#     ha="center",
+#     fontsize=font_size,
+# )
+# add_arrow((legend_subset_mean - 0.4, 0), (legend_subset_mean - 1, -0.11), subax)  # 50%
+# # ---------------------------------------------------------------------------------
 
 plt.savefig(f"figure_{dependent_vari}.png", dpi=300, bbox_inches="tight")
 plt.show()

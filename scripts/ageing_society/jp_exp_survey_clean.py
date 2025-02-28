@@ -212,5 +212,6 @@ for data_path in path_data_raw.glob("*.xls*"):
 
 # save data
 logging.info("Save cleaned data")
+cleaned_exp_full["country"] = "japan"
 file_name = f"{data_source}_household_data_all.csv"
 cleaned_exp_full.to_csv(path_data_clean / file_name, index=False)
