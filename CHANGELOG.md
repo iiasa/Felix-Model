@@ -1,5 +1,10 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.5.4
+- Based on version 9.4.4
+- XXXX denmand local is as a share in total energy demand according to market share
+
+
 ## Version 9.4.4
 - Based on version 9.3.4
 - Gas denmand local is as a share in total energy demand according to market share
