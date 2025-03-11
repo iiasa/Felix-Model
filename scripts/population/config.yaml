@@ -26,8 +26,6 @@ data_input:
     data_file: 
       - popbyage5andsex_fact.csv
     concordance: unpd_regions_to_5_un_regions.csv
-data_output:
-  root_path: data_regionalization_clean
 dimension:
   region:
     - Africa
