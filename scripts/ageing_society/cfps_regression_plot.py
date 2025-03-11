@@ -27,7 +27,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 
 timestamp = datetime.datetime.now()
@@ -75,7 +75,41 @@ consum_columns = [
 ]
 
 logging.info("Specific age cohort")
-age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
+age_cohorts = [
+    "0-14",
+    "15-24",
+    "25-44",
+    "45-64",
+    "65+",
+]
+
+
+def omit_outlier(data_series: np.array):
+    """
+    To omit outliers of a data series
+
+    Input parameters:
+    data_series: np.array
+        A data series that needs to omit outliers
+
+    Return:
+        data_series_without_outliers
+    """
+    logging.info("Omit nan values")
+    data_series_ = data_series[~np.isnan(data_series)]
+
+    logging.info("Calculate the 5 and 95 quantiles")
+    quantiles = np.percentile(data_series_, [5, 95]).tolist()
+    data_series_without_outliers = data_series_[
+        (data_series_ > quantiles[0]) & (data_series_ <= quantiles[1])
+    ]
+
+    if len(data_series_without_outliers) > 0:
+        return data_series_without_outliers, quantiles[1], quantiles[0]
+    else:
+        logging.warning("No valid values left")
+        return np.array()
+
 
 person_consum_no_nan = pd.DataFrame()
 for age_cohort in age_cohorts:
@@ -93,6 +127,7 @@ for age_cohort in age_cohorts:
         (person_consum[f"age_in_{year}"] >= age_start)
         & (person_consum[f"age_in_{year}"] < age_end + 1)
     ].reset_index(drop=True)
+
     subset_person_consum["age_cohort"] = age_cohort
     person_consum_no_nan = pd.concat(
         [person_consum_no_nan, subset_person_consum], ignore_index=True
@@ -125,8 +160,16 @@ titles = consum_columns.copy()
 for pos, ax in enumerate(axes):
     measure = f"{consum_columns[pos]}_per_capita"
 
-    x_ = np.array(person_consum_no_nan[f"age_in_{year}"])
     y_ = np.array(person_consum_no_nan[measure])
+    y_, y_max, y_min = omit_outlier(data_series=y_)
+
+    x_ = np.array(
+        person_consum_no_nan.loc[
+            (person_consum_no_nan[measure] > y_min)
+            & (person_consum_no_nan[measure] <= y_max),
+            f"age_in_{year}",
+        ]
+    )
     nan_mask = ~np.isnan(x_) & ~np.isnan(y_)
 
     # Scatter by age group
@@ -162,41 +205,6 @@ for pos, ax in enumerate(axes):
         verticalalignment="top",
         color="red",
     )
-
-    # # Scatter by household size
-    # sns.scatterplot(
-    #     data=df,
-    #     x="household_size",
-    #     y=measure,
-    #     ax=ax,
-    #     s=100,
-    #     color="blue",
-    #     edgecolor="black",
-    #     label="By Household Size",
-    # )
-
-    # # Fit and plot EKC for household size
-    # x_range, y_pred, coef, intercept, r2 = fit_polynomial(
-    #     df["household_size"].values, df[measure].values
-    # )
-    # ax.plot(
-    #     x_range,
-    #     y_pred,
-    #     color="green",
-    #     linestyle="--",
-    #     linewidth=2,
-    #     label=f"EKC (Size, $R^2$={r2:.2f})",
-    # )
-    # func_str = f"Function: {intercept:.2f} + {coef[1]:.2f}x + {coef[2]:.2f}x²"
-    # ax.text(
-    #     0.02,
-    #     0.88,
-    #     func_str,
-    #     transform=ax.transAxes,
-    #     fontsize=10,
-    #     verticalalignment="top",
-    #     color="green",
-    # )
 
     # Titles and labels
     ax.set_title(titles[pos], fontsize=14)

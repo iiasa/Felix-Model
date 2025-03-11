@@ -6,6 +6,9 @@
 - Data cleaning for Japan
 - Data cleaning for AUS
 - Merge data from different countries
+- Convert currency to 2005 USD
+- Specify age cohorts and expenditure items of FeliX
+- Merge national expenditure to regional expenditure of Felix. MUST INCLUDE CHINA AS THE REPRESENTATIVE OF DEVELOPING COUNTRIES.
 
 
 # FeliX3_YoGL_v25 (by Q. Ye)

@@ -16,13 +16,6 @@ import seaborn as sns
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import make_pipeline
-import matplotlib.patches as patches
-from matplotlib.lines import Line2D
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from cmcrameri import cm
 
 from dotenv import load_dotenv
 import os
@@ -32,7 +25,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 
 timestamp = datetime.datetime.now()
@@ -80,17 +73,44 @@ consum_columns = [
 ]
 
 logging.info("Specific age cohort")
-# age_cohorts = [f"{(x-1)*5}-{(x-1)*5+4}" for x in range(5, 21)] + ["100+"]
+# for the final cohort classification
 age_cohorts = [
-    "0-19",
-    "20-34",
-    "34-49",
-    "50-64",
+    "0-14",
+    "15-24",
+    "25-44",
+    "45-64",
     "65+",
 ]
 
 logging.info("Specify the dependent variable")
 dependent_vari = "household_size"
+
+
+def omit_outlier(data_series: np.array):
+    """
+    To omit outliers of a data series
+
+    Input parameters:
+    data_series: np.array
+        A data series that needs to omit outliers
+
+    Return:
+        data_series_without_outliers
+    """
+    logging.info("Omit nan values")
+    data_series_ = data_series[~np.isnan(data_series)]
+
+    logging.info("Calculate the 5 and 95 quantiles")
+    quantiles = np.percentile(data_series_, [5, 95]).tolist()
+    data_series_without_outliers = data_series_[
+        (data_series_ > quantiles[0]) & (data_series_ <= quantiles[1])
+    ]
+
+    if len(data_series_without_outliers) > 0:
+        return data_series_without_outliers
+    else:
+        logging.warning("No valid values left")
+        return np.array()
 
 
 #########################################################################
@@ -107,7 +127,7 @@ for age_cohort in age_cohorts:
     except ValueError:
         age_end = 150
 
-    # subset the data for each word
+    # subset the data for each age cohort
     subset_fam_consum = fam_consum[
         (fam_consum["average_age"] >= age_start)
         & (fam_consum["average_age"] < age_end + 1)
@@ -139,15 +159,17 @@ bandwidth = 1
 
 fig, axs = plt.subplots(nrows=num_cohorts, ncols=1, figsize=(8, 8))
 axs = axs.flatten()  # needed to access each individual axis
-
 for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     # subset the data for each word
     subset_fam_consum = fam_consum_no_nan[
         fam_consum_no_nan["age_cohort"] == age_cohort
     ].reset_index(drop=True)
 
+    logging.info("Omit outliers")
+    subset_fam_dep_vari_ = omit_outlier(data_series=subset_fam_consum[dependent_vari])
+
     sns.kdeplot(
-        subset_fam_consum[dependent_vari],
+        subset_fam_dep_vari_,
         shade=True,
         bw_adjust=bandwidth,
         ax=axs[pos],
@@ -157,7 +179,11 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     )
 
     # national mean reference line
-    median_dep_vari_size_chn = fam_consum[dependent_vari].median()
+    subset_fam_dep_vari_nat = omit_outlier(
+        data_series=fam_consum_no_nan[dependent_vari]
+    )
+    median_dep_vari_size_chn = np.median(subset_fam_dep_vari_nat)
+
     axs[pos].axvline(median_dep_vari_size_chn, color="#525252", linestyle="--")
 
     # display average number of bedrooms on left
@@ -171,9 +197,7 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
     )
 
     # compute quantiles
-    quantiles = np.percentile(
-        subset_fam_consum[dependent_vari], [2.5, 10, 25, 75, 90, 97.5]
-    )
+    quantiles = np.percentile(subset_fam_dep_vari_, [2.5, 25, 75, 97.5])
     quantiles = quantiles.tolist()
 
     # fill space between each pair of quantiles
@@ -189,7 +213,7 @@ for pos, age_cohort in enumerate(np.unique(fam_consum_no_nan["age_cohort"])):
         )
 
     # mean value as a reference
-    median_dep_vari_size = subset_fam_consum[dependent_vari].median()
+    median_dep_vari_size = np.median(subset_fam_dep_vari_)
     axs[pos].scatter([median_dep_vari_size], [0.2], color="black", s=10)
 
     # set title and labels
@@ -320,5 +344,5 @@ fig.text(0.5, 0.07, text, ha="center", fontsize=font_size)
 # add_arrow((legend_subset_mean - 0.4, 0), (legend_subset_mean - 1, -0.11), subax)  # 50%
 # # ---------------------------------------------------------------------------------
 
-plt.savefig(f"figure_{dependent_vari}.png", dpi=300, bbox_inches="tight")
+# plt.savefig(f"figure_{dependent_vari}.png", dpi=300, bbox_inches="tight")
 plt.show()

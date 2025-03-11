@@ -29,7 +29,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 
 timestamp = datetime.datetime.now()
@@ -102,6 +102,33 @@ age_cohorts = [
 num_cohorts = len(age_cohorts)
 
 
+def omit_outlier(data_series: np.array):
+    """
+    To omit outliers of a data series
+
+    Input parameters:
+    data_series: np.array
+        A data series that needs to omit outliers
+
+    Return:
+        data_series_without_outliers
+    """
+    logging.info("Omit nan values")
+    data_series_ = data_series[~np.isnan(data_series)]
+
+    logging.info("Calculate the 5 and 95 quantiles")
+    quantiles = np.percentile(data_series_, [5, 95]).tolist()
+    data_series_without_outliers = data_series_[
+        (data_series_ > quantiles[0]) & (data_series_ <= quantiles[1])
+    ]
+
+    if len(data_series_without_outliers) > 0:
+        return data_series_without_outliers
+    else:
+        logging.warning("No valid values left")
+        return np.array()
+
+
 logging.info("Make the ridge plot")
 logging.info("Specify colormap and colors")
 fill_colors = [
@@ -137,18 +164,9 @@ for dependent_vari_ in consum_columns:
                 dependent_vari,
             ]
         )
-        subset_personal_consum_ = subset_personal_consum_[
-            ~np.isnan(subset_personal_consum_)
-        ]
-
-        quantiles = np.percentile(subset_personal_consum_, [25, 75]).tolist()
-        personal_consum_max = quantiles[1] + 1.5 * (quantiles[1] - quantiles[0])
-        personal_consum_min = quantiles[0] + 1.5 * (quantiles[1] - quantiles[0])
-
-        subset_personal_consum[dependent_vari] = subset_personal_consum_[
-            (subset_personal_consum_ > personal_consum_min)
-            & (subset_personal_consum_ < personal_consum_max)
-        ]
+        subset_personal_consum[dependent_vari] = omit_outlier(
+            data_series=subset_personal_consum_
+        )
 
         subset_personal_consum["age_cohort"] = age_cohort
         personal_consum_no_nan = pd.concat(

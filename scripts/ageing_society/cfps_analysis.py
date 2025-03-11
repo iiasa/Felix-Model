@@ -27,7 +27,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()

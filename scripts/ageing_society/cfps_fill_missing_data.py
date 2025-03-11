@@ -9,13 +9,11 @@ Email: quanliang.ye@ru.nl
 """
 
 import datetime
-import json
 import logging
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import yaml
 from dotenv import load_dotenv
 import os
 
@@ -24,7 +22,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -62,12 +60,13 @@ logging.info("Read available data")
 raw_person = pd.DataFrame()
 for year in years:
     for file_path in (path_data_raw / f"cfps_{year}").glob("*"):
-        if "person" in str(file_path) or "adult" in str(file_path):
+        if "person" in file_path.name or "adult" in file_path.name:
             raw_adult = pd.read_stata(file_path, convert_categoricals=False)
-        elif "child" in str(file_path):
+        elif "child" in file_path.name:
             raw_child = pd.read_stata(file_path, convert_categoricals=False)
-        elif "famecon" in str(file_path):
+        elif "famecon" in file_path.name:
             raw_famecon = pd.read_stata(file_path, convert_categoricals=False)
+
     try:
         raw_person_ = pd.concat(
             [
@@ -86,14 +85,28 @@ for year in years:
                 ignore_index=True,
             ).rename(columns={f"cfps{year}_age": f"age_in_{year}"})
         except KeyError:
-            # with education
-            raw_person_ = pd.concat(
-                [
-                    raw_adult[["pid", "cfps_age", f"cfps{year}edu"]],
-                    raw_child[["pid", "cfps_age", f"cfps{year}edu"]],
-                ],
-                ignore_index=True,
-            ).rename(columns={"cfps_age": f"age_in_{year}"})
+            try:
+                # with education
+                raw_person_ = pd.concat(
+                    [
+                        raw_adult[["pid", "cfps_age", f"cfps{year}edu"]],
+                        raw_child[["pid", "cfps_age", f"cfps{year}edu"]],
+                    ],
+                    ignore_index=True,
+                ).rename(columns={"cfps_age": f"age_in_{year}"})
+            except KeyError:
+                raw_person_ = pd.concat(
+                    [
+                        raw_adult[["pid", f"cfps{year}_age", f"edu{year}"]],
+                        raw_child[["pid", f"cfps{year}_age", f"edu{year}"]],
+                    ],
+                    ignore_index=True,
+                ).rename(
+                    columns={
+                        f"cfps{year}_age": f"age_in_{year}",
+                        f"edu{year}": f"cfps{year}edu",
+                    }
+                )
 
     # process missing age data
     logging.info("Process missing age data")

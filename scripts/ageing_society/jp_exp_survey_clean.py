@@ -21,7 +21,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -42,6 +42,7 @@ current_module = "ageing_society"
 
 logging.info("Configure data source")
 data_source = "jp_exp_survey"
+country = "japan"
 
 logging.info("Configure paths")
 path_data_raw = data_home / "raw_data" / current_module / current_version / data_source
@@ -66,6 +67,11 @@ exp_categories = [
     "Culture & recreation",
     "Other consumption expenditures",
 ]
+
+logging.info("Load the currency convert rates")
+file_name_conv_rate = [file_ for file_ in path_data_raw.parent.glob("currency*")][0]
+raw_conv_rate = pd.read_csv(file_name_conv_rate)
+raw_conv_rate_group = raw_conv_rate.groupby("time")
 
 logging.info("Start cleaning procedure")
 cleaned_exp_full = pd.DataFrame()
@@ -192,18 +198,24 @@ for data_path in path_data_raw.glob("*.xls*"):
             exp_age_cohort = raw_exp_item.iloc[1:, [0, pos]]
             househouse_size = raw_exp_item.iloc[0, pos]
 
+            logging.info("Find the currency convert rate")
+            raw_conv_rate_ = raw_conv_rate_group.get_group(int(year))[
+                f"{country}, convert rate local currency to 2005 usd"
+            ].values[0]
+
             exp_age_cohort["value"] = (
-                exp_age_cohort[column] / househouse_size * 12
+                exp_age_cohort[column] / househouse_size * 12 * raw_conv_rate_
             )  # convert to annual expenditure
+
             exp_age_cohort["age_cohort"] = column
             exp_age_cohort["household_size"] = househouse_size
 
             cleaned_exp_per_capita = pd.concat(
                 [cleaned_exp_per_capita, exp_age_cohort.drop(columns=[column])]
             )
-            del exp_age_cohort, househouse_size, pos
+            del exp_age_cohort, househouse_size, pos, raw_conv_rate_
     cleaned_exp_per_capita["time"] = year
-    cleaned_exp_per_capita["unit"] = "current prices, japanese yen"
+    cleaned_exp_per_capita["unit"] = "2005 usd"
 
     logging.info("Concat cleaned data from different years")
     cleaned_exp_full = pd.concat([cleaned_exp_full, cleaned_exp_per_capita])
@@ -212,6 +224,6 @@ for data_path in path_data_raw.glob("*.xls*"):
 
 # save data
 logging.info("Save cleaned data")
-cleaned_exp_full["country"] = "japan"
-file_name = f"{data_source}_household_data_all.csv"
+cleaned_exp_full["country"] = country
+file_name = f"{data_source}_household_data_all_in_2005_usd.csv"
 cleaned_exp_full.to_csv(path_data_clean / file_name, index=False)

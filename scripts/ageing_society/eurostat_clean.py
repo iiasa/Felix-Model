@@ -21,7 +21,7 @@ load_dotenv()
 
 # Read the variable
 data_home = Path(os.getenv("DATA_HOME"))
-current_version = os.getenv("CURRENT_VERSION")
+current_version = os.getenv(f"CURRENT_VERSION_AGEING_SOCIETY")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
@@ -42,6 +42,8 @@ current_module = "ageing_society"
 
 logging.info("Configure data source")
 data_source = "eurostat"
+country = "euro"
+
 
 logging.info("Configure paths")
 path_data_raw = data_home / "raw_data" / current_module / current_version / data_source
@@ -55,6 +57,7 @@ if not path_data_clean.exists():
 logging.info("Specify file name of input data")
 file_name_exp = [file_ for file_ in path_data_raw.glob("hbs_exp_t135*")][0]
 file_name_exp_str = [file_ for file_ in path_data_raw.glob("hbs_str_t225*")][0]
+file_name_conv_rate = [file_ for file_ in path_data_raw.parent.glob("currency*")][0]
 
 logging.info("Read the expenditure data")
 raw_exp = pd.read_excel(
@@ -74,6 +77,27 @@ raw_exp = raw_exp.rename(
         "TIME-GEO (Labels)": "age_cohort",
     }
 ).set_index("age_cohort")
+
+logging.info("Read the currency convert rates")
+raw_conv_rate = pd.read_csv(file_name_conv_rate)
+raw_conv_rate_group = raw_conv_rate.groupby("time")
+
+logging.info("Convert expenditure data to 2005 usd")
+for column_ in raw_exp.columns:
+    year = int(column_.split("-")[0])
+    raw_exp_country_ = raw_exp[column_]
+    raw_conv_rate_country_ = raw_conv_rate_group.get_group(year)[
+        f"{country}, convert rate local currency to 2005 usd"
+    ].values[0]
+    try:
+        raw_exp_country_ = np.array(raw_exp_country_, dtype="float")
+    except ValueError:
+        raw_exp[column_] = ""
+        continue
+    raw_exp[column_] = (
+        np.array(raw_exp_country_, dtype="float") * raw_conv_rate_country_
+    )
+    del year, raw_exp_country_, raw_conv_rate_country_
 
 logging.info("Read the expenditure structure data")
 raw_exp_str = pd.read_excel(
@@ -170,8 +194,8 @@ for age_cohort in age_cohorts:
             del country, raw_exp_str_country, raw_exp_country
 
 clean_exp = clean_exp.rename(columns={"exp_category": "item"})
-clean_exp["unit"] = "Purchasing power standard (PPS) per adult equivalent"
+clean_exp["unit"] = "2005 usd"
 # save data
 logging.info("Save cleaned data")
-file_name = f"{data_source}_personal_data_all_years.csv"
+file_name = f"{data_source}_personal_data_all_years_in_2005_usd.csv"
 clean_exp.to_csv(path_data_clean / file_name, index=False)
