@@ -55,6 +55,18 @@ data_input:
     data_file: 
       - NY_GDP_PCAP_PP_KD_fact.json
     concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: gdp_hh_exp_share
+    text: Share of household expenditure in gdp
+    unit: 
+    download_via: api
+    data_file: 
+      - NE_CON_PRVT_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
 data_output:
   root_path: data_regionalization_clean
 dimension:

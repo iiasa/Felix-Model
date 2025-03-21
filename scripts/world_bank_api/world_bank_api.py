@@ -10,7 +10,6 @@ Email: quanliang.ye@ru.nl
 import datetime
 import json
 import logging
-import os
 from pathlib import Path
 from time import time
 from bs4 import BeautifulSoup
@@ -18,17 +17,26 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import yaml
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
-path_raw_data_folder = Path("data_regionalization_raw/version_nov2023/world_bank")
-if not path_raw_data_folder.exists():
-    path_raw_data_folder.mkdir(
-        parents=True,
-    )
+
+# Read the variable
+data_home = Path(os.getenv("DATA_HOME"))
+current_version = os.getenv(f"CURRENT_VERSION_FELIX_REGIONALIZATION")
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
+
+logging.info("Configure module")
+current_project = "felix_regionalization"
+current_module = "gdp"
+
+logging.info("Configure paths")
+path_raw_data_folder = (
+    data_home / "raw_data" / current_project / current_version / current_module
+)
 
 # set logging
 if not (path_raw_data_folder.joinpath("logs")).exists():
@@ -234,10 +242,8 @@ def get_data_cube(
 
 # Get datacube for a specified dataset
 logging.info("Specify id for the dataset and output path")
-endpoint = "NV.IND.TOTL.KD"
-module = "gdp"
-version = "nov2023"
-path_data_output = path_raw_data_folder.parent.parent / f"version_{version}" / module
+endpoint = "NE.CON.PRVT.ZS"
+
 
 logging.info(f"Get datacube {endpoint} via the API")
 dimensions, facts = get_data_cube(
@@ -248,8 +254,7 @@ dimensions, facts = get_data_cube(
 logging.info(f"Writing dimensions of {endpoint}")
 dim_name = f"{endpoint.replace('.','_')}_dim.yaml"
 
-
-with open(Path(path_data_output).joinpath(dim_name), "w") as f:
+with open(Path(path_raw_data_folder).joinpath(dim_name), "w") as f:
     yaml.safe_dump(dimensions, f)
 logging.info(f"Finished dimensions of {endpoint}")
 
@@ -258,5 +263,5 @@ logging.info(f"Writing facts of {endpoint}")
 #  Using zip because xml is very large
 fact_name = f"{endpoint.replace('.','_')}_fact.json"
 
-with open(path_data_output.joinpath(fact_name), "w") as zf:
+with open(path_raw_data_folder.joinpath(fact_name), "w") as zf:
     zf.write(json.dumps(facts))

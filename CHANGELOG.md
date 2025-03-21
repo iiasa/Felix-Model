@@ -2,7 +2,7 @@
 
 ## Version 9.6.5
 - Based on version 9.6.4
-- Solar and wind demand, in Africa region, is modeled as a share in total energy demand according to market share.
+- Solar and wind demand, in WestEu region, is modeled as a share in total energy demand according to market share.
 
 ## Version 9.6.4
 - Based on version 9.5.4
