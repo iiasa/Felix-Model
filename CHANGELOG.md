@@ -10,7 +10,7 @@
 - Specify age cohorts and expenditure items of FeliX
 - Merge national expenditure to regional expenditure of Felix. MUST INCLUDE CHINA AS THE REPRESENTATIVE OF DEVELOPING COUNTRIES.
 - Build a preliminary model
-- Use Chinese survey data as a proxy, applied to upper income countries
+- Use Chinese survey data as a proxy, applied to upper middle income countries and adjusted according to household final consumption per capita data from World Bank
 
 
 # FeliX3_YoGL_v25 (by Q. Ye)
