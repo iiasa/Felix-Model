@@ -8,13 +8,11 @@ Email: yequanliang@iiasa.ac.at
 """
 
 import datetime
-import json
 import logging
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import yaml
 from dotenv import load_dotenv
 import os
 
@@ -124,14 +122,20 @@ def merge_exp_category(
         for felix_item in felix_items:
             for age_cohort in age_cohorts:
                 for year in years:
-                    cleaned_exp_region_year = cleaned_exp_groups.get_group(
-                        (
-                            country,
-                            felix_item,
-                            age_cohort,
-                            year,
+                    try:
+                        cleaned_exp_region_year = cleaned_exp_groups.get_group(
+                            (
+                                country,
+                                felix_item,
+                                age_cohort,
+                                year,
+                            )
                         )
-                    )
+                    except KeyError:
+                        logging.warning(
+                            f"No data for {(country,felix_item,age_cohort,year)}"
+                        )
+                        continue
                     if extra_attri:
                         # extra attribute is another column in the cleaned data
                         entry = {
@@ -196,8 +200,8 @@ def merge_age_cohort(
         If yes, to match which felix age cohorts are related
 
         Input parameters:
-            age_cohort_source: str
-                Source age cohort from different data sources
+            age_cohort_source: list
+                A list of source age cohort from different data sources
 
         Return:
             cleaned_exp_age_converted:pd.DataFrame
@@ -268,14 +272,20 @@ def merge_age_cohort(
         for felix_item in felix_items:
             for felix_age_cohort in felix_age_cohorts:
                 for year in years:
-                    cleaned_exp_region_year = cleaned_exp_groups.get_group(
-                        (
-                            country,
-                            felix_item,
-                            felix_age_cohort,
-                            year,
+                    try:
+                        cleaned_exp_region_year = cleaned_exp_groups.get_group(
+                            (
+                                country,
+                                felix_item,
+                                felix_age_cohort,
+                                year,
+                            )
                         )
-                    )
+                    except KeyError:
+                        logging.warning(
+                            f"No data for {(country,felix_item,felix_age_cohort,year)}"
+                        )
+                        continue
 
                     if (
                         len(np.unique(cleaned_exp_region_year["source_age_cohort"]))
@@ -421,68 +431,6 @@ for data_source in path_data_clean.glob("**/*"):
             exp_data_all_sources = pd.concat(
                 [exp_data_all_sources, cleaned_age_cohort], ignore_index=True
             ).reset_index(drop=True)
-
-
-#             logging.info("Restructure the data")
-#             felix_items = np.unique(cleaned_exp_aggregated["felix_item"])
-#             del exp_items, cleaned_exp
-
-#             cleaned_exp_groups = cleaned_exp_aggregated.groupby(
-#                 ["country", "felix_item", "age_cohort", "time"]
-#             )
-#             for country in countries:
-#                 for exp_item in felix_items:
-#                     for age_cohort in age_cohorts:
-#                         entry = {
-#                             "country": country,
-#                             "felix_item": exp_item.lower(),
-#                             "age_cohort": age_cohort,
-#                             "unit": unit,
-#                         }
-#                         if exp_item == "total":
-#                             logging.info("Restructure the extra attribute as well")
-#                             if extra_attri:
-#                                 entry_extra_attri = {
-#                                     "country": country,
-#                                     "felix_item": extra_attri[0].lower(),
-#                                     "age_cohort": age_cohort,
-#                                 }
-#                         for year in range(1900, 2101):
-#                             if year in years:
-#                                 try:
-#                                     cleaned_exp_ = cleaned_exp_groups.get_group(
-#                                         (country, exp_item, age_cohort, year)
-#                                     )
-#                                     value = cleaned_exp_["value"].values[0]
-
-#                                     if exp_item == "total":
-#                                         if extra_attri:
-#                                             extra_attri_value = cleaned_exp_[
-#                                                 extra_attri[0]
-#                                             ].values[0]
-#                                         else:
-#                                             extra_attri_value = None
-#                                 except KeyError:
-#                                     value = None
-#                                     extra_attri_value = None
-#                             else:
-#                                 value = None
-#                                 extra_attri_value = None
-
-#                             entry[year] = value
-#                             if exp_item == "total":
-#                                 if extra_attri:
-#                                     entry_extra_attri[year] = extra_attri_value
-
-#                             del year
-
-#                         exp_data_all_sources.append(entry)
-#                         del entry
-#                         if exp_item == "total":
-#                             if extra_attri:
-#                                 exp_data_all_sources.append(entry_extra_attri)
-#                                 del entry_extra_attri
-# exp_data_all_sources = pd.DataFrame(exp_data_all_sources).replace(0, np.nan)
 
 # save data
 logging.info("Save cleaned data")

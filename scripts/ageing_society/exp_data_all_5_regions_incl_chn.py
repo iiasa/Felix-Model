@@ -97,6 +97,7 @@ logging.info(
     "Start to aggregate national data into regional one, and restructure the data"
 )
 exp_data_felix_region = []
+exp_data_felix_region_2020 = pd.DataFrame()
 for felix_age_cohort in felix_age_cohorts:
     for felix_item in felix_items:
         for year in years:
@@ -125,6 +126,10 @@ for felix_age_cohort in felix_age_cohorts:
                     "Calculate global average, first to check whether China is included"
                 )
                 if "china" in list(cleaned_exp_pop_merge["country"]):
+                    if year == 2020:
+                        exp_data_felix_region_2020 = pd.concat(
+                            [exp_data_felix_region_2020, cleaned_exp_pop_merge]
+                        )
                     entry = {
                         "felix_region": "World",
                         "felix_item": felix_item,
