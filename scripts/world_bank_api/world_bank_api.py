@@ -242,7 +242,7 @@ def get_data_cube(
 
 # Get datacube for a specified dataset
 logging.info("Specify id for the dataset and output path")
-endpoint = "NE.CON.PRVT.ZS"
+endpoint = "NE.CON.PRVT.PC.KD"
 
 
 logging.info(f"Get datacube {endpoint} via the API")

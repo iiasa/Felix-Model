@@ -1,5 +1,9 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.6.6
+- Based on version 9.6.5
+- Solar and wind demand, in African region, is modeled as a share in total energy demand according to market share.
+
 ## Version 9.6.5
 - Based on version 9.6.4
 - Solar and wind demand, in WestEu region, is modeled as a share in total energy demand according to market share.
