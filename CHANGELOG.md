@@ -1,5 +1,9 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 9.6.8
+- Based on version 9.6.7
+- Solar and wind demand, in EastEu region, is modeled as a share in total energy demand according to market share.
+
 ## Version 9.6.7
 - Based on version 9.6.6
 - Solar and wind demand, in LAC region, is modeled as a share in total energy demand according to market share.
