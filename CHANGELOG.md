@@ -1,5 +1,22 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 13.0.0
+- Based on version 12.0.0
+- Add water module, regionalized
+
+## Version 12.0.0
+- Based on version 11.0.0
+- Add climate damage global module.
+
+## Version 11.0.0
+- Based on version 10.0.0
+- Add climate global module.
+
+## Version 10.0.0
+- Based on version 9.6.8
+- Add carbon cycle global module.
+
+
 ## Version 9.6.8
 - Based on version 9.6.7
 - Solar and wind demand, in EastEu region, is modeled as a share in total energy demand according to market share.

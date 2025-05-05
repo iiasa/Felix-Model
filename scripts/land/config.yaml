@@ -1,0 +1,39 @@
+module: land
+overwrite: True
+create_path: True
+data_input:
+  - datasource: faostat
+    variable: agri_land
+    download_via: manually
+    data_file: 
+      - agricultural_land_area.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: agri_area_irri_percent
+    download_via: manually
+    data_file: 
+      - agriculture_area_irrigated.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: True
+    dependency_datasource: 
+    dependency_module: land
+    dependency_file: 
+      - agricultural_land_area.csv
+    dependency_concordance:
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+
+
