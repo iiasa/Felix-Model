@@ -25,6 +25,30 @@ data_input:
     dependency_file: 
       - agricultural_land_area.csv
     dependency_concordance:
+  - datasource: faostat
+    variable: arable_land_area
+    download_via: manually
+    data_file: 
+      - agricultural_arable_area.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
+  - datasource: faostat
+    variable: forest_area
+    download_via: manually
+    data_file: 
+      - forest_land_area.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
 dimension:
   region:
     - Africa

@@ -1,5 +1,37 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 15.3.0 clean
+- Based on version 15.3.0
+- Delete ununsed variables, such as population indicator
+
+## Version 15.3.0
+- Based on version 15.2.0
+- Life expectancy at birth fit the historical data.
+
+## Version 15.2.0
+- Based on version 15.2.0
+- Make sure oil production in WestEu fits the historic trend.
+
+## Version 15.2.0
+- Based on version 15.1.0
+- To solve the high market share of solar in WestEu.
+
+## Version 15.1.0
+- Based on version 15.0.0
+- Regionalize energy crops production and forest biomass production
+- recalibrate parameters for some regions
+
+## Version 15.0.0
+- Based on version 14.0.0
+- Add dietary change module---kept globally
+- Add scenarios module --- kept globally
+- Add extreme events module --- kept globally
+- Add fertilizer use module --- kept globally
+
+## Version 14.0.0
+- Based on version 13.0.0
+- Add land use module---kept globally
+
 ## Version 13.0.0
 - Based on version 12.0.0
 - Add water module, regionalized
