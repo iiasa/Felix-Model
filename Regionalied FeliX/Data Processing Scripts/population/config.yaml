@@ -1,31 +1,28 @@
-version: nov2023
+version: v.11.2023
 module: population
 overwrite: True
 create_path: True
+data_root_path: C:/Users/yequanliang/OneDrive - IIASA/data
 data_input:
   - datasource: wittgenstein
-    root_path: data_regionalization_raw
     data_file: 
       - wcde_data_1950_2020.csv
     concordance: wittgenstein_regions_to_5_un_regions.csv
   - datasource: world_bank
-    root_path: data_regionalization_raw
     data_file: 
       - population_world_bank.csv
     concordance: world_bank_countries_to_5_un_regions.csv
   - datasource: unpd
-    root_path: data_regionalization_raw
     download_via: manually
     data_file: 
       - WPP2022_POP_F02_2_POPULATION_5-YEAR_AGE_GROUPS_MALE.xlsx
       - WPP2022_POP_F02_3_POPULATION_5-YEAR_AGE_GROUPS_FEMALE.xlsx
     concordance: unpd_regions_to_5_un_regions.csv
   - datasource: unpd
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - popbyage5andsex_fact.csv
-    concordance: unpd_regions_to_5_un_regions.csv
+    concordance: unpd_regions_to_ipcc_r6.csv
 dimension:
   region:
     - Africa
@@ -33,6 +30,14 @@ dimension:
     - EastEu
     - LAC
     - WestEu
+    - World
+  ipcc_r6:
+    - Asia and Pacific
+    - Developed Countries
+    - Africa
+    - Latin America and Caribbean
+    - Eastern Europe and West-Central Asia
+    - Middle East
     - World
   gender:
     - female

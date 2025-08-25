@@ -2,7 +2,7 @@
 """
 Created: Thur 14 Feburary 2024
 Description: Scripts to process birth fration by region from UNPD to 5 FeliX regions
-Scope: FeliX model regionalization, module birth rate 
+Scope: FeliX model regionalization, module birth rate
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -16,7 +16,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pyam
 import yaml
 
 timestamp = datetime.datetime.now()

@@ -1,22 +1,21 @@
-version: nov2023
+version: v.11.2023
 module: gdp
 overwrite: True
 create_path: True
+data_root_path: C:/Users/yequanliang/OneDrive - IIASA/data
 data_input:
   - datasource: world_bank
     variable: gdp_2015usd
     text: GDP (constant 2015 US$)
     unit: constant 2015 US$
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - NY_GDP_MKTP_KD_fact.json
-    concordance: world_bank_countries_to_5_un_regions.csv
+    concordance: world_bank_countries_to_ipcc_r6.csv
   - datasource: world_bank
     variable: gdp_ppp
     text: GDP, PPP (constant 2017 international $)
     unit: constant 2017 international $
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - NY_GDP_MKTP_PP_KD_fact.json
@@ -25,7 +24,6 @@ data_input:
     variable: gdp_ind_share
     text: Share of industrial value added in gdp
     unit: 
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - NV_IND_TOTL_ZS_fact.json
@@ -38,7 +36,6 @@ data_input:
     variable: gdp_ind_share_app2
     text: Share of industrial value added in gdp by approach2
     unit: 
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - NV_IND_TOTL_KD_fact.json
@@ -50,7 +47,6 @@ data_input:
   - datasource: world_bank
     variable: gdp_per_capita_ppp
     text: GDP per capita, PPP (constant 2017 international $)
-    root_path: data_regionalization_raw
     download_via: api
     data_file: 
       - NY_GDP_PCAP_PP_KD_fact.json
@@ -77,6 +73,13 @@ dimension:
     - LAC
     - WestEu
     - World
-
+  ipcc_r6:
+    - Asia and Pacific
+    - Developed Countries
+    - Africa
+    - Latin America and Caribbean
+    - Eastern Europe and West-Central Asia
+    - Middle East
+    - World
 
 

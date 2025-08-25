@@ -2,7 +2,7 @@
 """
 Created: Wed 21 Feburary 2024
 Description: Scripts to aggregate gdp data by region from UNPD to 5 FeliX regions
-Scope: FeliX model regionalization, module gdp 
+Scope: FeliX model regionalization, module gdp
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -16,11 +16,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pyam
+
+# import pyam
 import yaml
 
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
+
+project_name = "felix_regionalization"
 
 # predefine the data source of gdp
 # data sources are wittgensteinwittgenstein, world_bank, unpd
@@ -36,8 +39,8 @@ with open(yaml_dir, "r") as dimension_file:
 version = data_info["version"]
 felix_module = data_info["module"]
 # Any path consists of at least a root path, a version path, a module path
-path_clean_data_folder = Path(data_info["data_output"]["root_path"]).joinpath(
-    f"version_{version}/{felix_module}"
+path_clean_data_folder = Path(data_info["data_root_path"]).joinpath(
+    f"clean_data/{project_name}/{version}/{felix_module}"
 )
 
 # set logger
@@ -75,23 +78,27 @@ unit = raw_data_info["unit"]
 
 logging.info("Set path to the raw data")
 # Any path consists of at least a root path, a version path, a module path
-path_raw_data_folder = Path(raw_data_info["root_path"]).joinpath(
-    f"version_{version}/{felix_module}"
+path_raw_data_folder = Path(data_info["data_root_path"]).joinpath(
+    f"raw_data/{project_name}/{version}/{felix_module}"
 )
 raw_data_files = raw_data_info["data_file"]
 logging.info("Path to raw data set")
 
 logging.info("Set concordance tables of regional classifications")
 # set paths of concordance table
-path_concordance_folder = Path(raw_data_info["root_path"]).joinpath(
-    f"version_{version}/concordance"
+path_concordance_folder = Path(data_info["data_root_path"]).joinpath(
+    f"raw_data/{project_name}/{version}/concordance"
 )
 concordance_file = raw_data_info["concordance"]
 logging.info("Concordance tables of regional classifications set")
 
 logging.info("Extracting dimension information for data cleaning and restructing")
-
-regions = data_info["dimension"]["region"]
+if "ipcc_r6" in concordance_file:
+    regions = data_info["dimension"]["ipcc_r6"]
+    final_region_name = "ipcc_r6"
+else:
+    regions = data_info["dimension"]["region"]
+    final_region_name = "un_regions"
 logging.info("Extracted dimensions of regions")
 
 # Read raw data
@@ -129,7 +136,7 @@ concordance_table = pd.read_csv(
     encoding="utf-8",
 )
 concordance_table = concordance_table.dropna()
-concordance_table["un_region_code"] = concordance_table["un_region_code"].astype("int")
+# concordance_table["un_region_code"] = concordance_table["un_region_code"].astype("int")
 logging.info(f"Finish reading concordance table")
 
 
@@ -218,10 +225,15 @@ def data_cleaning_world_bank(
     -------
     cleaned data in pd.Dataframe
     """
+    if "ipcc_r6" in concordance.columns:
+        final_region_name = "ipcc_r6"
+    else:
+        final_region_name = "un_region"
+
     if download_method == "api":
         raw_data_merge = pd.merge(
             raw_data,
-            concordance[["location", "un_region"]],
+            concordance[["location", final_region_name]],
             left_on="country",
             right_on="location",
         ).rename(
@@ -232,7 +244,7 @@ def data_cleaning_world_bank(
     else:
         raw_data_merge = pd.merge(
             raw_data,
-            concordance[["country", "un_region"]],
+            concordance[["country", final_region_name]],
             on="country",
         ).rename(
             columns={
@@ -241,7 +253,7 @@ def data_cleaning_world_bank(
         )
 
     years = np.unique(raw_data_merge["year"])
-    raw_data_groups = raw_data_merge.groupby(["un_region", "year"])
+    raw_data_groups = raw_data_merge.groupby([final_region_name, "year"])
     cleaned_data = pd.DataFrame()
     for year in years:
         cleaned_data_ = []
@@ -259,7 +271,7 @@ def data_cleaning_world_bank(
                 ):  # make sure at least 80% countries in a region have available GDP values
 
                     entry = {
-                        "un_region": region,
+                        final_region_name: region,
                         "year": year,
                         "value": raw_data_region_year["value"].sum(),
                         "unit": unit,
@@ -273,7 +285,7 @@ def data_cleaning_world_bank(
             else:
                 entry_glb = [
                     {
-                        "un_region": region,
+                        final_region_name: region,
                         "year": year,
                         "value": raw_data_region_year["value"].sum(),
                         "unit": unit,
@@ -416,10 +428,10 @@ def data_restructure(
     To restructure data into the format:
       '''
           Time,1950,1951,1952,...
-          Gross World Product in <unit>[Africa],x,x,x,...
-          Gross World Product in <unit>[AsiaPacific],x,x,x,...
+          Gross World Product in <unit>[Region 1],x,x,x,...
+          Gross World Product in <unit>[Region 2],x,x,x,...
           ......
-          Gross World Product in <unit>[WestEU],x,x,x,...
+          Gross World Product in <unit>[Region N],x,x,x,...
       '''
       The restructured data will be used as historic data for data calibration
 
@@ -442,7 +454,12 @@ def data_restructure(
 
     restructured_data = []
     logging.info("Group cleaned data by all dimensions")
-    cleaned_data_groups = cleaned_data.groupby(["un_region", "year"])
+    if "ipcc_r6" in cleaned_data.columns:
+        final_region_name = "ipcc_r6"
+    else:
+        final_region_name = "un_region"
+
+    cleaned_data_groups = cleaned_data.groupby([final_region_name, "year"])
     for region in regions:
         if variable == "gdp_2015usd":
             entry = {
@@ -491,39 +508,39 @@ logging.info(f"Finish cleaning the raw data from {data_source}")
 
 ##################################################################################################
 including_iiasa = False
-if including_iiasa:
-    logging.info(f"Add SSP2 gdp data from IIASA based on the specified concordance")
-    logging.info(f"Load IIASA data")
-    iiasa_data_file = "1706548837040-ssp_basic_drivers_release_3.0_full.csv"
-    iiasa_data = pyam.IamDataFrame(
-        data=Path("data_regionalization_raw")
-        / f"version_{version}"
-        / "iiasa"
-        / iiasa_data_file
-    )
-    logging.info(f"Select gdp-related data from IIASA dataset")
-    iiasa_raw_data = (
-        iiasa_data.filter(scenario="SSP2", variable="GDP|PPP")
-        .timeseries()
-        .reset_index()
-    )
+# if including_iiasa:
+#     logging.info(f"Add SSP2 gdp data from IIASA based on the specified concordance")
+#     logging.info(f"Load IIASA data")
+#     iiasa_data_file = "1706548837040-ssp_basic_drivers_release_3.0_full.csv"
+#     iiasa_data = pyam.IamDataFrame(
+#         data=Path("data_regionalization_raw")
+#         / f"version_{version}"
+#         / "iiasa"
+#         / iiasa_data_file
+#     )
+#     logging.info(f"Select gdp-related data from IIASA dataset")
+#     iiasa_raw_data = (
+#         iiasa_data.filter(scenario="SSP2", variable="GDP|PPP")
+#         .timeseries()
+#         .reset_index()
+#     )
 
-    logging.info(f"Load concordance between IIASA regions and FeliX regions")
-    concordance_file_iiasa = "iiasa_countries_to_5_un_regions.csv"
-    concordance_table_iiasa = pd.read_csv(
-        path_concordance_folder / concordance_file_iiasa,
-        encoding="utf-8",
-    )
-    concordance_table_iiasa = concordance_table_iiasa.dropna().reset_index(drop=True)
-    concordance_table_iiasa["un_region_code"] = concordance_table_iiasa[
-        "un_region_code"
-    ].astype("int")
-    logging.info(f"Finish reading concordance table for IIASA")
+#     logging.info(f"Load concordance between IIASA regions and FeliX regions")
+#     concordance_file_iiasa = "iiasa_countries_to_5_un_regions.csv"
+#     concordance_table_iiasa = pd.read_csv(
+#         path_concordance_folder / concordance_file_iiasa,
+#         encoding="utf-8",
+#     )
+#     concordance_table_iiasa = concordance_table_iiasa.dropna().reset_index(drop=True)
+#     concordance_table_iiasa["un_region_code"] = concordance_table_iiasa[
+#         "un_region_code"
+#     ].astype("int")
+#     logging.info(f"Finish reading concordance table for IIASA")
 
-    cleaned_data_iiasa = data_cleaning_iiasa(
-        raw_data=iiasa_raw_data,
-        concordance=concordance_table_iiasa,
-    )
+#     cleaned_data_iiasa = data_cleaning_iiasa(
+#         raw_data=iiasa_raw_data,
+#         concordance=concordance_table_iiasa,
+#     )
 ##################################################################################################
 
 # Start restructuring cleaned data, which will be used as historic data
@@ -552,7 +569,9 @@ else:
 
     logging.info(f"Start writing the restructured data")
     restructured_gdp.to_csv(
-        path_clean_data_folder.joinpath(f"{variable}_by_time_series_{data_source}.csv"),
+        path_clean_data_folder.joinpath(
+            f"{variable}_by_time_series_{data_source}_{final_region_name}.csv"
+        ),
         encoding="utf-8",
         index=False,
     )

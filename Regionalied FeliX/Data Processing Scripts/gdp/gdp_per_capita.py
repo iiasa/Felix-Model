@@ -2,7 +2,7 @@
 """
 Created: Thur 11 January 2024
 Description: Scripts to calculate GDP per capital by FeliX regions
-Scope: FeliX model regionalization, module GDP 
+Scope: FeliX model regionalization, module GDP
 Author: Quanliang Ye
 Institution: Radboud University
 Email: quanliang.ye@ru.nl
@@ -18,15 +18,22 @@ import pandas as pd
 timestamp = datetime.datetime.now()
 file_timestamp = timestamp.ctime()
 
+project_name = "felix_regionalization"
+
 # set paths of data
-root_path_raw = Path("data_regionalization_raw")
-root_path_clean = Path("data_regionalization_clean")
-version = "nov2023"
+root_path = Path("C:/Users/yequanliang/OneDrive - IIASA/data")
+root_path_raw = root_path / "raw_data"
+root_path_clean = root_path / "clean_data"
+version = "v.11.2023"
 felix_module = "gdp"
 
 # Any path consists of at least a root path, a version path, a module path
-path_raw_data_folder = root_path_raw.joinpath(f"version_{version}/{felix_module}")
-path_clean_data_folder = root_path_clean.joinpath(f"version_{version}/{felix_module}")
+path_raw_data_folder = root_path_raw.joinpath(
+    f"{project_name}/{version}/{felix_module}"
+)
+path_clean_data_folder = root_path_clean.joinpath(
+    f"{project_name}/{version}/{felix_module}"
+)
 raw_data_file = "gdp_2015_usd.csv"
 raw_unit = "2015_USD"
 
@@ -35,16 +42,16 @@ felix_module_dep = "population"
 
 # Any path consists of at least a root path, a version path, a module path
 path_raw_data_folder_dep = root_path_raw.joinpath(
-    f"version_{version}/{felix_module_dep}"
+    f"{project_name}/{version}/{felix_module_dep}"
 )
 raw_data_file_dep = "population_world_bank.csv"
 
 # set paths of concordance table
 felix_concordance = "concordance"
 path_concordance_folder = root_path_raw.joinpath(
-    f"version_{version}/{felix_concordance}"
+    f"{project_name}/{version}/{felix_concordance}"
 )
-concordance_file = "world_bank_countries_to_5_un_regions.csv"
+concordance_file = "world_bank_countries_to_ipcc_r6.csv"
 
 
 # set logger
@@ -91,8 +98,30 @@ concordance_table = pd.read_csv(
     encoding="utf-8",
 )
 concordance_table = concordance_table.dropna()
-concordance_table["un_region_code"] = concordance_table["un_region_code"].astype("int")
+# concordance_table["un_region_code"] = concordance_table["un_region_code"].astype("int")
 logging.info(f"Finish reading concordance table")
+
+if "ipcc_r6" in concordance_table.columns:
+    final_region_name = "ipcc_r6"
+    regions = [
+        "Africa",
+        "Asia and Pacific",
+        "Developed Countries",
+        "Eastern Europe and West-Central Asia",
+        "Latin America and Caribbean",
+        "Middle East",
+        "World",
+    ]
+else:
+    final_region_name = "un_region"
+    regions = [
+        "Africa",
+        "AsiaPacific",
+        "EastEu",
+        "LAC",
+        "WestEu",
+        "World",
+    ]
 
 
 # Define data restructuring function
@@ -136,13 +165,10 @@ def data_restructure(
 
     """
     parameter = f"GWP per Capita in {raw_unit.replace('_',' ')}"
-    structured_data = [
-        {"parameter": f"{parameter}[Africa]"},
-        {"parameter": f"{parameter}[AsiaPacific]"},
-        {"parameter": f"{parameter}[EastEU]"},
-        {"parameter": f"{parameter}[LAC]"},
-        {"parameter": f"{parameter}[WestEU]"},
-    ]
+    structured_data = []
+    for region in regions:
+        structured_data.append({"parameter": f"{parameter}[{region}]"})
+
     for column in raw_data.columns:
         if column in [str(i) for i in range(1950, 2030)]:
             raw_data_year = pd.merge(
@@ -157,18 +183,19 @@ def data_restructure(
             )
             raw_data_merge = pd.merge(
                 raw_data_year,
-                concordance[["country", "un_region"]],
+                concordance[["location", final_region_name]],
                 left_on="Country Name",
-                right_on="country",
+                right_on="location",
             )
 
             logging.info(
                 f"Calculate average life expectancy at birth by Felix region, for year {column}"
             )
-            raw_data_group = raw_data_merge.groupby(["un_region"])
+            raw_data_group = raw_data_merge.groupby([final_region_name])
+
             for pos, region in enumerate(
                 np.unique(
-                    raw_data_merge["un_region"],
+                    raw_data_merge[final_region_name],
                 ),
             ):
                 raw_data_region = raw_data_group.get_group(region)
@@ -181,6 +208,7 @@ def data_restructure(
     structured_data = pd.DataFrame(structured_data)
     structured_data["unit"] = raw_unit
     structured_data = structured_data.set_index("parameter")
+
     return structured_data
 
 
@@ -195,32 +223,34 @@ logging.info("Finish restructing the raw data based on the specified concordance
 
 logging.info("Write structured data into a .csv file")
 restructured_data.to_csv(
-    path_clean_data_folder.joinpath(f"gdp_per_capita_{raw_unit}_by_time_series.csv"),
+    path_clean_data_folder.joinpath(
+        f"gdp_per_capita_{raw_unit}_by_time_series_{final_region_name}.csv"
+    ),
     encoding="utf-8",
 )
 logging.info("Finish writing structured data.")
 
 
-# convert gdp to 2005 USD
-convert_rate = 0.835833
-currency_converted_data = restructured_data
-if raw_unit == "2015_USD":
-    for column in currency_converted_data.columns:
-        if column in [str(i) for i in range(1960, 2030)]:
-            currency_converted_data[column] = (
-                currency_converted_data[column] * convert_rate
-            )
-currency_converted_data = currency_converted_data.reset_index()
-currency_converted_data["parameter"] = [
-    "GWP per Capita[Africa]",
-    "GWP per Capita[AsiaPacific]",
-    "GWP per Capita[EastEU]",
-    "GWP per Capita[LAC]",
-    "GWP per Capita[WestEU]",
-]
-currency_converted_data["unit"] = ["2005 USD"] * 5
-currency_converted_data.to_csv(
-    path_clean_data_folder.joinpath(f"gdp_per_capital_in_2005_USD_by_time_series.csv"),
-    encoding="utf-8",
-    index=False,
-)
+# # convert gdp to 2005 USD
+# convert_rate = 0.835833
+# currency_converted_data = restructured_data
+# if raw_unit == "2015_USD":
+#     for column in currency_converted_data.columns:
+#         if column in [str(i) for i in range(1960, 2030)]:
+#             currency_converted_data[column] = (
+#                 currency_converted_data[column] * convert_rate
+#             )
+# currency_converted_data = currency_converted_data.reset_index()
+# currency_converted_data["parameter"] = [
+#     "GWP per Capita[Africa]",
+#     "GWP per Capita[AsiaPacific]",
+#     "GWP per Capita[EastEU]",
+#     "GWP per Capita[LAC]",
+#     "GWP per Capita[WestEU]",
+# ]
+# currency_converted_data["unit"] = ["2005 USD"] * 5
+# currency_converted_data.to_csv(
+#     path_clean_data_folder.joinpath(f"gdp_per_capital_in_2005_USD_by_time_series.csv"),
+#     encoding="utf-8",
+#     index=False,
+# )

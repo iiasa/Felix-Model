@@ -1,5 +1,10 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 16.0.0
+- Based on version 15.3.0 clean
+- Modify the trade mechanism
+- Create a folder to store regionalized felix
+
 ## Version 15.3.0 clean
 - Based on version 15.3.0
 - Delete ununsed variables, such as population indicator
