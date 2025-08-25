@@ -14,6 +14,7 @@
 - Use Chinese survey data as a proxy, applied to upper middle income countries and adjusted according to household final consumption per capita data from World Bank
 - Calibrating the expenditure module
 - Regression analysis between expenditure and age, educational level, and income level.
+- Create a new folder for model files
 
 
 # FeliX3_YoGL_v25 (by Q. Ye)
