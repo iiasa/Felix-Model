@@ -1,4 +1,4 @@
-This version of the FeliX model was used in a research paper ("A robust, integrated policy portfolio is necessary to promote global progress across multiple sustainable development goals") submitted to The Lancet Planetary Health.
+This version of the FeliX model was used in a research paper ("Integrative Sustainable Development Goal policy portfolios to accelerate global progress towards a more sustainable future: a modelling study") published in The Lancet Planetary Health.
 
 FeliX (Functional Enviro-economic Linkages Integrated neXus) is a system dynamics model of global social, economic, and environmental Earth systems. More information can be found at: https://iiasa.ac.at/models-tools-data/felix Different versions of the FeliX model used in various publications and a full documentation of the model can be found at: https://github.com/iiasa/Felix-Model
 
