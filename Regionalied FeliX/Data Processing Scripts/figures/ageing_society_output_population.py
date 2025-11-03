@@ -50,6 +50,8 @@ path_data_output = (
 
 for output_data_file in path_data_output.glob("*.csv"):
     output_data_file_name = output_data_file.name
+    if "ageing_scenario_" not in output_data_file_name:
+        continue
 
     logging.info("Load outpout data by regionalized felix")
     output_data = pd.read_csv(output_data_file, index_col=0, header=[0, 1])
@@ -63,10 +65,13 @@ for output_data_file in path_data_output.glob("*.csv"):
     sce_names = [column_[1] for column_ in output_data.columns[:4]]
 
     logging.info("Data processing")
-    historical_data = {
-        region: np.array(output_data.loc[years, (region, "FeliX")])
-        for region in regions
-    }
+    try:
+        historical_data = {
+            region: np.array(output_data.loc[years, (region, "FeliX")])
+            for region in regions
+        }
+    except KeyError:
+        continue
 
     future_data = {
         region: [
@@ -83,7 +88,7 @@ for output_data_file in path_data_output.glob("*.csv"):
     # Set global font size to 7
     plt.rcParams.update({"font.size": font_size})
 
-    fig, axes = plt.subplots(1, 5, figsize=(7.5, 1.5), sharey=True)
+    fig, axes = plt.subplots(1, 5, figsize=(8, 1.5), sharey=False)
 
     for ax, region in zip(axes, regions):
         logging.info("Plot historical data")
@@ -113,15 +118,20 @@ for output_data_file in path_data_output.glob("*.csv"):
             )
             ax.tick_params(axis="x", labelrotation=90)
             del label_
-
-        ax.set_title(region, fontsize=font_size, fontweight="bold")
+        if "share_population" in output_data_file_name:
+            if region == "WestEu":
+                ax.set_title("WestEu_Dev", fontsize=font_size)
+            else:
+                ax.set_title(region, fontsize=font_size)
 
         ax.set_xlim(years[0], future_years[-1])
 
     # Add y-axis label to first subplot
     # axes[2].set_xlabel("Year")
     axes[0].set_ylabel(
-        output_data_file_name.split(".")[0].replace("_", " "), fontweight="bold"
+        output_data_file_name.split(".")[0][len("ageing_scenario_") :].replace(
+            "_", " "
+        ),
     )
 
     # Add legend to first subplot only to avoid clutter
@@ -131,7 +141,7 @@ for output_data_file in path_data_output.glob("*.csv"):
     legend.set_frame_on(False)
 
     # plt.tight_layout()
-    fig.subplots_adjust(right=0.82)
+    fig.subplots_adjust(wspace=0.55, right=0.82)
     plt.savefig(
         path_data_output / f"{output_data_file_name.split('.')[0]}_trends.png",
         dpi=300,

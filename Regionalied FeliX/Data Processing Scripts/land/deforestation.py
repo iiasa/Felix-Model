@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 1 May 2025
-Description: Scripts to aggregate agricultural land data from FAOSTAT to FeliX regions
+Created: Thur 11 Sept 2025
+Description: Scripts to aggregate crop land areas to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -15,6 +15,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+from netCDF4 import Dataset
+import xarray as xr
 
 from dotenv import load_dotenv
 import os
@@ -47,8 +49,8 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "agri_land"
-data_source = "faostat"
+data_variable = "deforestation"
+data_source = "land_use_harmonization"
 data_download_method = "manually"
 
 logging.info("Configure paths")
@@ -89,7 +91,7 @@ raw_data_dependency = raw_data_info["dependency"]
 if raw_data_dependency:
     felix_module_dep = raw_data_info["dependency_module"]
     raw_data_files_dep = raw_data_info["dependency_file"]
-    path_raw_data_folder_dep = path_data_raw.parent.parent / felix_module_dep
+    path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
 # set paths of concordance table
@@ -104,25 +106,38 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_land = pd.DataFrame()
+raw_deforestation = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_land_data = pd.read_csv(
-        path_data_raw / raw_data_file,
-        encoding="latin1",
-    ).rename(columns={"Area": "country"})
+    raw_deforestation_ = Dataset(path_data_raw / raw_data_file, mode="r")
+    # # print(raw_deforestation_)  # Metadata about the file
+    # print(raw_deforestation_.variables["primf"][:])
 
-    raw_land = pd.concat(
-        [raw_land, raw_land_data],
-        ignore_index=True,
-    )
-    del raw_land_data
+    import matplotlib.pyplot as plt
+
+    raw_deforestation_ = xr.open_dataset(path_data_raw / raw_data_file)
+    # print(raw_deforestation_.variables)
+    # print(raw_deforestation_.variables["time"][:])
+    raw_deforestation_["primf"].isel(time=1165).plot()
+    plt.show()
+    exit()
+# raw_deforestation_ = pd.read_csv(
+#     path_data_raw / raw_data_file,
+#     encoding="latin1",
+# ).rename(columns={"Area": "country"})
+
+# raw_deforestation = pd.concat(
+#     [raw_deforestation, raw_deforestation_],
+#     ignore_index=True,
+# )
+# del raw_deforestation_
+
+exit()
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_land_dep = pd.DataFrame()
-    logging.info("3 data source is iea")
+    logging.info("Raw data dependence exists")
 
 
 logging.info("Start reading condordance table")
@@ -177,34 +192,31 @@ def data_cleaning(
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
 
-    logging.info("Specify unit")
-    unit = np.unique(raw_data_merge["unit"])
-
     raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_land = []
+    cleaned_deforestation = []
     for region in regions:
         num_country_ = num_country[region]
         for year in years:
             try:
-                raw_data_region = raw_data_merge_groups.get_group((region, year))
+                raw_data_region_year = raw_data_merge_groups.get_group((region, year))
             except KeyError:
                 continue
 
-            if len(raw_data_region) / num_country_ > 0.85:
+            if len(raw_data_region_year) / num_country_ > 0.85:
                 entry = {
                     "region": region,
                     "year": year,
-                    "value": raw_data_region["value"].sum()
+                    "value": raw_data_region_year["value"].sum()
                     * 1000,  # convert unit from 1000 ha to ha
                     "unit": "ha",
                 }
 
-                cleaned_land.append(entry)
-                del entry, year, raw_data_region
+                cleaned_deforestation.append(entry)
+                del (entry, raw_data_region_year)
 
-    cleaned_land = pd.DataFrame(cleaned_land)
+    cleaned_deforestation = pd.DataFrame(cleaned_deforestation)
 
-    return cleaned_land
+    return cleaned_deforestation
 
 
 # Define data restructuring function
@@ -215,11 +227,11 @@ def data_restructure(
     """
     To restructure data cleaned via the cleaning function into the format:
     '''
-        Parameter,1950,1951,1952,...
-        Parameter Name[Africa],x,x,x,...
-        Parameter Name[AsiaPacific],x,x,x,...
+        Parameter,1900,1901,1902,...
+        Land Allocated for Food Crops[Africa],x,x,x,...
+        Land Allocated for Food Crops[AsiaPacific],x,x,x,...
         ...
-        Parameter Name[WestEu],x,x,x,...
+        Land Allocated for Food Crops[WestEu],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -244,20 +256,15 @@ def data_restructure(
     clean_data_groups = clean_data.groupby(["region", "year"])
     structured_data = []
     for region in regions:
-        if data_variable == "agri_area_irri":
-            entry = {
-                "parameter (unit: ha)": f"Irrigated Agriculture Land[{region}]",
-            }
-        elif data_variable == "agri_land":
-            entry = {
-                "parameter (unit: ha)": f"Agricultural Land[{region}]",
-            }
+        entry = {
+            "parameter (unit: ha)": f"Land Allocated for Food Crops[{region}]",
+        }
         for year in range(1900, 2101):
             if year in years:
                 try:
-                    cleaned_land = clean_data_groups.get_group((region, year))
+                    cleaned_deforestation = clean_data_groups.get_group((region, year))
 
-                    entry[year] = cleaned_land["value"].values[0]
+                    entry[year] = cleaned_deforestation["value"].values[0]
                 except KeyError:
                     entry[year] = np.nan
             else:
@@ -274,14 +281,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_land = data_cleaning(raw_land, concordance_table)
+cleaned_deforestation = data_cleaning(raw_deforestation, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_land = data_restructure(cleaned_land)
+restructured_deforestation = data_restructure(cleaned_deforestation)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_land.to_csv(
+restructured_deforestation.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

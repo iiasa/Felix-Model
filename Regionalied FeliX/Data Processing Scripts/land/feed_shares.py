@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 1 May 2025
-Description: Scripts to aggregate agricultural land data from FAOSTAT to FeliX regions
+Created: Thur 11 September 2025
+Description: Scripts to calculate feed shares from FAOSTAT to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -47,7 +47,7 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "agri_land"
+data_variable = "feed_share"
 data_source = "faostat"
 data_download_method = "manually"
 
@@ -89,7 +89,7 @@ raw_data_dependency = raw_data_info["dependency"]
 if raw_data_dependency:
     felix_module_dep = raw_data_info["dependency_module"]
     raw_data_files_dep = raw_data_info["dependency_file"]
-    path_raw_data_folder_dep = path_data_raw.parent.parent / felix_module_dep
+    path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
 # set paths of concordance table
@@ -104,25 +104,25 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_land = pd.DataFrame()
+raw_feed_data = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_land_data = pd.read_csv(
+    raw_feed_data_ = pd.read_csv(
         path_data_raw / raw_data_file,
         encoding="latin1",
     ).rename(columns={"Area": "country"})
 
-    raw_land = pd.concat(
-        [raw_land, raw_land_data],
+    raw_feed_data = pd.concat(
+        [raw_feed_data, raw_feed_data_],
         ignore_index=True,
     )
-    del raw_land_data
+
+    del raw_feed_data_
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_land_dep = pd.DataFrame()
-    logging.info("3 data source is iea")
+    logging.info("Raw data dependence exists")
 
 
 logging.info("Start reading condordance table")
@@ -177,34 +177,74 @@ def data_cleaning(
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
 
-    logging.info("Specify unit")
-    unit = np.unique(raw_data_merge["unit"])
+    def name_mapping(crop_name: str):
+        if crop_name in [
+            "Pulses",
+        ]:
+            return "Pulses"
+        elif crop_name in [
+            "Cereals - Excluding Beer",
+        ]:
+            return "Grains"
+        elif crop_name in [
+            "Fruits - Excluding Wine",
+            "Starchy Roots",
+            "Vegetables",
+            "Vegetable Oils",
+        ]:
+            return "VegFruits"
+        elif crop_name in [
+            "Oilcrops",
+            # "Sugar & Sweeteners",
+            "Sugar Crops",
+            "Treenuts",
+            # "Spices",
+            # "Stimulants",
+        ]:
+            return "OtherCrops"
 
-    raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_land = []
+    raw_data_merge["food_category"] = (
+        raw_data_merge["item"].astype(str).map(name_mapping)
+    )
+    food_categories = ["Pulses", "Grains", "VegFruits", "OtherCrops"]
+
+    raw_data_merge_groups = raw_data_merge.groupby(
+        ["un_region", "year", "food_category"]
+    )
+
+    cleaned_feed_data = []
     for region in regions:
-        num_country_ = num_country[region]
         for year in years:
-            try:
-                raw_data_region = raw_data_merge_groups.get_group((region, year))
-            except KeyError:
-                continue
+            raw_data_feed_amount = [np.nan] * len(food_categories)
+            for pos, food_category in enumerate(food_categories):
+                try:
+                    raw_data_feed_ = raw_data_merge_groups.get_group(
+                        (region, year, food_category)
+                    )
+                except KeyError:
+                    raw_data_feed_amount[pos] = 0
 
-            if len(raw_data_region) / num_country_ > 0.85:
-                entry = {
-                    "region": region,
-                    "year": year,
-                    "value": raw_data_region["value"].sum()
-                    * 1000,  # convert unit from 1000 ha to ha
-                    "unit": "ha",
-                }
+                raw_data_feed_amount[pos] = (
+                    raw_data_feed_["value"].sum() * 1000
+                )  # convert 1000 t to tons
+                del pos, food_category
 
-                cleaned_land.append(entry)
-                del entry, year, raw_data_region
+            entry = {
+                "region": region,
+                "year": year,
+            }
+            for pos, food_category in enumerate(food_categories):
+                entry[f"amount_{food_category}"] = raw_data_feed_amount[pos]
+                entry[f"share_{food_category}"] = raw_data_feed_amount[pos] / sum(
+                    raw_data_feed_amount
+                )
 
-    cleaned_land = pd.DataFrame(cleaned_land)
+            cleaned_feed_data.append(entry)
+            del entry, raw_data_feed_amount
 
-    return cleaned_land
+    cleaned_feed_data = pd.DataFrame(cleaned_feed_data)
+
+    return cleaned_feed_data
 
 
 # Define data restructuring function
@@ -215,11 +255,11 @@ def data_restructure(
     """
     To restructure data cleaned via the cleaning function into the format:
     '''
-        Parameter,1950,1951,1952,...
-        Parameter Name[Africa],x,x,x,...
-        Parameter Name[AsiaPacific],x,x,x,...
+        Parameter,1900,1901,1902,...
+        Feed share of crop types Data[Africa,Pulses],x,x,x,...
+        Feed share of crop types Data[AsiaPacific,Pulses],x,x,x,...
         ...
-        Parameter Name[WestEu],x,x,x,...
+        Feed share of crop types Data[WestEu,OtherCrops],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -240,33 +280,43 @@ def data_restructure(
     logging.info("Specify available years")
     years = np.unique(clean_data["year"])
 
+    food_categories = ["Pulses", "Grains", "VegFruits", "OtherCrops"]
+
     logging.info("Restructure cleaned data")
     clean_data_groups = clean_data.groupby(["region", "year"])
     structured_data = []
     for region in regions:
-        if data_variable == "agri_area_irri":
-            entry = {
-                "parameter (unit: ha)": f"Irrigated Agriculture Land[{region}]",
+        for food_category in food_categories:
+            entry_amount = {
+                "parameter": f"Feed demand in tonnes[{region},{food_category}]",
             }
-        elif data_variable == "agri_land":
             entry = {
-                "parameter (unit: ha)": f"Agricultural Land[{region}]",
+                "parameter": f"Feed share of crop types Data[{region},{food_category}]",
             }
-        for year in range(1900, 2101):
-            if year in years:
-                try:
-                    cleaned_land = clean_data_groups.get_group((region, year))
+            for year in range(1900, 2101):
+                if year in years:
+                    try:
+                        cleaned_feed_data_ = clean_data_groups.get_group((region, year))
 
-                    entry[year] = cleaned_land["value"].values[0]
-                except KeyError:
+                        entry_amount[year] = cleaned_feed_data_[
+                            f"amount_{food_category}"
+                        ].values[0]
+                        entry[year] = cleaned_feed_data_[
+                            f"share_{food_category}"
+                        ].values[0]
+                    except KeyError:
+                        entry_amount[year] = np.nan
+                        entry[year] = np.nan
+
+                else:
+                    entry_amount[year] = np.nan
                     entry[year] = np.nan
-            else:
-                entry[year] = np.nan
 
-            del year
+                del year
 
-        structured_data.append(entry)
-        del entry
+            structured_data.append(entry_amount)
+            structured_data.append(entry)
+            del entry
 
     structured_data = pd.DataFrame(structured_data)
     return structured_data
@@ -274,14 +324,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_land = data_cleaning(raw_land, concordance_table)
+cleaned_feed_data = data_cleaning(raw_feed_data, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_land = data_restructure(cleaned_land)
+restructured_feed_data = data_restructure(cleaned_feed_data)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_land.to_csv(
+restructured_feed_data.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

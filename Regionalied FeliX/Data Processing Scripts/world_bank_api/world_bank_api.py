@@ -31,7 +31,7 @@ file_timestamp = timestamp.ctime()
 
 logging.info("Configure module")
 current_project = "felix_regionalization"
-current_module = "gdp"
+current_module = "land"
 
 logging.info("Configure paths")
 path_raw_data_folder = (
@@ -242,7 +242,7 @@ def get_data_cube(
 
 # Get datacube for a specified dataset
 logging.info("Specify id for the dataset and output path")
-endpoint = "NE.CON.PRVT.PC.KD"
+endpoint = "AG.LND.TOTL.UR.K2"
 
 
 logging.info(f"Get datacube {endpoint} via the API")

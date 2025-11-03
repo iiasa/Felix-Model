@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 1 May 2025
-Description: Scripts to aggregate agricultural land data from FAOSTAT to FeliX regions
+Created: Thur 11 Sept 2025
+Description: Scripts to calculate fractions of permanent meadow and pasture in agricultural land to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -47,7 +47,7 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "agri_land"
+data_variable = "fraction_permanent_meadow_pasture"
 data_source = "faostat"
 data_download_method = "manually"
 
@@ -89,7 +89,7 @@ raw_data_dependency = raw_data_info["dependency"]
 if raw_data_dependency:
     felix_module_dep = raw_data_info["dependency_module"]
     raw_data_files_dep = raw_data_info["dependency_file"]
-    path_raw_data_folder_dep = path_data_raw.parent.parent / felix_module_dep
+    path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
 # set paths of concordance table
@@ -104,25 +104,24 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_land = pd.DataFrame()
+raw_meadow_pasture = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_land_data = pd.read_csv(
+    raw_meadow_pasture_data = pd.read_csv(
         path_data_raw / raw_data_file,
         encoding="latin1",
     ).rename(columns={"Area": "country"})
 
-    raw_land = pd.concat(
-        [raw_land, raw_land_data],
+    raw_meadow_pasture = pd.concat(
+        [raw_meadow_pasture, raw_meadow_pasture_data],
         ignore_index=True,
     )
-    del raw_land_data
+    del raw_meadow_pasture_data
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_land_dep = pd.DataFrame()
-    logging.info("3 data source is iea")
+    logging.info("Raw data dependence exists")
 
 
 logging.info("Start reading condordance table")
@@ -177,34 +176,55 @@ def data_cleaning(
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
 
-    logging.info("Specify unit")
-    unit = np.unique(raw_data_merge["unit"])
-
-    raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_land = []
+    raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year", "item"])
+    cleaned_meadow_pasture = []
     for region in regions:
-        num_country_ = num_country[region]
         for year in years:
             try:
-                raw_data_region = raw_data_merge_groups.get_group((region, year))
+                raw_permanent_meadow_pasture_ = raw_data_merge_groups.get_group(
+                    (region, year, "Permanent meadows and pastures")
+                )
             except KeyError:
                 continue
 
-            if len(raw_data_region) / num_country_ > 0.85:
-                entry = {
-                    "region": region,
-                    "year": year,
-                    "value": raw_data_region["value"].sum()
-                    * 1000,  # convert unit from 1000 ha to ha
-                    "unit": "ha",
-                }
+            try:
+                raw_agricultural_meadow_pasture_ = raw_data_merge_groups.get_group(
+                    (region, year, "Agricultural land")
+                )
+            except KeyError:
+                continue
 
-                cleaned_land.append(entry)
-                del entry, year, raw_data_region
+            raw_permanent_meadow_agri_meadow_pasture_merge = pd.merge(
+                raw_permanent_meadow_pasture_.rename(
+                    columns={"value": "permanent_meadow_pasture"}
+                ),
+                raw_agricultural_meadow_pasture_.rename(
+                    columns={"value": "agri_meadow_pasture"}
+                ),
+                on="country",
+            )
 
-    cleaned_land = pd.DataFrame(cleaned_land)
+            entry = {
+                "region": region,
+                "year": year,
+                "fraction": raw_permanent_meadow_agri_meadow_pasture_merge[
+                    "permanent_meadow_pasture"
+                ].sum()
+                / raw_permanent_meadow_agri_meadow_pasture_merge[
+                    "agri_meadow_pasture"
+                ].sum(),
+                "meadow_pasture_area": raw_permanent_meadow_agri_meadow_pasture_merge[
+                    "permanent_meadow_pasture"
+                ].sum()
+                * 1000,  # convert unit from 1000 ha to ha
+            }
 
-    return cleaned_land
+            cleaned_meadow_pasture.append(entry)
+            del (entry, raw_agricultural_meadow_pasture_, raw_permanent_meadow_pasture_)
+
+    cleaned_meadow_pasture = pd.DataFrame(cleaned_meadow_pasture)
+
+    return cleaned_meadow_pasture
 
 
 # Define data restructuring function
@@ -215,11 +235,11 @@ def data_restructure(
     """
     To restructure data cleaned via the cleaning function into the format:
     '''
-        Parameter,1950,1951,1952,...
-        Parameter Name[Africa],x,x,x,...
-        Parameter Name[AsiaPacific],x,x,x,...
+        Parameter,1900,1901,1902,...
+        Meadows and Pastures Percentage of Agriculture Land[Africa],x,x,x,...
+        Meadows and Pastures Percentage of Agriculture Land[AsiaPacific],x,x,x,...
         ...
-        Parameter Name[WestEu],x,x,x,...
+        Meadows and Pastures Percentage of Agriculture Land[WestEu],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -244,29 +264,33 @@ def data_restructure(
     clean_data_groups = clean_data.groupby(["region", "year"])
     structured_data = []
     for region in regions:
-        if data_variable == "agri_area_irri":
-            entry = {
-                "parameter (unit: ha)": f"Irrigated Agriculture Land[{region}]",
-            }
-        elif data_variable == "agri_land":
-            entry = {
-                "parameter (unit: ha)": f"Agricultural Land[{region}]",
-            }
+        entry_fraction = {
+            "parameter (unit: ha)": f"Meadows and Pastures Percentage of Agriculture Land[{region}]",
+        }
+        entry_area = {
+            "parameter (unit: ha)": f"Permanent meadows and pastures[{region}]",
+        }
         for year in range(1900, 2101):
             if year in years:
                 try:
-                    cleaned_land = clean_data_groups.get_group((region, year))
+                    cleaned_meadow_pasture = clean_data_groups.get_group((region, year))
 
-                    entry[year] = cleaned_land["value"].values[0]
+                    entry_fraction[year] = cleaned_meadow_pasture["fraction"].values[0]
+                    entry_area[year] = cleaned_meadow_pasture[
+                        "meadow_pasture_area"
+                    ].values[0]
                 except KeyError:
-                    entry[year] = np.nan
+                    entry_fraction[year] = np.nan
+                    entry_area[year] = np.nan
             else:
-                entry[year] = np.nan
+                entry_fraction[year] = np.nan
+                entry_area[year] = np.nan
 
             del year
 
-        structured_data.append(entry)
-        del entry
+        structured_data.append(entry_fraction)
+        structured_data.append(entry_area)
+        del entry_area, entry_fraction
 
     structured_data = pd.DataFrame(structured_data)
     return structured_data
@@ -274,14 +298,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_land = data_cleaning(raw_land, concordance_table)
+cleaned_meadow_pasture = data_cleaning(raw_meadow_pasture, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_land = data_restructure(cleaned_land)
+restructured_meadow_pasture = data_restructure(cleaned_meadow_pasture)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_land.to_csv(
+restructured_meadow_pasture.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

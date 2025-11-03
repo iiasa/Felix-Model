@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 21 August 2025
-Description: Scripts to plot average daily calorie intake by diet, gender, age cohort
+Created: Thur 25 September 2025
+Description: Scripts to plot followers by diet, gender, age cohort
 Scope: FeliX model regionalization, module working_paper
 Author: Quanliang Ye
 Institution: IIASA
@@ -50,7 +50,7 @@ path_data_output = (
 
 for output_data_file in path_data_output.glob("*.csv"):
     output_data_file_name = output_data_file.name
-    if "by_diet_scenario" not in output_data_file_name:
+    if "by_scenario" not in output_data_file_name:
         continue
 
     logging.info("Load outpout data")
@@ -92,9 +92,12 @@ for output_data_file in path_data_output.glob("*.csv"):
 
                 for gender in genders:
                     # Male values negated for left side
-                    gender_vals = output_data_tot_diet[
-                        output_data_tot_diet["gender"] == gender
-                    ][year].values
+                    gender_vals = (
+                        output_data_tot_diet[output_data_tot_diet["gender"] == gender][
+                            year
+                        ].values
+                        / 1000000
+                    )  # unit in million people
 
                     if gender == "male":
                         ax.plot(
@@ -105,7 +108,7 @@ for output_data_file in path_data_output.glob("*.csv"):
                         )
                     elif gender == "female":
                         ax.plot(
-                            gender_vals * 100,
+                            gender_vals * 1000000,
                             age_cohorts,
                             linestyle,
                             color="black",
@@ -121,7 +124,7 @@ for output_data_file in path_data_output.glob("*.csv"):
             # Formatting
             ax.axvline(0, color="black", linewidth=linewidth)
             if j == 1:
-                ax.set_xlabel("kcal per person", fontsize=font_size)
+                ax.set_xlabel("million person", fontsize=font_size)
 
             ax.set_title(
                 f"{diet}, {year}",
@@ -132,11 +135,11 @@ for output_data_file in path_data_output.glob("*.csv"):
             ax.tick_params(axis="y", labelsize=7)
 
             # Relabel x-axis ticks as positive values
-            xticks = [i for i in range(-4000, 4001, 1000)]
+            max_val = 800
+            xticks = [i for i in range(-max_val, max_val + 1, 200)]
             ax.set_xticks(xticks)
             ax.set_xticklabels([abs(int(x)) for x in xticks], fontsize=font_size)
 
-            max_val = 4000
             ax.set_xlim(-max_val, max_val)
 
             # --- Add "Male" and "Female" text labels ---

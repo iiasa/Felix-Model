@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 1 May 2025
-Description: Scripts to aggregate agricultural land data from FAOSTAT to FeliX regions
+Created: Wed 27 August 2025
+Description: Scripts to aggregate agricultural protective land area from FAOSTAT to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -47,7 +47,7 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "agri_land"
+data_variable = "agri_protect_land"
 data_source = "faostat"
 data_download_method = "manually"
 
@@ -89,7 +89,7 @@ raw_data_dependency = raw_data_info["dependency"]
 if raw_data_dependency:
     felix_module_dep = raw_data_info["dependency_module"]
     raw_data_files_dep = raw_data_info["dependency_file"]
-    path_raw_data_folder_dep = path_data_raw.parent.parent / felix_module_dep
+    path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
 # set paths of concordance table
@@ -104,25 +104,24 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_land = pd.DataFrame()
+raw_protect_land = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_land_data = pd.read_csv(
+    raw_protect_land_data = pd.read_csv(
         path_data_raw / raw_data_file,
         encoding="latin1",
     ).rename(columns={"Area": "country"})
 
-    raw_land = pd.concat(
-        [raw_land, raw_land_data],
+    raw_protect_land = pd.concat(
+        [raw_protect_land, raw_protect_land_data],
         ignore_index=True,
     )
-    del raw_land_data
+    del raw_protect_land_data
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_land_dep = pd.DataFrame()
-    logging.info("3 data source is iea")
+    logging.info("Raw data dependence exists")
 
 
 logging.info("Start reading condordance table")
@@ -177,9 +176,6 @@ def data_cleaning(
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
 
-    logging.info("Specify unit")
-    unit = np.unique(raw_data_merge["unit"])
-
     raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
     cleaned_land = []
     for region in regions:
@@ -215,11 +211,11 @@ def data_restructure(
     """
     To restructure data cleaned via the cleaning function into the format:
     '''
-        Parameter,1950,1951,1952,...
-        Parameter Name[Africa],x,x,x,...
-        Parameter Name[AsiaPacific],x,x,x,...
+        Parameter,1900,1901,1902,...
+        Agriculture Protected Land[Africa],x,x,x,...
+        Agriculture Protected Land[AsiaPacific],x,x,x,...
         ...
-        Parameter Name[WestEu],x,x,x,...
+        Agriculture Protected Land[WestEu],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -244,14 +240,9 @@ def data_restructure(
     clean_data_groups = clean_data.groupby(["region", "year"])
     structured_data = []
     for region in regions:
-        if data_variable == "agri_area_irri":
-            entry = {
-                "parameter (unit: ha)": f"Irrigated Agriculture Land[{region}]",
-            }
-        elif data_variable == "agri_land":
-            entry = {
-                "parameter (unit: ha)": f"Agricultural Land[{region}]",
-            }
+        entry = {
+            "parameter (unit: ha)": f"Agriculture Protected Land[{region}]",
+        }
         for year in range(1900, 2101):
             if year in years:
                 try:
@@ -274,7 +265,7 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_land = data_cleaning(raw_land, concordance_table)
+cleaned_land = data_cleaning(raw_protect_land, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
 restructured_land = data_restructure(cleaned_land)

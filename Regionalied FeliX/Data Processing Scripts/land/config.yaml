@@ -49,6 +49,187 @@ data_input:
     dependency_file: 
       - 
     dependency_concordance:
+  - datasource: faostat
+    variable: crop_yield
+    download_via: manually
+    data_file: 
+      - crop_production_harvested_area_to_1969.csv
+      - crop_production_harvested_area_1970_1979.csv
+      - crop_production_harvested_area_1980_1989.csv
+      - crop_production_harvested_area_1990_1999.csv
+      - crop_production_harvested_area_2000_2009.csv
+      - crop_production_harvested_area_after_2010.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
+  - datasource: faostat
+    variable: agri_protect_land
+    download_via: manually
+    data_file: 
+      - agricultural_protected_land.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: permanent_crop_land
+    download_via: manually
+    data_file: 
+      - permanent_crop_land.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: other_land
+    download_via: manually
+    data_file: 
+      - other_land_area.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: livestock_products
+    download_via: manually
+    data_file: 
+      - animal_products_primary.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: pasture_land_area
+    download_via: manually
+    data_file: 
+      - permanent_pasture_land.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: world_bank
+    variable: urban_area
+    download_via: api
+    data_file: 
+      - AG_LND_TOTL_UR_K2_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: fraction_permanent_meadow_pasture
+    download_via: manually
+    data_file: 
+      - permanent_meadow_pasture_land.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: crop_land_area
+    download_via: manually
+    data_file: 
+      - crop_land_area.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: feed_share
+    download_via: manually
+    data_file: 
+      - feed_demand_to_2009.csv
+      - feed_demand_after_2010.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
+  - datasource: faostat
+    variable: food_demand
+    text: Food demand by product from FAOSTAT
+    download_via: manually
+    data_file: food_demand
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
+  - datasource: faostat
+    variable: food_production
+    download_via: manually
+    data_file: 
+      - food_production_to_1969.csv
+      - food_production_1970_1979.csv
+      - food_production_1980_1989.csv
+      - food_production_1990_1999.csv
+      - food_production_2000_2009.csv
+      - food_production_after_2010.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: faostat
+    variable: egg_production
+    download_via: manually
+    data_file: 
+      - egg_production.csv
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: land_use_harmonization
+    variable: deforestation
+    download_via: manually
+    data_file: 
+      - states.nc
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  - datasource: land_use_harmonization
+    variable: grass_land_area
+    download_via: manually
+    data_file: 
+      - pasture_land_area.csv
+      - range_land_area.csv
+    concordance: land_use_hamonization_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+  
 dimension:
   region:
     - Africa
@@ -57,7 +238,15 @@ dimension:
     - LAC
     - WestEu
     - World
-
+  food_category:
+    - PasMeat
+    - CropMeat
+    - Dairy
+    - Eggs
+    - Pulses
+    - Grains
+    - VegFruits
+    - OtherCrops
 
 
 

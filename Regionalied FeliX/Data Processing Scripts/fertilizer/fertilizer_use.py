@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 1 May 2025
-Description: Scripts to aggregate agricultural land data from FAOSTAT to FeliX regions
-Scope: FeliX model regionalization, module land
+Created: Wed 27 August 2025
+Description: Scripts to aggregate fertilizer use data from IFA to FeliX regions
+Scope: FeliX model regionalization, module fertilizer
 Author: Quanliang Ye
 Institution: IIASA
 Email: yequanliang@iiasa.ac.at
@@ -44,11 +44,11 @@ logging.info("Configure peoject")
 current_project = "felix_regionalization"
 
 logging.info("Configure module")
-current_module = "land"
+current_module = "fertilizer"
 
 logging.info("Config data variable")
-data_variable = "agri_land"
-data_source = "faostat"
+data_variable = "fertilizer_use"
+data_source = "ifa"
 data_download_method = "manually"
 
 logging.info("Configure paths")
@@ -68,7 +68,6 @@ yaml_dir = Path(
 )
 with open(yaml_dir, "r") as dimension_file:
     data_info = yaml.safe_load(dimension_file)
-
 
 logging.info("Extracting information of input data")
 raw_data_info = {}
@@ -104,24 +103,25 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_land = pd.DataFrame()
+raw_fertilizer = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_land_data = pd.read_csv(
+    raw_fertilizer_data = pd.read_excel(
         path_data_raw / raw_data_file,
-        encoding="latin1",
-    ).rename(columns={"Area": "country"})
+        skiprows=2,
+        # encoding="latin1",
+    )
 
-    raw_land = pd.concat(
-        [raw_land, raw_land_data],
+    raw_fertilizer = pd.concat(
+        [raw_fertilizer, raw_fertilizer_data],
         ignore_index=True,
     )
-    del raw_land_data
+    del raw_fertilizer_data
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
-    raw_land_dep = pd.DataFrame()
+    raw_fertilizer_dep = pd.DataFrame()
     logging.info("3 data source is iea")
 
 
@@ -132,12 +132,6 @@ concordance_table = pd.read_csv(
 )
 concordance_table = concordance_table.dropna()
 concordance_table["un_region_code"] = concordance_table["un_region_code"].astype("int")
-logging.info(f"Finish reading concordance table")
-num_country = {}
-for region in regions:
-    num_country[region] = len(
-        concordance_table.loc[concordance_table["un_region"] == region]
-    )
 
 
 # Define cleaning function
@@ -175,36 +169,43 @@ def data_cleaning(
         raise KeyError
 
     logging.info("Specify available years")
-    years = np.unique(raw_data_merge["year"])
+    years = [int(year_) for year_ in np.unique(raw_data_merge["year"])]
+    logging.info("Specify the fertilizer types")
+    fertilizer_types = list(np.unique(raw_data_merge["product"]))
 
-    logging.info("Specify unit")
-    unit = np.unique(raw_data_merge["unit"])
-
-    raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_land = []
+    raw_data_merge_groups = raw_data_merge.groupby(
+        [
+            "un_region",
+            "product",
+            "year",
+        ]
+    )
+    cleaned_fertilizer = []
     for region in regions:
-        num_country_ = num_country[region]
-        for year in years:
-            try:
-                raw_data_region = raw_data_merge_groups.get_group((region, year))
-            except KeyError:
-                continue
+        for fertilizer_type in fertilizer_types:
+            for year in years:
+                try:
+                    raw_data_region = raw_data_merge_groups.get_group(
+                        (region, fertilizer_type, year)
+                    )
+                except KeyError:
+                    continue
 
-            if len(raw_data_region) / num_country_ > 0.85:
                 entry = {
                     "region": region,
+                    "fertilizer_type": fertilizer_type,
                     "year": year,
-                    "value": raw_data_region["value"].sum()
-                    * 1000,  # convert unit from 1000 ha to ha
-                    "unit": "ha",
+                    "value": raw_data_region["consumption"].sum()
+                    * 1000,  # convert unit from thousand tonnes to ton
+                    "unit": "tonnes",
                 }
 
-                cleaned_land.append(entry)
+                cleaned_fertilizer.append(entry)
                 del entry, year, raw_data_region
 
-    cleaned_land = pd.DataFrame(cleaned_land)
+    cleaned_fertilizer = pd.DataFrame(cleaned_fertilizer)
 
-    return cleaned_land
+    return cleaned_fertilizer
 
 
 # Define data restructuring function
@@ -216,10 +217,10 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1950,1951,1952,...
-        Parameter Name[Africa],x,x,x,...
-        Parameter Name[AsiaPacific],x,x,x,...
+        Fertilizer type[Africa],x,x,x,...
+        Fertilizer type[AsiaPacific],x,x,x,...
         ...
-        Parameter Name[WestEu],x,x,x,...
+        Fertilizer type[WestEu],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -240,33 +241,35 @@ def data_restructure(
     logging.info("Specify available years")
     years = np.unique(clean_data["year"])
 
+    logging.info("Specify fertilizer types")
+    fertilizer_types = np.unique(clean_data["fertilizer_type"])
+
     logging.info("Restructure cleaned data")
-    clean_data_groups = clean_data.groupby(["region", "year"])
+    clean_data_groups = clean_data.groupby(["fertilizer_type", "region", "year"])
     structured_data = []
-    for region in regions:
-        if data_variable == "agri_area_irri":
-            entry = {
-                "parameter (unit: ha)": f"Irrigated Agriculture Land[{region}]",
-            }
-        elif data_variable == "agri_land":
-            entry = {
-                "parameter (unit: ha)": f"Agricultural Land[{region}]",
-            }
-        for year in range(1900, 2101):
-            if year in years:
-                try:
-                    cleaned_land = clean_data_groups.get_group((region, year))
 
-                    entry[year] = cleaned_land["value"].values[0]
-                except KeyError:
+    for fertilizer_type in fertilizer_types:
+        for region in regions:
+            entry = {
+                "parameter (unit: tonnes)": f"{fertilizer_type}[{region}]",
+            }
+            for year in range(1900, 2101):
+                if year in years:
+                    try:
+                        cleaned_fertilizer = clean_data_groups.get_group(
+                            (fertilizer_type, region, year)
+                        )
+
+                        entry[year] = cleaned_fertilizer["value"].values[0]
+                    except KeyError:
+                        entry[year] = np.nan
+                else:
                     entry[year] = np.nan
-            else:
-                entry[year] = np.nan
 
-            del year
+                del year
 
-        structured_data.append(entry)
-        del entry
+            structured_data.append(entry)
+            del entry
 
     structured_data = pd.DataFrame(structured_data)
     return structured_data
@@ -274,14 +277,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_land = data_cleaning(raw_land, concordance_table)
+cleaned_fertilizer = data_cleaning(raw_fertilizer, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_land = data_restructure(cleaned_land)
+restructured_fertilizer = data_restructure(cleaned_fertilizer)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_land.to_csv(
+restructured_fertilizer.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,
