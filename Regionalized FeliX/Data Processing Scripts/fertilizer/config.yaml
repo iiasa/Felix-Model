@@ -1,0 +1,27 @@
+module: fertilizer
+overwrite: True
+create_path: True
+data_input:
+  - datasource: ifa
+    variable: fertilizer_use
+    download_via: manually
+    data_file: 
+      - grand_total_n_p_consumption.xlsx
+    concordance: ifa_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+
+

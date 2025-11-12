@@ -1,0 +1,62 @@
+version: nov2023
+module: comtrade
+overwrite: True
+create_path: True
+data_input:
+  - datasource: un_comtrade
+    variable: oil_comtrade
+    unit: kg
+    text: oil export 
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      # - oil_comtrade_un_1989.xlsx
+      - oil_comtrade_un_1962_1969.xlsx
+      - oil_comtrade_un_1970_1979.xlsx
+      - oil_comtrade_un_1980_1989.xlsx
+      - oil_comtrade_un_1990_2000.xlsx
+      - oil_comtrade_un_2000_2009.xlsx
+      - oil_comtrade_un_2010_2019.xlsx
+      - oil_comtrade_un_2020_2023.xlsx
+    concordance: uncomtrade_reporters_to_5_un_regions.csv
+  - datasource: un_comtrade
+    variable: gas_comtrade
+    unit: kg
+    text: gas export 
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - gas_comtrade_un.xlsx
+      - gas_comtrade_un_2007_2011.xlsx
+      - gas_comtrade_un_1995_2006.xlsx
+      - gas_comtrade_un_1983_1994.xlsx
+      - gas_comtrade_un_1971_1982.xlsx
+      - gas_comtrade_un_1962_1970.xlsx
+    concordance: uncomtrade_reporters_to_5_un_regions.csv
+  - datasource: un_comtrade
+    variable: coal_comtrade
+    unit: kg
+    text: coal export 
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - coal_comtrade_un_2012_2023.xlsx
+      - coal_comtrade_un_2000_2011.xlsx
+      - coal_comtrade_un_1988_1999.xlsx
+      - coal_comtrade_un_1976_1987.xlsx
+      - coal_comtrade_un_1964_1975.xlsx
+      - coal_comtrade_un_1962_1963.xlsx
+    concordance: uncomtrade_reporters_to_5_un_regions.csv
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+

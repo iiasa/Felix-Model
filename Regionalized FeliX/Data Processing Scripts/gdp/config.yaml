@@ -1,0 +1,85 @@
+version: v.11.2023
+module: gdp
+overwrite: True
+create_path: True
+data_root_path: C:/Users/yequanliang/OneDrive - IIASA/data
+data_input:
+  - datasource: world_bank
+    variable: gdp_2015usd
+    text: GDP (constant 2015 US$)
+    unit: constant 2015 US$
+    download_via: api
+    data_file: 
+      - NY_GDP_MKTP_KD_fact.json
+    concordance: world_bank_countries_to_ipcc_r6.csv
+  - datasource: world_bank
+    variable: gdp_ppp
+    text: GDP, PPP (constant 2017 international $)
+    unit: constant 2017 international $
+    download_via: api
+    data_file: 
+      - NY_GDP_MKTP_PP_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: gdp_ind_share
+    text: Share of industrial value added in gdp
+    unit: 
+    download_via: api
+    data_file: 
+      - NV_IND_TOTL_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
+  - datasource: world_bank
+    variable: gdp_ind_share_app2
+    text: Share of industrial value added in gdp by approach2
+    unit: 
+    download_via: api
+    data_file: 
+      - NV_IND_TOTL_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
+  - datasource: world_bank
+    variable: gdp_per_capita_ppp
+    text: GDP per capita, PPP (constant 2017 international $)
+    download_via: api
+    data_file: 
+      - NY_GDP_PCAP_PP_KD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: gdp_hh_exp_share
+    text: Share of household expenditure in gdp
+    unit: 
+    download_via: api
+    data_file: 
+      - NE_CON_PRVT_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_KD_fact.json
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+  ipcc_r6:
+    - Asia and Pacific
+    - Developed Countries
+    - Africa
+    - Latin America and Caribbean
+    - Eastern Europe and West-Central Asia
+    - Middle East
+    - World
+
+
