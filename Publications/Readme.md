@@ -1,3 +1,9 @@
+Liu, Q., et al. (2025). [Assessing the Dynamic Evolution of Global Energy Poverty Under Uncertain Climate Trends–Shaped Future Pathways]([https://www.cell.com/one-earth/fulltext/S2590-3322(23)00141-0](https://doi.org/10.1002/sd.70396)) Sustainability Science.
+
+Yang J., Gao L., Guo Z., et al. (2025) [Integrative Sustainable Development Goal policy portfolios to accelerate global progress towards a more sustainable future: a modelling study](https://doi.org/10.1016/j.lanplh.2025.101318). Lancet Planetary Health.
+
+Ye Q, Liu Q, Swamy D, Moallemi E, Gao L, Rydzak F, Eker S. (2024) [FeliX 2.0: An integrated model of climate, economy, environment, and society interactions](https://www.sciencedirect.com/science/article/pii/S1364815224001828). Environmental Modeling and Software (179). 
+
 Yang, J., et al. (2023). [Assessing environmental impacts of response strategies for sustainable food system transformation](https://onlinelibrary.wiley.com/doi/10.1002/sd.2795). Sustainable Development.
 
 Ruan, W., et al. (2023). [Assessing the progress toward achieving energy- and climate-related sustainable development goals under four global energy transition outlooks](https://onlinelibrary.wiley.com/doi/epdf/10.1002/sd.2873). Sustainable Development.
