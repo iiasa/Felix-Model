@@ -1,4 +1,4 @@
-Liu, Q., et al. (2025). [Assessing the Dynamic Evolution of Global Energy Poverty Under Uncertain Climate Trends–Shaped Future Pathways]([https://www.cell.com/one-earth/fulltext/S2590-3322(23)00141-0](https://doi.org/10.1002/sd.70396)) Sustainability Science.
+Liu, Q., et al. (2025). [Assessing the Dynamic Evolution of Global Energy Poverty Under Uncertain Climate Trends–Shaped Future Pathways](https://doi.org/10.1002/sd.70396) Sustainability Science.
 
 Yang J., Gao L., Guo Z., et al. (2025) [Integrative Sustainable Development Goal policy portfolios to accelerate global progress towards a more sustainable future: a modelling study](https://doi.org/10.1016/j.lanplh.2025.101318). Lancet Planetary Health.
 
