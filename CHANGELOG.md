@@ -1,3 +1,26 @@
+# FeliX3_ISE_v26 (by R. Tan)
+- Based on FeliX3_YoGL_v25
+### Food System Updates
+- **Food Demand Scenarios**
+  - Diet Change: Added alternative Global Scenario in *Diet Change Module*
+  - Food Loss and Waste: Split into separate Waste/Losses components
+  - Alternative Proteins: Newly scenario which include Land Swap interaction in *Land Use Module*
+- **Food-related Indicators**
+  - *Nutrition Module*: Newly added to calculate caloric and nutrition supply, including indicators such as PoU (Prevalence of Undernourishment)
+  - Freshwater Withdrawal: Added formulas to estimate food-related water use
+- **Additional Variables for FeliX ISE Tool**
+  - Historical Data (New View)
+  - Placeholder Values (New View)
+### Climate System Updates
+- **GHG Disaggregation**
+  - *Emissions Module*: Newly added to track various emissions (previously only CO2) from various activities
+  - *Gaseous Cycle Module*: Extended Carbon Cycle to include methane and nitrous oxide cycles
+  - *Climate Module*: Updated formulas for radiative forcing that account for overlapping interactions between different GHG atmospheric concentrations
+### Energy Updates
+- **Wind/Solar Energy Modules**
+  - Updated cost structure
+  - Revised Energy Market Share Module
+
 # FeliX3_YoGL_v25 (by Q. Ye)
 - Based on FeliX3_YoGL_v24
 - Adjust the parameter values to match the total investment in three fossil fuels. Total investment inlcudes investment in oil exploration, oil production, and oil technology.
