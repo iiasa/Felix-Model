@@ -32359,9 +32359,8 @@ Reference tertiary education enrollment fraction[Gender],0,1,0.01
 :DATASET *6
 :L<%^E!@
 1:Reference_V25.vdfx
-1:Data.vdfx
 4:Time
-5:"$ into $thousand"
+5:GDP per Capita GLOBIOM usd
 6:"10-14"
 6:"15-19"
 6:"20-24"
