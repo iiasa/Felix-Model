@@ -1,5 +1,13 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 18.1.0
+- Based on version 18.0.0
+- Revisions based on merge request comments.
+
+## Version 18.0.0
+- Based on version 17.2.8
+- Regionalize diet module.
+
 ## Version 17.2.8
 - Based on version 17.2.7
 - Re-connect the effect of fetilizer on OtherCrops yield.
