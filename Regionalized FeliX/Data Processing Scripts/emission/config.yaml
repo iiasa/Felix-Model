@@ -1,0 +1,26 @@
+module: emission
+overwrite: True
+create_path: True
+data_input:
+  - datasource: iea
+    variable: co2_by_energy_source
+    download_via: manually
+    data_file: 
+    concordance: iea_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+
+

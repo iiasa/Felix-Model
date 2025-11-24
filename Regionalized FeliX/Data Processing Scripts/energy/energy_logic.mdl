@@ -1,0 +1,594 @@
+{UTF-8}
+Energy Trade  = A FUNCTION OF( )
+	~	
+	~		|
+
+Total Primary Energy Demand by Sources=A FUNCTION OF(Total Primary Energy Demand by Sources\
+		,Market Share by Energy Source,Total Primary Energy Demand) ~~|
+Total Primary Energy Demand by Sources=
+	~	
+	~		|
+
+Total Final Energy Consum Elect=A FUNCTION OF(Total Final Energy Consum Elect) ~~|
+Total Final Energy Consum Elect=
+	~	
+	~		|
+
+Total Primary Energy Demand Others=A FUNCTION OF(Total Primary Energy Demand Others,Efficiency from Primary to Secondary Energy by Sources\
+		,Total Final Energy Consum Others) ~~|
+Total Primary Energy Demand Others=
+	~	
+	~		|
+
+Total Primary Energy Demand Others for Elect=A FUNCTION OF(Total Primary Energy Demand Others for Elect\
+		,Efficiency for Elect Generation by Sources,Total Final Energy Consum Others for Elect\
+		) ~~|
+Total Primary Energy Demand Others for Elect=
+	~	
+	~		|
+
+Total Final Energy Consum Others=A FUNCTION OF(Total Final Energy Consum Others) ~~|
+Total Final Energy Consum Others=
+	~	
+	~		|
+
+Total Primary Energy Demand by Sources Alt=A FUNCTION OF(Total Primary Energy Demand by Sources Alt\
+		,Total Primary Energy Demand Others,Total Primary Energy Demand Others for Elect) ~~|
+Total Primary Energy Demand by Sources Alt=
+	~	
+	~		|
+
+Total Primary Energy Demand=A FUNCTION OF(Total Primary Energy Demand,Efficiency from Primary to Secondary Energy\
+		,Total Final Energy Consum) ~~|
+Total Primary Energy Demand=
+	~	
+	~		|
+
+Oil Production  = A FUNCTION OF( Oil Production Rate)
+	~	
+	~		|
+
+Cumulative Oil Production  = A FUNCTION OF( Oil Production) ~~|
+Cumulative Oil Production[Regions]= INTEG (
+	Oil Production[Regions],
+		INIT COPN[Regions])
+	~	Mtoe
+	~	Cumulative Oil Resources that has been produced.
+	|
+
+Desired Oil Exploration Rate[Regions]  = A FUNCTION OF( Adjustment for Identified Oil Resource\
+		,Oil Production) ~~|
+Desired Oil Exploration Rate[Regions]=
+	MAX(0,Adjustment for Identified Oil Resource[Regions]+Oil Production[Regions])
+	~	Mtoe/Year
+	~	Desired Oil exploration rate due to Total Oil Demand and Identified Oil \
+		Resources safety coverage.
+	|
+
+Identified Oil Resources[Regions]  = A FUNCTION OF( Oil Exploration,-Oil Production) ~~|
+Identified Oil Resources[Regions]= INTEG (
+	Oil Exploration[Regions]-Oil Production[Regions],
+		(Total Oil Demand[Regions]*Normal Oil Production Ratio[Regions]+Cumulative Oil Production\
+		[Regions]*(1-Oil Fraction Recoverable
+[Regions]))/Oil Fraction Recoverable[Regions])
+	~	Mtoe
+	~	Oil Resources discovered thanks to developments in exploration technology.
+	|
+
+Oil Production Rate[Regions]=
+	MIN(Total Oil Demand[Regions],Potential Oil Production[Regions])
+	~	Mtoe/Year
+	~	Total oil energy production per year due to available resources, \
+		developments in production technology and oil energy demand.
+	|
+
+Adjustment for Identified Oil Resource[Regions]=
+	(Required Identified Oil Resources[Regions]-Identified Oil Resources[Regions])/Identified Oil Resources Adjustment Time\
+		[Regions]
+	~	Mtoe/Year
+	~	Adjustment of Identified Oil Resource to the desired level over a \
+		specified adjustment time.
+	|
+
+Potential Oil Exploration[Regions]  = A FUNCTION OF( Investment in Oil Exploration) ~~|
+Potential Oil Exploration[Regions]=
+	Effective Investment in Oil Exploration[Regions]*Productivity of Investment in Oil Exploration\
+		[Regions]/toe per Mtoe
+	~	Mtoe/Year
+	~	Potential Oil exploration due to available investments in oil resources \
+		discovery.
+	|
+
+Potential Oil Production[Regions]  = A FUNCTION OF( Investment in Oil Production) ~~|
+Potential Oil Production[Regions]=
+	MIN(Potential Oil Production from Investment[Regions],Potential Oil Production from Resources\
+		[Regions])
+	~	Mtoe/Year
+	~	Potential Oil Production due to available investments in oil resources \
+		recovery and recovery technology.
+	|
+
+Rate of New Discovery Oil  = A FUNCTION OF( Investment in Oil Technology) ~~|
+Rate of New Discovery Oil[Regions]=
+	Mtoe per Barrel*Annual Change in Oil Reserves[Regions]
+	~	Mtoe/Year
+	~		|
+
+Regions:
+	Africa,
+	AsiaPacific,
+	EastEu,
+	LAC,
+	WestEu
+	~	
+	~	Africa: African States
+		AsiaPacific: Asia-Pacific States
+		EastEu: Eastern European States
+		LAC: Latin American and Caribbean States
+		WestEu: Western European and other States
+	|
+
+Required Identified Oil Resources[Regions]  = A FUNCTION OF( Identified Oil Resources\
+		) ~~|
+Required Identified Oil Resources[Regions]=
+	(Identified Oil Resources[Regions]/Total Oil Recoverable Resource Remaining[Regions]\
+		)*(Normal Oil Production Ratio[Regions
+]*Total Oil Demand[Regions])
+	~	Mtoe
+	~	The desired Identified Oil Resources level sought by the oil sector.
+	|
+
+Oil Demand Local[Regions]=
+	Oil Demand per Capita[Regions]*Population[Regions]/1e+06
+	~	Mtoe/Year
+	~		|
+
+Oil Demand per Capita  = A FUNCTION OF( ) ~~|
+Oil Demand per Capita[Regions]=
+	Normal Oil Demand per Capita[Regions]*Effect GDP on Oil Demand per Capita[Regions]
+	~	toe/(Year*Person)
+	~		|
+
+Oil Exploration[Regions]=
+	MAX(0,Oil Exploration Rate[Regions])
+	~	Mtoe/Year
+	~	Oil resources discovery rate.
+	|
+
+Oil Exploration Rate[Regions]=
+	MIN(Desired Oil Exploration Rate[Regions],Potential Oil Exploration[Regions])
+	~	Mtoe/Year
+	~	Oil Exploration Rate accounting for potential and desired oil exploration \
+		rates.
+	|
+
+Gender:
+	male, female
+	~	
+	~		|
+
+Population  = A FUNCTION OF( ) ~~|
+Population[Regions]=
+	sum(Population by Gender[Regions,Gender!])
+	~	People
+	~		|
+
+Investment in Oil Technology  = A FUNCTION OF( ) ~~|
+Investment in Oil Technology[Regions]=
+	Fraction of Oil Revenues Invested in Technology[Regions]*Oil Revenue[Regions]
+	~	$/Year
+	~	Investments in development of exploration and production technology.
+	|
+
+Identified Oil Resources Adjustment Time[Regions]=
+	2
+	~	Year
+	~	Time to adjust Identified Oil Resource to the desired level.
+	|
+
+Investment in Oil Exploration  = A FUNCTION OF( ) ~~|
+Investment in Oil Exploration[Regions]=
+	Desired Investment in Oil Exploration[Regions]
+	~	$/Year
+	~	Amount of resources dedicated to oil exploration.
+	|
+
+Investment in Oil Production  = A FUNCTION OF( ) ~~|
+Investment in Oil Production[Regions]=
+	Desired Investment in Oil Production[Regions]
+	~	$/Year
+	~	Amount of resources dedicated to oil production.
+	|
+
+Undiscovered Oil Resources[Regions]  = A FUNCTION OF( -Oil Exploration,Rate of New Discovery Oil\
+		) ~~|
+Undiscovered Oil Resources[Regions]= INTEG (
+	Rate of New Discovery Oil[Regions]-Oil Exploration[Regions],
+		INIT UORN[Regions])
+	~	Mtoe
+	~	Existing Oil Resources but not discovered yet.
+	|
+
+Total Oil Demand  = A FUNCTION OF( ) ~~|
+Total Oil Demand[Regions]=
+	Oil Demand Local[Regions]+Oil Demand for Export[Regions]
+	~	Mtoe/Year
+	~	Total demand for oil resources, including local consumption and net export
+	|
+
+Share in Elect Generation by Sources  = A FUNCTION OF( )
+	~	
+	~		|
+
+Total Final Energy Consum Services=A FUNCTION OF(Total Final Energy Consum Services,Energy Intensity Services\
+		,Value Added Services) ~~|
+Total Final Energy Consum Services=
+	~	
+	~		|
+
+Efficiency for Elect Generation by Sources  = A FUNCTION OF( )
+	~	
+	~		|
+
+Efficiency from Primary to Secondary Energy  = A FUNCTION OF( )
+	~	
+	~		|
+
+Efficiency from Primary to Secondary Energy by Sources  = A FUNCTION OF( )
+	~	
+	~		|
+
+Final Energy Consum Homes per Cap=A FUNCTION OF(Final Energy Consum Homes per Cap,Energy Intensity Home Heating by Lifestyle\
+		,Floorspace per Cap by Lifestyle) ~~|
+Final Energy Consum Homes per Cap=
+	~	
+	~		|
+
+Final Energy Consum Mobility per Cap=A FUNCTION OF(Final Energy Consum Mobility per Cap\
+		,Energy Intensity Mobility by Lifestyle,Mobility Distance per Cap by Lifestyle) ~~|
+Final Energy Consum Mobility per Cap=
+	~	
+	~		|
+
+Total Final Energy Consum Homes=A FUNCTION OF(Total Final Energy Consum Homes,Final Energy Consum Homes per Cap\
+		,Population by Lifestyles) ~~|
+Total Final Energy Consum Homes=
+	~	
+	~		|
+
+Total Final Energy Consum Mobility=A FUNCTION OF(Total Final Energy Consum Mobility,Final Energy Consum Mobility per Cap\
+		,Population by Lifestyles) ~~|
+Total Final Energy Consum Mobility=
+	~	
+	~		|
+
+Energy Intensity Services=A FUNCTION OF(Energy Intensity Services) ~~|
+Energy Intensity Services=
+	~	
+	~		|
+
+Total Final Energy Consum Others for Elect=A FUNCTION OF(Total Final Energy Consum Others for Elect\
+		,Share in Elect Generation by Sources,Total Final Energy Consum Elect) ~~|
+Total Final Energy Consum Others for Elect=
+	~	
+	~		|
+
+Final Food Consum per Cap by Lifestyles=A FUNCTION OF(Final Food Consum per Cap by Lifestyles\
+		) ~~|
+Final Food Consum per Cap by Lifestyles=
+	~	
+	~		|
+
+Total Final Energy Consum Industry=A FUNCTION OF(Total Final Energy Consum Industry,Energy Intensity Industry\
+		,Value Added Industry) ~~|
+Total Final Energy Consum Industry=
+	~	
+	~		|
+
+Total Final Food Consum=A FUNCTION OF(Total Final Food Consum,Final Food Consum per Cap by Lifestyles\
+		,Population by Lifestyles) ~~|
+Total Final Food Consum=
+	~	
+	~		|
+
+Total Final Energy Consum=A FUNCTION OF(Total Final Energy Consum,Total Final Energy Consum Industry\
+		,Total Final Energy Consum Services,Total Final Energy Consum Agriculture,Total Final Energy Consum Homes\
+		,Total Final Energy Consum Mobility) ~~|
+Total Final Energy Consum=
+	~	
+	~		|
+
+Total Final Energy Consum Agriculture=A FUNCTION OF(Total Final Energy Consum Agriculture\
+		,Total Final Food Consum) ~~|
+Total Final Energy Consum Agriculture= INTEG (
+	,
+		)
+	~	
+	~		|
+
+Active  = A FUNCTION OF( )
+	~	
+	~		|
+
+Cautious  = A FUNCTION OF( )
+	~	
+	~		|
+
+Constrained  = A FUNCTION OF( )
+	~	
+	~		|
+
+Energy Intensity Home Heating by Lifestyle=A FUNCTION OF(Energy Intensity Home Heating by Lifestyle\
+		) ~~|
+Energy Intensity Home Heating by Lifestyle=
+	~	
+	~		|
+
+Energy Intensity Industry  = A FUNCTION OF( )
+	~	
+	~		|
+
+Energy Intensity Mobility by Lifestyle=A FUNCTION OF(Energy Intensity Mobility by Lifestyle\
+		) ~~|
+Energy Intensity Mobility by Lifestyle=
+	~	
+	~		|
+
+Energy Production by Sources  = A FUNCTION OF( Total Primary Energy Demand by Sources\
+		)
+	~	
+	~		|
+
+Floorspace per Cap by Lifestyle=A FUNCTION OF(Floorspace per Cap by Lifestyle) ~~|
+Floorspace per Cap by Lifestyle=
+	~	
+	~		|
+
+GWP  = A FUNCTION OF( )
+	~	
+	~		|
+
+Lifestyle Cluster Shares  = A FUNCTION OF( )
+	~	
+	~		|
+
+Market Share by Energy Source  = A FUNCTION OF( )
+	~	
+	~		|
+
+Mobility Distance per Cap by Lifestyle=A FUNCTION OF(Mobility Distance per Cap by Lifestyle\
+		) ~~|
+Mobility Distance per Cap by Lifestyle=
+	~	
+	~		|
+
+Population by Lifestyles  = A FUNCTION OF( Lifestyle Cluster Shares,Population Cohort\
+		)
+	~	
+	~		|
+
+Population Cohort  = A FUNCTION OF( )
+	~	
+	~		|
+
+Resourceful  = A FUNCTION OF( )
+	~	
+	~		|
+
+Share of Value Added Industry  = A FUNCTION OF( )
+	~	
+	~		|
+
+Share of Value Added Services  = A FUNCTION OF( )
+	~	
+	~		|
+
+Value Added Industry  = A FUNCTION OF( GWP,Share of Value Added Industry)
+	~	
+	~		|
+
+Value Added Services  = A FUNCTION OF( GWP,Share of Value Added Services)
+	~	
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 100
+	~	Month
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Month
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Month [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 1
+	~	Month [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,133,0
+12,1,0,499,353,486,190,3,7,0,21,-1,1,0,0,0-0-0,255-255-255,||B|0-0-0,4,0,256,0,0,0
+DEMAND
+12,2,0,395,644,382,47,3,7,0,21,-1,1,0,0,255-128-64,255-255-255,||B|0-0-0,4,0,256,0,0,0
+PRODUCTION (existing in FeliX)
+12,3,0,499,-55,485,144,3,7,0,21,-1,1,0,0,255-128-192,255-255-255,||B|0-0-0,4,0,256,0,0,0
+LIFESTYLES|<<NnN>>|- Resourceful|<<NnN>>|- Active|<<NnN>>|- Constrained|<<NnN>>|- Cautous
+10,4,Total Final Food Consum,287,-70,42,26,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,5,Total Final Energy Consum Mobility,570,210,71,23,8,3,0,16,-1,1,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,6,Total Final Energy Consum Homes,370,206,66,22,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,7,Population Cohort,412,-177,49,16,8,2,0,19,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,8,Lifestyle Cluster Shares,528,-154,56,18,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+10,9,Population by Lifestyles,449,-71,51,18,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+10,10,Final Food Consum per Cap by Lifestyles,282,-149,57,24,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+10,11,Final Energy Consum Mobility per Cap,691,128,62,19,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,12,Final Energy Consum Homes per Cap,241,126,59,19,8,3,0,0,-1,1,0,0,0,0,0,0,0,0
+1,13,7,9,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,14,8,9,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,15,10,4,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,16,9,4,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,17,9,5,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,18,Floorspace per Cap by Lifestyle,195,33,52,31,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+10,19,Energy Intensity Home Heating by Lifestyle,324,32,65,26,8,3,0,18,-1,1,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+1,20,18,12,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+1,21,19,12,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,22,12,6,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,23,9,6,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,24,Mobility Distance per Cap by Lifestyle,616,24,67,31,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+10,25,Energy Intensity Mobility by Lifestyle,772,22,65,32,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+1,26,25,11,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,27,24,11,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+1,28,11,5,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+10,29,Total Final Energy Consum Industry,362,378,67,23,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,30,Total Final Energy Consum Services,564,377,67,20,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,31,Total Final Energy Consum Agriculture,234,302,73,28,3,3,0,17,-1,1,0,0,0-0-0,0-0-0,||B|0-0-0,1,0,0,0,0,0
+10,32,Energy Intensity Industry,208,375,40,26,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,33,Value Added Industry,361,483,48,18,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,34,GWP,462,480,27,11,8,2,0,19,-1,0,0,0,128-128-128,0-0-0,||B|128-128-128,0,0,0,0,0,0
+10,35,Share of Value Added Industry,220,480,58,19,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,36,Value Added Services,564,479,44,15,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,37,Share of Value Added Services,718,482,55,20,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,38,32,29,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,39,33,29,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,40,35,33,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,41,34,33,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,42,34,36,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,43,37,36,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+1,44,36,30,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+10,45,Energy Intensity Services,722,376,51,28,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,46,45,30,0,0,43,0,0,64,0,-1--1--1,,1|(0,0)|
+10,47,Total Final Energy Consum,456,303,58,22,8,3,0,16,-1,1,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,48,6,47,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,49,29,47,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,50,5,47,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,51,30,47,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,52,Total Primary Energy Demand by Sources,902,648,64,34,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,53,Market Share by Energy Source,1115,645,76,29,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-0-0,0,0,0,0,0,0
+1,54,53,52,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,55,Energy Production by Sources,455,647,74,28,8,3,0,18,-1,0,0,0,0-0-0,0-0-0,||B|255-128-64,0,0,0,0,0,0
+1,56,52,55,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,57,31,47,0,0,43,1,0,192,0,-1--1--1,,1|(0,0)|
+1,58,4,31,1,0,43,1,0,192,0,-1--1--1,,1|(89,149)|
+12,59,0,1403,-44,343,43,3,7,0,5,-1,1,0,0,255-255-255,192-192-192,|||0-0-0,0,0,256,0,0,0
+Final Consumption -- final consumption directly by population, e.g., electricity consumption |<<NnN>>|Demand -- converted from final consumption based on efficiency, e.g., primary oil demand|<<NnN>>|Supply -- supply including import and export, numerically closed to demand e.g., primary oil supply
+10,60,Total Primary Energy Demand,899,305,59,19,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,61,47,60,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,62,Efficiency from Primary to Secondary Energy,897,203,84,28,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,63,62,60,0,0,45,0,0,192,0,-1--1--1,,1|(0,0)|
+1,64,60,52,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+12,65,0,1279,106,219,63,3,7,0,5,-1,1,0,0,192-192-192,192-192-192,|||0-0-0,0,0,256,0,0,0
+Total Energy Consumption by secondary energy sources:|<<NnN>>| - oil|<<NnN>>| - gas|<<NnN>>| - coal|<<NnN>>| - wind|<<NnN>>| - solar|<<NnN>>| - biomass|<<NnN>>| - electricity
+10,66,Total Final Energy Consum Elect,1174,214,81,21,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,67,Total Final Energy Consum Others,1400,215,80,23,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,68,Total Primary Energy Demand Others,1406,450,92,21,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,69,Total Final Energy Consum Others for Elect,1174,335,95,21,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,70,Share in Elect Generation by Sources,1065,261,50,21,8,3,0,0,-1,1,0,0,0,0,0,0,0,0
+1,71,66,69,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,72,70,69,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,73,Efficiency from Primary to Secondary Energy by Sources,1534,303,89,29,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,74,67,68,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,75,73,68,0,0,45,0,0,192,0,-1--1--1,,1|(0,0)|
+10,76,Total Primary Energy Demand Others for Elect,1186,453,99,25,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,77,69,76,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+10,78,Efficiency for Elect Generation by Sources,1048,386,43,38,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,79,78,76,0,0,45,0,0,192,0,-1--1--1,,1|(0,0)|
+10,80,Total Primary Energy Demand by Sources Alt,1300,567,79,27,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,81,76,80,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,82,68,80,0,0,43,0,0,192,0,-1--1--1,,1|(0,0)|
+12,83,0,1069,-204,80,40,8,7,0,0,-1,1,0,0,0,0,0,0,0,0
+GLOBAL VERSION |<<NnN>>||<<NnN>>|     MOVE TO|<<NnN>>||<<NnN>>|REGIONAL LEVEL
+10,84,Energy Trade,807,646,26,24,3,3,0,23,-1,0,0,0,128-0-255,128-0-255,||B|255-255-255,0,0,0,0,0,0
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 2
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,110,0
+10,1,Identified Oil Resources,577,252,57,35,3,131,0,16,0,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+10,2,Potential Oil Production,779,104,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,3,Oil Production Rate,726,176,52,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,4,2,3,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,5,Undiscovered Oil Resources,227,252,57,35,3,131,0,16,0,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,6,8,1,4,0,0,22,0,0,0,-1--1--1,,1|(464,250)|
+1,7,8,5,100,0,0,22,0,0,0,-1--1--1,,1|(340,250)|
+11,8,0,403,250,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,9,Oil Exploration,403,272,53,10,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,10,Potential Oil Exploration,287,519,45,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,11,10,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,12,Oil Exploration Rate,402,445,54,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,13,12,9,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,14,Required Identified Oil Resources,674,345,69,18,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,15,1,14,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,16,Adjustment for Identified Oil Resource,577,414,53,27,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,17,Identified Oil Resources Adjustment Time,488,334,61,27,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,18,1,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,19,14,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,20,17,16,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,21,Desired Oil Exploration Rate,577,523,61,22,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,22,21,12,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,23,16,21,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,24,Total Oil Demand,664,104,36,18,8,3,0,18,0,0,0,0,0-0-0,0-0-0,||B|255-128-192,0,0,0,0,0,0
+1,25,24,3,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+12,26,48,230,391,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,27,29,5,4,0,0,22,0,0,0,-1--1--1,,1|(230,314)|
+1,28,29,26,100,0,0,22,0,0,0,-1--1--1,,1|(230,368)|
+11,29,0,230,347,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,30,Rate of New Discovery Oil,287,347,49,18,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,31,Investment in Oil Exploration,287,587,59,18,8,3,8,18,-1,0,0,0,0-0-0,0-0-0,|||255-128-64,0,0,0,0,0,0
+10,32,Investment in Oil Technology,185,438,59,18,8,3,8,18,0,0,0,0,0-0-0,0-0-0,|||255-128-64,0,0,0,0,0,0
+10,33,Investment in Oil Production,779,34,59,18,8,3,8,18,0,0,0,0,0-0-0,0-0-0,|||255-128-64,0,0,0,0,0,0
+1,34,33,2,0,8,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,35,32,30,1,8,0,0,0,192,0,-1--1--1,,1|(291,416)|
+1,36,31,10,0,8,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,37,Cumulative Oil Production,875,252,57,35,3,131,0,16,0,0,0,0,0-0-0,0-0-0,||B|0-0-0,0,0,0,0,0,0
+1,38,40,1,100,0,0,22,0,192,0,-1--1--1,,1|(676,252)|
+1,39,40,37,4,0,0,22,0,192,0,-1--1--1,,1|(774,252)|
+11,40,0,725,252,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,41,Oil Production,725,276,50,16,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,42,3,40,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,43,41,21,1,0,0,0,0,192,0,-1--1--1,,1|(768,453)|
+///---\\\
+:L<%^E!@
+5:Energy Trade
+6:Africa
+6:male
+19:133,0
+24:0
+25:0
+26:0
+23:0
+15:0,0,0,0,0,0
+27:0,
+34:0,
+42:0
+72:0
+73:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:1
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Vensim Sans|12||0-0-0|0-0-0|-1--1--1|0-0-255|192-192-192|-1--1--1

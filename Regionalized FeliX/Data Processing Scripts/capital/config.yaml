@@ -1,0 +1,101 @@
+version: nov2023
+module: capital
+overwrite: True
+create_path: True
+data_input:
+  - datasource: ggdc
+    variable: capital_intensity
+    text: Capital intensity of output
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - pwt81.xlsx
+    concordance: ggdc_countries_to_5_un_regions.csv
+  - datasource: ggdc
+    variable: capital_stock
+    text: Capital stock time series
+    unit: current PPPs (2005US$)
+    root_path: data_regionalization_raw
+    download_via: manually
+    data_file: 
+      - pwt81.xlsx
+    concordance: ggdc_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: capital_depr
+    text: Capital depreciation time series
+    unit: current US$
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NY_ADJ_DKAP_CD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: capital_form_fix
+    text: Gross fixed capital formation time series
+    unit: current US$
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NE_GDI_FTOT_CD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: capital_form_gross
+    text: Gross Capital formation time series
+    unit: current US$
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NE_GDI_TOTL_CD_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: world_bank
+    variable: capital_depr_share
+    text: Share of capital depreciation in gross national income
+    unit: 
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NY_ADJ_DKAP_GN_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GNP_MKTP_CD_fact.json
+  - datasource: world_bank
+    variable: capital_form_gross_share
+    text: Share of gross capital formation in gdp
+    unit: 
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NE_GDI_TOTL_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_CD_fact.json
+  - datasource: world_bank
+    variable: capital_form_fix_share
+    text: Share of gross fixed capital formation in gdp
+    unit: 
+    root_path: data_regionalization_raw
+    download_via: api
+    data_file: 
+      - NE_GDI_FTOT_ZS_fact.json
+    concordance: world_bank_countries_to_5_un_regions.csv
+    dependency: True
+    dependency_module: gdp
+    dependency_file: 
+      - NY_GDP_MKTP_CD_fact.json
+data_output:
+  root_path: data_regionalization_clean
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+

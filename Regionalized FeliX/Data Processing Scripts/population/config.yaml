@@ -1,0 +1,69 @@
+version: v.11.2023
+module: population
+overwrite: True
+create_path: True
+data_root_path: C:/Users/yequanliang/OneDrive - IIASA/data
+data_input:
+  - datasource: wittgenstein
+    data_file: 
+      - wcde_data_1950_2020.csv
+    concordance: wittgenstein_regions_to_5_un_regions.csv
+  - datasource: world_bank
+    data_file: 
+      - population_world_bank.csv
+    concordance: world_bank_countries_to_5_un_regions.csv
+  - datasource: unpd
+    download_via: manually
+    data_file: 
+      - WPP2022_POP_F02_2_POPULATION_5-YEAR_AGE_GROUPS_MALE.xlsx
+      - WPP2022_POP_F02_3_POPULATION_5-YEAR_AGE_GROUPS_FEMALE.xlsx
+    concordance: unpd_regions_to_5_un_regions.csv
+  - datasource: unpd
+    download_via: api
+    data_file: 
+      - popbyage5andsex_fact.csv
+    concordance: unpd_regions_to_ipcc_r6.csv
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+  ipcc_r6:
+    - Asia and Pacific
+    - Developed Countries
+    - Africa
+    - Latin America and Caribbean
+    - Eastern Europe and West-Central Asia
+    - Middle East
+    - World
+  gender:
+    - female
+    - male
+  age:
+    - 0--4
+    - 5--9
+    - 10--14
+    - 15--19
+    - 20--24
+    - 25--29
+    - 30--34
+    - 35--39
+    - 40--44
+    - 45--49
+    - 50--54
+    - 55--59
+    - 60--64
+    - 65--69
+    - 70--74
+    - 75--79
+    - 80--84
+    - 85--89
+    - 90--94
+    - 95--99
+    - 100+
+
+
+

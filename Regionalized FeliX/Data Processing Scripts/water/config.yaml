@@ -1,0 +1,27 @@
+module: water
+overwrite: True
+create_path: True
+data_input:
+  - datasource: aquastat
+    variable: wat_withdrawal
+    download_via: manually
+    data_file: 
+      - water_withdrawal_by_sector.csv
+    concordance: aquastat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+    dependency_concordance:
+dimension:
+  region:
+    - Africa
+    - AsiaPacific
+    - EastEu
+    - LAC
+    - WestEu
+    - World
+
+
+
+
