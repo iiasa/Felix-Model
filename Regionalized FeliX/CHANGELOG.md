@@ -1,6 +1,14 @@
 ## CHANGELOG for the regionalized version of FeliX
 
-## Version 18.1.0
+## Version 18.2.1 (FeliX_R5_V3.0)
+- Based on version 18.2.0
+- Change the daily caloric demand of each region by using global average
+
+## Version 18.2.0 (FeliX_R5_V2.1)
+- Based on version 18.1.0
+- Integrate FAOSTAT diet
+
+## Version 18.1.0 
 - Based on version 18.0.0
 - Revisions based on merge request comments.
 
@@ -8,7 +16,7 @@
 - Based on version 17.2.8
 - Regionalize diet module.
 
-## Version 17.2.8
+## Version 17.2.8 (FeliX_R5_V2.0)
 - Based on version 17.2.7
 - Re-connect the effect of fetilizer on OtherCrops yield.
 
