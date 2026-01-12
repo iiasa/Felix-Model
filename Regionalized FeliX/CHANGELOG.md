@@ -1,5 +1,9 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 18.2.2 (FeliX_R5_V3.1)
+- Based on version 18.2.1
+- Recalibrate modules
+
 ## Version 18.2.1 (FeliX_R5_V3.0)
 - Based on version 18.2.0
 - Change the daily caloric demand of each region by using global average
