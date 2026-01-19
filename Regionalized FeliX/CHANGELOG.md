@@ -1,5 +1,10 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 18.2.3 (FeliX_R5_V3.2)
+- Based on version 18.2.2
+- Remove the exteral excel dependencies on parameters
+- Recalibrate carbon emissions from land use change
+
 ## Version 18.2.2 (FeliX_R5_V3.1)
 - Based on version 18.2.1
 - Recalibrate modules
