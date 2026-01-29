@@ -1,9 +1,7 @@
 # Felix-Model
+To get updates about the FeliX model, subscribe to our **[newsletter](https://iiasa.us5.list-manage.com/subscribe/post?u=4a7b399fd5c39ff77e8f1e7dc&id=392b395289&f_id=00cbc2e1f0)**.
 
 **If you are using the FeliX model in your work or studies, please** [**get in touch**](mailto:eker@iiasa.ac.at) **to join our collaboration network.**
-
-**If you have a publication using FeliX, please** [**report**](mailto:eker@iiasa.ac.at)**, so that we can include it in the list.**
-
 
 
 FeliX (Functional Enviro-economic Linkages Integrated neXus) is a system dynamics model of global social, economic, and environmental Earth systems. More information can be found at:
