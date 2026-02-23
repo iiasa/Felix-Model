@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 11 Sept 2025
-Description: Scripts to aggregate crop land areas to FeliX regions
-Scope: FeliX model regionalization, module land
+Created: Tue 10 Feburary 2026
+Description: Scripts to aggregate CO2 emissions by land use change from FAOSTAT to FeliX regions
+Scope: FeliX model regionalization, module emission
 Author: Quanliang Ye
 Institution: IIASA
 Email: yequanliang@iiasa.ac.at
@@ -15,8 +15,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-from netCDF4 import Dataset
-import xarray as xr
 
 from dotenv import load_dotenv
 import os
@@ -46,11 +44,11 @@ logging.info("Configure peoject")
 current_project = "felix_regionalization"
 
 logging.info("Configure module")
-current_module = "land"
+current_module = "emission"
 
 logging.info("Config data variable")
-data_variable = "deforestation"
-data_source = "land_use_harmonization"
+data_variable = "co2_land_use_change"
+data_source = "faostat"
 data_download_method = "manually"
 
 logging.info("Configure paths")
@@ -106,33 +104,19 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_deforestation = pd.DataFrame()
+raw_luc_emission = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_deforestation_ = Dataset(path_data_raw / raw_data_file, mode="r")
-    # # print(raw_deforestation_)  # Metadata about the file
-    # print(raw_deforestation_.variables["primf"][:])
+    raw_luc_emission_data = pd.read_csv(
+        path_data_raw / raw_data_file,
+        encoding="latin1",
+    ).rename(columns={"Area": "country"})
 
-    import matplotlib.pyplot as plt
-
-    raw_deforestation_ = xr.open_dataset(path_data_raw / raw_data_file)
-    # print(raw_deforestation_.variables)
-    # print(raw_deforestation_.variables["time"][:])
-    raw_deforestation_["primf"].isel(time=1165).plot()
-    plt.show()
-    exit()
-# raw_deforestation_ = pd.read_csv(
-#     path_data_raw / raw_data_file,
-#     encoding="latin1",
-# ).rename(columns={"Area": "country"})
-
-# raw_deforestation = pd.concat(
-#     [raw_deforestation, raw_deforestation_],
-#     ignore_index=True,
-# )
-# del raw_deforestation_
-
-exit()
+    raw_luc_emission = pd.concat(
+        [raw_luc_emission, raw_luc_emission_data],
+        ignore_index=True,
+    )
+    del raw_luc_emission_data
 
 # Read raw data
 logging.info(f"Read dependent raw data")
@@ -192,31 +176,34 @@ def data_cleaning(
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
 
+    logging.info("Specify unit")
+    unit = np.unique(raw_data_merge["unit"])
+
     raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_deforestation = []
+    cleaned_luc_emission = []
     for region in regions:
         num_country_ = num_country[region]
         for year in years:
             try:
-                raw_data_region_year = raw_data_merge_groups.get_group((region, year))
+                raw_data_region = raw_data_merge_groups.get_group((region, year))
             except KeyError:
                 continue
 
-            if len(raw_data_region_year) / num_country_ > 0.85:
+            if len(raw_data_region) / num_country_ > 0.85:
                 entry = {
                     "region": region,
                     "year": year,
-                    "value": raw_data_region_year["value"].sum()
-                    * 1000,  # convert unit from 1000 ha to ha
-                    "unit": "ha",
+                    "value": raw_data_region["value"].sum()
+                    * 1000,  # convert unit from kt to ton
+                    "unit": "TonCO2",
                 }
 
-                cleaned_deforestation.append(entry)
-                del (entry, raw_data_region_year)
+                cleaned_luc_emission.append(entry)
+                del entry, year, raw_data_region
 
-    cleaned_deforestation = pd.DataFrame(cleaned_deforestation)
+    cleaned_luc_emission = pd.DataFrame(cleaned_luc_emission)
 
-    return cleaned_deforestation
+    return cleaned_luc_emission
 
 
 # Define data restructuring function
@@ -228,10 +215,10 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1900,1901,1902,...
-        Land Allocated for Food Crops[Africa],x,x,x,...
-        Land Allocated for Food Crops[AsiaPacific],x,x,x,...
+        Total CO2 Emissions from Land Use[Africa],x,x,x,...
+        Total CO2 Emissions from Land Use[AsiaPacific],x,x,x,...
         ...
-        Land Allocated for Food Crops[WestEu],x,x,x,...
+        Total CO2 Emissions from Land Use[WestEu],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -257,14 +244,14 @@ def data_restructure(
     structured_data = []
     for region in regions:
         entry = {
-            "parameter (unit: ha)": f"Land Allocated for Food Crops[{region}]",
+            "parameter (unit: ha)": f"Total CO2 Emissions from Land Use[{region}]",
         }
         for year in range(1900, 2101):
             if year in years:
                 try:
-                    cleaned_deforestation = clean_data_groups.get_group((region, year))
+                    cleaned_luc_emission = clean_data_groups.get_group((region, year))
 
-                    entry[year] = cleaned_deforestation["value"].values[0]
+                    entry[year] = cleaned_luc_emission["value"].values[0]
                 except KeyError:
                     entry[year] = np.nan
             else:
@@ -281,14 +268,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_deforestation = data_cleaning(raw_deforestation, concordance_table)
+cleaned_luc_emission = data_cleaning(raw_luc_emission, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_deforestation = data_restructure(cleaned_deforestation)
+restructured_luc_emission = data_restructure(cleaned_luc_emission)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_deforestation.to_csv(
+restructured_luc_emission.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

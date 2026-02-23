@@ -1,5 +1,12 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 19.0.0 (FeliX_R5_V3.3)
+- Based on version 18.2.3
+- Fix the parameter inputs only from African States.
+- Link the C emissions from land use only
+- Include seed, processing, and other uses in food production
+
+
 ## Version 18.2.3 (FeliX_R5_V3.2)
 - Based on version 18.2.2
 - Remove the exteral excel dependencies on parameters

@@ -65,7 +65,7 @@ if not path_data_clean.exists():
 
 # read config.yaml file
 yaml_dir = Path(
-    f"Regionalied FeliX/Data Processing Scripts/{current_module}/config.yaml"
+    f"Regionalized FeliX/Data Processing Scripts/{current_module}/config.yaml"
 )
 with open(yaml_dir, "r") as dimension_file:
     data_info = yaml.safe_load(dimension_file)
