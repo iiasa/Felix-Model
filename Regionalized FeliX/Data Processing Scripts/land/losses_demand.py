@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 11 September 2025
-Description: Scripts to calculate feed shares from FAOSTAT to FeliX regions
+Created: Fri 13 Feb 2026
+Description: Scripts to calculate losses demand from FAOSTAT to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -47,7 +47,7 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "feed_share"
+data_variable = "losses_demand"
 data_source = "faostat"
 data_download_method = "manually"
 
@@ -64,7 +64,7 @@ if not path_data_clean.exists():
 
 # read config.yaml file
 yaml_dir = Path(
-    f"Regionalied FeliX/Data Processing Scripts/{current_module}/config.yaml"
+    f"Regionalized FeliX/Data Processing Scripts/{current_module}/config.yaml"
 )
 with open(yaml_dir, "r") as dimension_file:
     data_info = yaml.safe_load(dimension_file)
@@ -92,7 +92,6 @@ if raw_data_dependency:
     path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
-# set paths of concordance table
 path_concordance_folder = path_data_raw.parent / "concordance"
 
 concordance_file = raw_data_info["concordance"]
@@ -100,30 +99,29 @@ logging.info("Concordance tables of regional classifications set")
 
 logging.info("Extracting dimension information for data cleaning and restructing")
 regions = data_info["dimension"]["region"]
+food_categories = data_info["dimension"]["food_category"]
+
 logging.info("Extracted dimensions of regions")
 
-# Read raw data
 logging.info(f"Read raw data")
-raw_feed_data = pd.DataFrame()
+raw_losses_data = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_feed_data_ = pd.read_csv(
+    raw_losses_data_ = pd.read_csv(
         path_data_raw / raw_data_file,
         encoding="latin1",
     ).rename(columns={"Area": "country"})
 
-    raw_feed_data = pd.concat(
-        [raw_feed_data, raw_feed_data_],
+    raw_losses_data = pd.concat(
+        [raw_losses_data, raw_losses_data_],
         ignore_index=True,
     )
 
-    del raw_feed_data_
+    del raw_losses_data_
 
-# Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
     logging.info("Raw data dependence exists")
-
 
 logging.info("Start reading condordance table")
 concordance_table = pd.read_csv(
@@ -140,6 +138,41 @@ for region in regions:
     )
 
 
+def name_mapping(crop_name: str):
+    if crop_name in [
+        "Bovine Meat",
+        "Mutton & Goat Meat",
+        # "Offals, Edible",
+    ]:
+        return "PasMeat"
+    elif crop_name in ["Pigmeat", "Poultry Meat", "Fish, Seafood"]:
+        return "CropMeat"
+    elif crop_name in [
+        "Milk - Excluding Butter",
+        "Fats, Animals, Raw",
+    ]:
+        return "Dairy"
+    elif crop_name in ["Eggs"]:
+        return "Eggs"
+    elif crop_name in ["Pulses"]:
+        return "Pulses"
+    elif crop_name in ["Cereals - Excluding Beer"]:
+        return "Grains"
+    elif crop_name in [
+        "Fruits - Excluding Wine",
+        "Starchy Roots",
+        "Vegetables",
+        "Vegetable Oils",
+    ]:
+        return "VegFruits"
+    elif crop_name in [
+        "Oilcrops",
+        "Sugar Crops",
+        "Treenuts",
+    ]:
+        return "OtherCrops"
+
+
 # Define cleaning function
 def data_cleaning(
     raw_data: pd.DataFrame,
@@ -147,12 +180,12 @@ def data_cleaning(
     **kwargs,
 ):
     """
-    To transfer raw data from IEA database into FeliX region classification
+    To transfer raw data from FAOSTAT database into FeliX region classification
 
     Parameter
     ---------
     raw_data: pd.DataFrame
-        Data downloaded directly from IEA database.
+        Data downloaded directly from FAOSTAT database.
 
     **kwargs
         Other arguments that may be used to restructure the clean data
@@ -176,75 +209,43 @@ def data_cleaning(
 
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
-
-    def name_mapping(crop_name: str):
-        if crop_name in [
-            "Pulses",
-        ]:
-            return "Pulses"
-        elif crop_name in [
-            "Cereals - Excluding Beer",
-        ]:
-            return "Grains"
-        elif crop_name in [
-            "Fruits - Excluding Wine",
-            "Starchy Roots",
-            "Vegetables",
-            "Vegetable Oils",
-        ]:
-            return "VegFruits"
-        elif crop_name in [
-            "Oilcrops",
-            # "Sugar & Sweeteners",
-            "Sugar Crops",
-            "Treenuts",
-            # "Spices",
-            # "Stimulants",
-        ]:
-            return "OtherCrops"
-
     raw_data_merge["food_category"] = (
         raw_data_merge["item"].astype(str).map(name_mapping)
     )
-    food_categories = ["Pulses", "Grains", "VegFruits", "OtherCrops"]
 
     raw_data_merge_groups = raw_data_merge.groupby(
         ["un_region", "year", "food_category"]
     )
-
-    cleaned_feed_data = []
+    cleaned_losses_data = []
     for region in regions:
+        num_country_ = num_country[region]
         for year in years:
-            raw_data_feed_amount = [np.nan] * len(food_categories)
-            for pos, food_category in enumerate(food_categories):
+            # raw_data_losses_amount = [np.nan] * len(food_categories)
+            for food_category in food_categories:
                 try:
-                    raw_data_feed_ = raw_data_merge_groups.get_group(
+                    raw_data_losses_ = raw_data_merge_groups.get_group(
                         (region, year, food_category)
                     )
                 except KeyError:
-                    raw_data_feed_amount[pos] = 0
+                    continue
 
-                raw_data_feed_amount[pos] = (
-                    raw_data_feed_["value"].sum() * 1000
-                )  # convert 1000 t to tons
-                del pos, food_category
+                if len(np.unique(raw_data_losses_["country"])) / num_country_ > 0.75:
+                    entry = {
+                        "region": region,
+                        "year": year,
+                        "food_category": food_category,
+                        "value": raw_data_losses_["value"].sum() * 1000,
+                        "unit": "tonnes",
+                    }
 
-            entry = {
-                "region": region,
-                "year": year,
-            }
-            for pos, food_category in enumerate(food_categories):
-                entry[f"amount_{food_category}"] = raw_data_feed_amount[pos]
-                entry[f"share_{food_category}"] = raw_data_feed_amount[pos] / sum(
-                    raw_data_feed_amount
-                )
+                    cleaned_losses_data.append(entry)
+                    del entry, raw_data_losses_, food_category
+            del year
+        del region
 
-            cleaned_feed_data.append(entry)
-            del entry, raw_data_feed_amount
+    cleaned_losses_data = pd.DataFrame(cleaned_losses_data)
 
-    cleaned_feed_data = pd.DataFrame(cleaned_feed_data)
-
-    return cleaned_feed_data
+    return cleaned_losses_data
 
 
 # Define data restructuring function
@@ -256,10 +257,10 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1900,1901,1902,...
-        Feed share of crop types Data[Africa,Pulses],x,x,x,...
-        Feed share of crop types Data[AsiaPacific,Pulses],x,x,x,...
+        Losses demand in tonnes[Africa,Pulses],x,x,x,...
+        Losses demand in tonnes[AsiaPacific,Pulses],x,x,x,...
         ...
-        Feed share of crop types Data[WestEu,OtherCrops],x,x,x,...
+        Losses demand in tonnes[WestEu,OtherCrops],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -280,41 +281,28 @@ def data_restructure(
     logging.info("Specify available years")
     years = np.unique(clean_data["year"])
 
-    food_categories = ["Pulses", "Grains", "VegFruits", "OtherCrops"]
-
     logging.info("Restructure cleaned data")
-    clean_data_groups = clean_data.groupby(["region", "year"])
+    clean_data_groups = clean_data.groupby(["region", "year", "food_category"])
     structured_data = []
     for region in regions:
         for food_category in food_categories:
-            entry_amount = {
-                "parameter": f"Feed demand in tonnes[{region},{food_category}]",
-            }
             entry = {
-                "parameter": f"Feed share of crop types Data[{region},{food_category}]",
+                "parameter": f"Losses demand in tonnes[{region},{food_category}]",
             }
             for year in range(1900, 2101):
                 if year in years:
                     try:
-                        cleaned_feed_data_ = clean_data_groups.get_group((region, year))
-
-                        entry_amount[year] = cleaned_feed_data_[
-                            f"amount_{food_category}"
-                        ].values[0]
-                        entry[year] = cleaned_feed_data_[
-                            f"share_{food_category}"
-                        ].values[0]
+                        cleaned_losses_data_ = clean_data_groups.get_group(
+                            (region, year, food_category)
+                        )
+                        entry[year] = cleaned_losses_data_["value"].values[0]
                     except KeyError:
-                        entry_amount[year] = np.nan
                         entry[year] = np.nan
-
                 else:
-                    entry_amount[year] = np.nan
                     entry[year] = np.nan
 
                 del year
 
-            structured_data.append(entry_amount)
             structured_data.append(entry)
             del entry
 
@@ -324,14 +312,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_feed_data = data_cleaning(raw_feed_data, concordance_table)
+cleaned_losses_data = data_cleaning(raw_losses_data, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_feed_data = data_restructure(cleaned_feed_data)
+restructured_losses_data = data_restructure(cleaned_losses_data)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_feed_data.to_csv(
+restructured_losses_data.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

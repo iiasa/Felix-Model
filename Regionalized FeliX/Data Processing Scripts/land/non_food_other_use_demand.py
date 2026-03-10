@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 11 Sept 2025
-Description: Scripts to aggregate crop land areas to FeliX regions
+Created: Fri 13 Feb 2026
+Description: Scripts to calculate non-food other use demand from FAOSTAT to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -15,8 +15,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-from netCDF4 import Dataset
-import xarray as xr
 
 from dotenv import load_dotenv
 import os
@@ -49,8 +47,8 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "deforestation"
-data_source = "land_use_harmonization"
+data_variable = "other_use_demand"
+data_source = "faostat"
 data_download_method = "manually"
 
 logging.info("Configure paths")
@@ -94,7 +92,6 @@ if raw_data_dependency:
     path_raw_data_folder_dep = path_data_raw.parent / felix_module_dep
 
 logging.info("Set concordance tables of regional classifications")
-# set paths of concordance table
 path_concordance_folder = path_data_raw.parent / "concordance"
 
 concordance_file = raw_data_info["concordance"]
@@ -102,43 +99,29 @@ logging.info("Concordance tables of regional classifications set")
 
 logging.info("Extracting dimension information for data cleaning and restructing")
 regions = data_info["dimension"]["region"]
+food_categories = data_info["dimension"]["food_category"]
+
 logging.info("Extracted dimensions of regions")
 
-# Read raw data
 logging.info(f"Read raw data")
-raw_deforestation = pd.DataFrame()
+raw_other_use_data = pd.DataFrame()
 for raw_data_file in raw_data_info["data_file"]:
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_deforestation_ = Dataset(path_data_raw / raw_data_file, mode="r")
-    # # print(raw_deforestation_)  # Metadata about the file
-    # print(raw_deforestation_.variables["primf"][:])
+    raw_other_use_data_ = pd.read_csv(
+        path_data_raw / raw_data_file,
+        encoding="latin1",
+    ).rename(columns={"Area": "country"})
 
-    import matplotlib.pyplot as plt
+    raw_other_use_data = pd.concat(
+        [raw_other_use_data, raw_other_use_data_],
+        ignore_index=True,
+    )
 
-    raw_deforestation_ = xr.open_dataset(path_data_raw / raw_data_file)
-    # print(raw_deforestation_.variables)
-    # print(raw_deforestation_.variables["time"][:])
-    raw_deforestation_["primf"].isel(time=1165).plot()
-    plt.show()
-    exit()
-# raw_deforestation_ = pd.read_csv(
-#     path_data_raw / raw_data_file,
-#     encoding="latin1",
-# ).rename(columns={"Area": "country"})
+    del raw_other_use_data_
 
-# raw_deforestation = pd.concat(
-#     [raw_deforestation, raw_deforestation_],
-#     ignore_index=True,
-# )
-# del raw_deforestation_
-
-exit()
-
-# Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
     logging.info("Raw data dependence exists")
-
 
 logging.info("Start reading condordance table")
 concordance_table = pd.read_csv(
@@ -155,6 +138,41 @@ for region in regions:
     )
 
 
+def name_mapping(crop_name: str):
+    if crop_name in [
+        "Bovine Meat",
+        "Mutton & Goat Meat",
+        # "Offals, Edible",
+    ]:
+        return "PasMeat"
+    elif crop_name in ["Pigmeat", "Poultry Meat", "Fish, Seafood"]:
+        return "CropMeat"
+    elif crop_name in [
+        "Milk - Excluding Butter",
+        "Fats, Animals, Raw",
+    ]:
+        return "Dairy"
+    elif crop_name in ["Eggs"]:
+        return "Eggs"
+    elif crop_name in ["Pulses"]:
+        return "Pulses"
+    elif crop_name in ["Cereals - Excluding Beer"]:
+        return "Grains"
+    elif crop_name in [
+        "Fruits - Excluding Wine",
+        "Starchy Roots",
+        "Vegetables",
+        "Vegetable Oils",
+    ]:
+        return "VegFruits"
+    elif crop_name in [
+        "Oilcrops",
+        "Sugar Crops",
+        "Treenuts",
+    ]:
+        return "OtherCrops"
+
+
 # Define cleaning function
 def data_cleaning(
     raw_data: pd.DataFrame,
@@ -162,12 +180,12 @@ def data_cleaning(
     **kwargs,
 ):
     """
-    To transfer raw data from IEA database into FeliX region classification
+    To transfer raw data from FAOSTAT database into FeliX region classification
 
     Parameter
     ---------
     raw_data: pd.DataFrame
-        Data downloaded directly from IEA database.
+        Data downloaded directly from FAOSTAT database.
 
     **kwargs
         Other arguments that may be used to restructure the clean data
@@ -191,32 +209,42 @@ def data_cleaning(
 
     logging.info("Specify available years")
     years = np.unique(raw_data_merge["year"])
+    raw_data_merge["food_category"] = (
+        raw_data_merge["item"].astype(str).map(name_mapping)
+    )
 
-    raw_data_merge_groups = raw_data_merge.groupby(["un_region", "year"])
-    cleaned_deforestation = []
+    raw_data_merge_groups = raw_data_merge.groupby(
+        ["un_region", "year", "food_category"]
+    )
+    cleaned_other_use_data = []
     for region in regions:
         num_country_ = num_country[region]
         for year in years:
-            try:
-                raw_data_region_year = raw_data_merge_groups.get_group((region, year))
-            except KeyError:
-                continue
+            for food_category in food_categories:
+                try:
+                    raw_data_other_use_ = raw_data_merge_groups.get_group(
+                        (region, year, food_category)
+                    )
+                except KeyError:
+                    continue
 
-            if len(raw_data_region_year) / num_country_ > 0.85:
-                entry = {
-                    "region": region,
-                    "year": year,
-                    "value": raw_data_region_year["value"].sum()
-                    * 1000,  # convert unit from 1000 ha to ha
-                    "unit": "ha",
-                }
+                if len(np.unique(raw_data_other_use_["country"])) / num_country_ > 0.75:
+                    entry = {
+                        "region": region,
+                        "year": year,
+                        "food_category": food_category,
+                        "value": raw_data_other_use_["value"].sum() * 1000,
+                        "unit": "tonnes",
+                    }
 
-                cleaned_deforestation.append(entry)
-                del (entry, raw_data_region_year)
+                    cleaned_other_use_data.append(entry)
+                    del entry, raw_data_other_use_, food_category
+            del year
+        del region
 
-    cleaned_deforestation = pd.DataFrame(cleaned_deforestation)
+    cleaned_other_use_data = pd.DataFrame(cleaned_other_use_data)
 
-    return cleaned_deforestation
+    return cleaned_other_use_data
 
 
 # Define data restructuring function
@@ -228,10 +256,10 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1900,1901,1902,...
-        Land Allocated for Food Crops[Africa],x,x,x,...
-        Land Allocated for Food Crops[AsiaPacific],x,x,x,...
+        Other use demand in tonnes[Africa,Pulses],x,x,x,...
+        Other use demand in tonnes[AsiaPacific,Pulses],x,x,x,...
         ...
-        Land Allocated for Food Crops[WestEu],x,x,x,...
+        Other use demand in tonnes[WestEu,OtherCrops],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -253,27 +281,29 @@ def data_restructure(
     years = np.unique(clean_data["year"])
 
     logging.info("Restructure cleaned data")
-    clean_data_groups = clean_data.groupby(["region", "year"])
+    clean_data_groups = clean_data.groupby(["region", "year", "food_category"])
     structured_data = []
     for region in regions:
-        entry = {
-            "parameter (unit: ha)": f"Land Allocated for Food Crops[{region}]",
-        }
-        for year in range(1900, 2101):
-            if year in years:
-                try:
-                    cleaned_deforestation = clean_data_groups.get_group((region, year))
-
-                    entry[year] = cleaned_deforestation["value"].values[0]
-                except KeyError:
+        for food_category in food_categories:
+            entry = {
+                "parameter": f"Other use demand in tonnes[{region},{food_category}]",
+            }
+            for year in range(1900, 2101):
+                if year in years:
+                    try:
+                        cleaned_other_use_data_ = clean_data_groups.get_group(
+                            (region, year, food_category)
+                        )
+                        entry[year] = cleaned_other_use_data_["value"].values[0]
+                    except KeyError:
+                        entry[year] = np.nan
+                else:
                     entry[year] = np.nan
-            else:
-                entry[year] = np.nan
 
-            del year
+                del year
 
-        structured_data.append(entry)
-        del entry
+            structured_data.append(entry)
+            del entry
 
     structured_data = pd.DataFrame(structured_data)
     return structured_data
@@ -281,14 +311,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_deforestation = data_cleaning(raw_deforestation, concordance_table)
+cleaned_other_use_data = data_cleaning(raw_other_use_data, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_deforestation = data_restructure(cleaned_deforestation)
+restructured_other_use_data = data_restructure(cleaned_other_use_data)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_deforestation.to_csv(
+restructured_other_use_data.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

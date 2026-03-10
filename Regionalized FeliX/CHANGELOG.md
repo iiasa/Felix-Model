@@ -1,6 +1,30 @@
 ## CHANGELOG for the regionalized version of FeliX
 
-## Version 18.1.0
+## Version 19.0.0 (FeliX_R5_V3.3)
+- Based on version 18.2.3
+- Fix the parameter inputs only from African States.
+- Link the C emissions from land use only
+- Include seed, processing, and other uses in food production
+
+
+## Version 18.2.3 (FeliX_R5_V3.2)
+- Based on version 18.2.2
+- Remove the exteral excel dependencies on parameters
+- Recalibrate carbon emissions from land use change
+
+## Version 18.2.2 (FeliX_R5_V3.1)
+- Based on version 18.2.1
+- Recalibrate modules
+
+## Version 18.2.1 (FeliX_R5_V3.0)
+- Based on version 18.2.0
+- Change the daily caloric demand of each region by using global average
+
+## Version 18.2.0 (FeliX_R5_V2.1)
+- Based on version 18.1.0
+- Integrate FAOSTAT diet
+
+## Version 18.1.0 
 - Based on version 18.0.0
 - Revisions based on merge request comments.
 
@@ -8,7 +32,7 @@
 - Based on version 17.2.8
 - Regionalize diet module.
 
-## Version 17.2.8
+## Version 17.2.8 (FeliX_R5_V2.0)
 - Based on version 17.2.7
 - Re-connect the effect of fetilizer on OtherCrops yield.
 
