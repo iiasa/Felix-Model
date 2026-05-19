@@ -139,18 +139,11 @@ for region in regions:
 
 
 def name_mapping(crop_name: str):
-    if crop_name in [
-        "Bovine Meat",
-        "Mutton & Goat Meat",
-        # "Offals, Edible",
-    ]:
+    if crop_name in ["Bovine Meat", "Mutton & Goat Meat"]:
         return "PasMeat"
     elif crop_name in ["Pigmeat", "Poultry Meat", "Fish, Seafood"]:
         return "CropMeat"
-    elif crop_name in [
-        "Milk - Excluding Butter",
-        "Fats, Animals, Raw",
-    ]:
+    elif crop_name in ["Milk - Excluding Butter", "Animal fats"]:
         return "Dairy"
     elif crop_name in ["Eggs"]:
         return "Eggs"
@@ -158,17 +151,12 @@ def name_mapping(crop_name: str):
         return "Pulses"
     elif crop_name in ["Cereals - Excluding Beer"]:
         return "Grains"
-    elif crop_name in [
-        "Fruits - Excluding Wine",
-        "Starchy Roots",
-        "Vegetables",
-        "Vegetable Oils",
-    ]:
+    elif crop_name in ["Fruits - Excluding Wine", "Starchy Roots", "Vegetables"]:
         return "VegFruits"
     elif crop_name in [
-        "Oilcrops",
-        "Sugar Crops",
+        "Sugar & Sweeteners",
         "Treenuts",
+        "Vegetable Oils",
     ]:
         return "OtherCrops"
 
@@ -229,7 +217,7 @@ def data_cleaning(
                 except KeyError:
                     continue
 
-                if len(np.unique(raw_data_seed_["country"])) / num_country_ > 0.75:
+                if len(np.unique(raw_data_seed_["country"])) / num_country_ > 0.5:
                     entry = {
                         "region": region,
                         "year": year,

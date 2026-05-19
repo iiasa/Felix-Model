@@ -178,28 +178,16 @@ def data_cleaning(
     years = np.unique(raw_data_merge["year"])
 
     def name_mapping(crop_name: str):
-        if crop_name in [
-            "Pulses",
-        ]:
+        if crop_name in ["Pulses"]:
             return "Pulses"
-        elif crop_name in [
-            "Cereals - Excluding Beer",
-        ]:
+        elif crop_name in ["Cereals - Excluding Beer"]:
             return "Grains"
-        elif crop_name in [
-            "Fruits - Excluding Wine",
-            "Starchy Roots",
-            "Vegetables",
-            "Vegetable Oils",
-        ]:
+        elif crop_name in ["Fruits - Excluding Wine", "Starchy Roots", "Vegetables"]:
             return "VegFruits"
         elif crop_name in [
-            "Oilcrops",
-            # "Sugar & Sweeteners",
-            "Sugar Crops",
+            "Sugar & Sweeteners",
             "Treenuts",
-            # "Spices",
-            # "Stimulants",
+            "Vegetable Oils",
         ]:
             return "OtherCrops"
 
@@ -332,7 +320,7 @@ logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
 restructured_feed_data.to_csv(
-    path_data_clean / f"{data_variable}_time_series_{data_source}_2.csv",
+    path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,
 )

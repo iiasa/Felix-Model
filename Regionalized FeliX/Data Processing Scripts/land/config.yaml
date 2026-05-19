@@ -59,6 +59,7 @@ data_input:
       - crop_production_harvested_area_1990_1999.csv
       - crop_production_harvested_area_2000_2009.csv
       - crop_production_harvested_area_after_2010.csv
+      - crop_production_harvested_area_2024.csv
     concordance: faostat_countries_to_5_un_regions.csv 
     dependency: False
     dependency_datasource: 
@@ -234,14 +235,21 @@ data_input:
       - 
     dependency_concordance:
   - datasource: faostat
+    variable: food_demand_incl_oil
+    text: Food demand by product from FAOSTAT
+    download_via: manually
+    data_file: food_demand_incl_oil
+    concordance: faostat_countries_to_5_un_regions.csv 
+    dependency: False
+    dependency_datasource: 
+    dependency_module: 
+    dependency_file: 
+      - 
+    dependency_concordance:
+  - datasource: faostat
     variable: food_production
     download_via: manually
     data_file: 
-      - food_production_to_1969.csv
-      - food_production_1970_1979.csv
-      - food_production_1980_1989.csv
-      - food_production_1990_1999.csv
-      - food_production_2000_2009.csv
       - food_production_after_2010.csv
     concordance: faostat_countries_to_5_un_regions.csv 
     dependency: False

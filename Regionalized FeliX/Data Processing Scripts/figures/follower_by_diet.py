@@ -50,11 +50,12 @@ path_data_output = (
 
 for output_data_file in path_data_output.glob("*.csv"):
     output_data_file_name = output_data_file.name
-    if "by_scenario" not in output_data_file_name:
+    if "diet_followers_by_scenario" not in output_data_file_name:
         continue
 
     logging.info("Load outpout data")
     output_data = pd.read_csv(output_data_file)
+    output_data["age"] = output_data["age"].str.replace('"', "", regex=False)
 
     logging.info("Configure basic information")
     age_cohorts = [f"{i*5}-{i*5+4}" for i in range(20)] + ["100+"]
@@ -79,7 +80,7 @@ for output_data_file in path_data_output.glob("*.csv"):
 
     # Set global font size to 7
     plt.rcParams.update({"font.size": font_size})
-
+    all_plot_data = pd.DataFrame()
     for i, year in enumerate(years):
         for j, diet in enumerate(diets):
             ax = axes[j, i]
@@ -107,6 +108,7 @@ for output_data_file in path_data_output.glob("*.csv"):
                             color="blue",
                         )
                     elif gender == "female":
+
                         ax.plot(
                             gender_vals * 1000000,
                             age_cohorts,
@@ -114,24 +116,26 @@ for output_data_file in path_data_output.glob("*.csv"):
                             color="black",
                             label=scenario,
                         )
+
                         ax.plot(
                             gender_vals,
                             age_cohorts,
                             linestyle,
                             color="red",
                         )
+                    all_plot_data[f"{year}_{diet}_{scenario}_{gender}'"] = gender_vals
 
             # Formatting
             ax.axvline(0, color="black", linewidth=linewidth)
             if j == 1:
-                ax.set_xlabel("million person", fontsize=font_size)
+                ax.set_xlabel("Million persons", fontsize=font_size)
 
             ax.set_title(
                 f"{diet}, {year}",
                 fontsize=font_size,
                 fontweight="bold",
             )
-            ax.set_ylabel("Age Cohort", fontsize=font_size)
+            ax.set_ylabel("Age cohorts", fontsize=font_size)
             ax.tick_params(axis="y", labelsize=7)
 
             # Relabel x-axis ticks as positive values
@@ -177,6 +181,7 @@ for output_data_file in path_data_output.glob("*.csv"):
             del output_data_tot_diet
     # Global legend outside bottom
     handles, labels = ax.get_legend_handles_labels()
+    labels = ["FeliX-Reference", "FeliX-Optimistic", "FeliX-Pessimistic"]
     fig.legend(
         handles,
         labels,
@@ -188,10 +193,17 @@ for output_data_file in path_data_output.glob("*.csv"):
         edgecolor="none",
     )
 
+    # all_plot_data.to_csv(
+    #     path_data_output / f"{output_data_file_name.split('.')[0]}_test.csv",
+    #     index=False,
+    # )
     plt.tight_layout()
     plt.savefig(
-        path_data_output / f"{output_data_file_name.split('.')[0]}.png",
-        dpi=600,
+        path_data_output / f"{output_data_file_name.split('.')[0]}.svg",
+        dpi=1200,
+        transparent=True,
         bbox_inches="tight",
+        pad_inches=0.01,
+        format="svg",
     )
     plt.close()

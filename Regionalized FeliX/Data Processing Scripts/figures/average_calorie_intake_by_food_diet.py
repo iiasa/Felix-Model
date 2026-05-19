@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 28 August 2025
-Description: Scripts to plot average daily calorie intake by food category, gender, age cohort
+Created: Wed 11 March 2026
+Description: Scripts to plot average daily calorie intake by food category, diet, age cohort
 Scope: FeliX model regionalization, module working_paper
 Author: Quanliang Ye
 Institution: IIASA
@@ -50,11 +50,12 @@ path_data_output = (
 
 for output_data_file in path_data_output.glob("*.csv"):
     output_data_file_name = output_data_file.name
-    if "food_category_scenario" not in output_data_file_name:
+    if "food_category_diet_scenario" not in output_data_file_name:
         continue
 
     logging.info("Load outpout data")
     output_data = pd.read_csv(output_data_file)
+    output_data["age"] = output_data["age"].str.replace('"', "", regex=False)
 
     logging.info("Configure basic information")
     age_cohorts = [f"{i*5}-{i*5+4}" for i in range(20)] + ["100+"]
@@ -74,7 +75,6 @@ for output_data_file in path_data_output.glob("*.csv"):
         "VegFruits",
         "OtherCrops",
     ]
-    genders = ["female", "male"]
     scenarios = list(np.unique(output_data.scenario))
 
     logging.info("Configure plot years")
@@ -95,13 +95,13 @@ for output_data_file in path_data_output.glob("*.csv"):
             ax = axes[i, j]
 
             output_data_food = output_data.loc[output_data["scenario"] == scenario][
-                ["food_category", "gender", "age", year]
+                ["diet", "food_category", "age", year]
             ]
 
             logging.info("Pivot to get food categories stacked by gender/age")
             output_data_food_pivot = (
                 output_data_food.pivot_table(
-                    index=["age", "gender"],
+                    index=["age", "diet"],
                     columns="food_category",
                     values=year,
                     aggfunc="sum",
@@ -115,44 +115,54 @@ for output_data_file in path_data_output.glob("*.csv"):
             )
             del output_data_food
 
-            logging.info("Get data by gender")
-            output_data_food_male = (
-                output_data_food_pivot[output_data_food_pivot["gender"] == "male"]
+            logging.info("Get data by diet")
+            output_data_food_conventional = (
+                output_data_food_pivot[output_data_food_pivot["diet"] == "Conventional"]
                 .set_index("age")
                 .sort_index()
             )
-            output_data_food_female = (
-                output_data_food_pivot[output_data_food_pivot["gender"] == "female"]
+            output_data_food_alternative = (
+                output_data_food_pivot[output_data_food_pivot["diet"] == "Alternative"]
                 .set_index("age")
                 .sort_index()
             )
-            output_data_food_male = output_data_food_male.drop(
-                columns="gender", errors="ignore"
+
+            output_data_food_conventional = output_data_food_conventional.drop(
+                columns="diet", errors="ignore"
             )[food_categories]
-            output_data_food_female = output_data_food_female.drop(
-                columns="gender", errors="ignore"
+            output_data_food_alternative = output_data_food_alternative.drop(
+                columns="diet", errors="ignore"
             )[food_categories]
 
-            output_data_food_male_cum = output_data_food_male.cumsum(axis=1)
-            for col in output_data_food_male.columns:
+            output_data_food_conventional_cum = output_data_food_conventional.cumsum(
+                axis=1
+            )
+            for col in output_data_food_conventional.columns:
                 left = (
-                    -output_data_food_male_cum[col] + output_data_food_male[col]
+                    -output_data_food_conventional_cum[col]
+                    + output_data_food_conventional[col]
                 )  # left boundary (negative)
                 ax.barh(
-                    output_data_food_male.index,
-                    -output_data_food_male[col],
-                    left=-output_data_food_male_cum[col] + output_data_food_male[col],
+                    output_data_food_conventional.index,
+                    -output_data_food_conventional[col],
+                    left=-output_data_food_conventional_cum[col]
+                    + output_data_food_conventional[col],
                     label=col if col not in ax.get_legend_handles_labels()[1] else "",
                     alpha=0.8,
                     color=color_map[col],
                 )
 
-            output_data_food_female_cum = output_data_food_female.cumsum(axis=1)
-            for col in output_data_food_female.columns:
-                left = output_data_food_female_cum[col] - output_data_food_female[col]
+            output_data_food_alternative_cum = output_data_food_alternative.cumsum(
+                axis=1
+            )
+            for col in output_data_food_alternative.columns:
+                left = (
+                    output_data_food_alternative_cum[col]
+                    - output_data_food_alternative[col]
+                )
                 ax.barh(
-                    output_data_food_female.index,
-                    output_data_food_female[col],
+                    output_data_food_alternative.index,
+                    output_data_food_alternative[col],
                     left=left,
                     label=col if col not in ax.get_legend_handles_labels()[1] else "",
                     alpha=0.8,
@@ -161,10 +171,10 @@ for output_data_file in path_data_output.glob("*.csv"):
 
             ax.axvline(0, color="black", linewidth=0.8)  # center line
             if int(year) < 2050:
-                ax.set_ylabel("Age Cohort", fontsize=font_size)
+                ax.set_ylabel("Age cohorts", fontsize=font_size)
             ax.tick_params(axis="y", labelsize=7)
             ax.set_title(
-                f"{scenarios_labels[i]} - {year}",
+                f"{scenarios_labels[i]}, {year}",
                 fontsize=font_size,
                 fontweight="bold",
             )
@@ -177,11 +187,13 @@ for output_data_file in path_data_output.glob("*.csv"):
             max_val = 4000
             ax.set_xlim(-max_val, max_val)
 
+            ax.set_ylim(-0.5, 22)
+
             # --- Add "Male" and "Female" text labels ---
             ax.text(
-                -max_val * 0.8,
-                age_cohorts[-1],
-                "Male",
+                -max_val * 0.5,
+                20.5,
+                "Conventional",
                 fontsize=font_size,
                 ha="center",
                 va="bottom",
@@ -189,9 +201,9 @@ for output_data_file in path_data_output.glob("*.csv"):
                 # fontweight="bold",
             )
             ax.text(
-                max_val * 0.7,
-                age_cohorts[-1],
-                "Female",
+                max_val * 0.6,
+                20.5,
+                "Alternative",
                 fontsize=font_size,
                 ha="center",
                 va="bottom",

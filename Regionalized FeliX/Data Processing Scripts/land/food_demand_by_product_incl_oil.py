@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created: Tue 16 September 2025
-Description: Scripts to aggregate food production by product from FAOSTAT to FeliX regions
+Created: Sat 14 March 2026
+Description: Scripts to aggregate food demand by product (incl. secondary oil product) from FAOSTAT to FeliX regions
 Scope: FeliX model regionalization, module land
 Author: Quanliang Ye
 Institution: IIASA
@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+from io import StringIO
 
 from dotenv import load_dotenv
 import os
@@ -47,7 +48,7 @@ logging.info("Configure module")
 current_module = "land"
 
 logging.info("Config data variable")
-data_variable = "food_production"
+data_variable = "food_demand_incl_oil"
 data_source = "faostat"
 data_download_method = "manually"
 
@@ -105,26 +106,23 @@ logging.info("Extracted dimensions of regions")
 
 # Read raw data
 logging.info(f"Read raw data")
-raw_food_production = pd.DataFrame()
-for raw_data_file in raw_data_info["data_file"]:
+raw_food_demand = pd.DataFrame()
+for raw_data_file in (path_data_raw / raw_data_info["data_file"]).glob("*.csv"):
     logging.info(f"Read raw data of {raw_data_file}")
-    raw_food_production_ = pd.read_csv(
-        path_data_raw / raw_data_file,
-        encoding="latin1",
-    ).rename(columns={"Area": "country"})
-
-    raw_food_production = pd.concat(
-        [raw_food_production, raw_food_production_],
-        ignore_index=True,
+    raw_food_demand_ = pd.read_csv(raw_data_file, encoding="latin1").rename(
+        columns={"Area": "country"}
     )
 
-    del raw_food_production_
+    raw_food_demand = pd.concat(
+        [raw_food_demand, raw_food_demand_],
+        ignore_index=True,
+    )
+    del raw_food_demand_
 
 # Read raw data
 logging.info(f"Read dependent raw data")
 if raw_data_dependency:
     logging.info("Raw data dependence exists")
-
 
 logging.info("Start reading condordance table")
 concordance_table = pd.read_csv(
@@ -148,12 +146,12 @@ def data_cleaning(
     **kwargs,
 ):
     """
-    To transfer raw data from IEA database into FeliX region classification
+    To transfer raw data from FAOSTA database into FeliX region classification
 
     Parameter
     ---------
     raw_data: pd.DataFrame
-        Data downloaded directly from IEA database.
+        Data downloaded directly from FAOSTA database.
 
     **kwargs
         Other arguments that may be used to restructure the clean data
@@ -199,47 +197,113 @@ def data_cleaning(
             "Vegetable Oils",
         ]:
             return "OtherCrops"
+        elif crop_name in ["Population"]:
+            return "Population"
 
     raw_data_merge["food_category"] = (
         raw_data_merge["item"].astype(str).map(name_mapping)
+    )
+
+    raw_data_merge = (
+        raw_data_merge[
+            [
+                "country",
+                "element",
+                "item",
+                "year",
+                "value",
+                "un_region",
+                "food_category",
+            ]
+        ]
+        .pivot_table(
+            index=["un_region", "country", "food_category", "year", "item"],
+            columns="element",
+            values="value",
+        )
+        .reset_index()
     )
 
     raw_data_merge_groups = raw_data_merge.groupby(
         ["un_region", "year", "food_category"]
     )
 
-    cleaned_food_production = []
+    cleaned_food_demand = []
     for region in regions:
         num_country_ = num_country[region]
         for year in years:
-            for pos, food_category in enumerate(food_categories):
+            for food_category in food_categories:
                 try:
                     raw_data_region_year_ = raw_data_merge_groups.get_group(
                         (region, year, food_category)
                     )
                 except KeyError:
                     continue
+                raw_data_region_year_pop_ = raw_data_merge_groups.get_group(
+                    (region, year, "Population")
+                )
 
                 if (
                     len(np.unique(raw_data_region_year_["country"])) / num_country_
                     > 0.7
                 ):
+                    if int(year) < 2010:
+                        cal_content = (
+                            raw_data_region_year_["Food supply (kcal/capita/day)"]
+                            * 365
+                            / raw_data_region_year_[
+                                "Food supply quantity (kg/capita/yr)"
+                            ]
+                        )  # unit in kcal per kg
 
-                    entry = {
-                        "region": region,
-                        "year": year,
-                        "food_category": food_category,
-                        "value": raw_data_region_year_["value"].sum()
-                        * 1000,  # convert 1000 t to tonnes
-                        "unit": "tonnes",
-                    }
+                        entry = {
+                            "region": region,
+                            "year": year,
+                            "food_category": food_category,
+                            "food_demand_tonnes": raw_data_region_year_["Food"].sum()
+                            * 1000,  # unit in tonnes
+                            "food_demand_Mkcal": sum(
+                                raw_data_region_year_["Food"] * cal_content
+                            ),  # unit in million kcal
+                        }
+                        del cal_content
 
-                    cleaned_food_production.append(entry)
+                    else:
+
+                        region_year_pop_ = (
+                            raw_data_region_year_pop_[
+                                raw_data_region_year_pop_["country"].isin(
+                                    list(raw_data_region_year_["country"].unique())
+                                )
+                            ]
+                            .iloc[:, -1]
+                            .sum()
+                            * 1000  # unit in person
+                        )
+
+                        entry = {
+                            "region": region,
+                            "year": year,
+                            "food_category": food_category,
+                            "food_demand_tonnes": raw_data_region_year_["Food"].sum()
+                            * 1000,  # unit in tonnes
+                            "food_demand_Mkcal": raw_data_region_year_[
+                                "Food supply (kcal)"
+                            ].sum(),  # unit in million kcal
+                            "daily_food_demand_per_capita_kcal": raw_data_region_year_[
+                                "Food supply (kcal)"
+                            ].sum()
+                            * 1000000
+                            / region_year_pop_
+                            / 365,
+                        }
+
+                    cleaned_food_demand.append(entry)
                     del entry, raw_data_region_year_
 
-    cleaned_food_production = pd.DataFrame(cleaned_food_production)
+    cleaned_food_demand = pd.DataFrame(cleaned_food_demand)
 
-    return cleaned_food_production
+    return cleaned_food_demand
 
 
 # Define data restructuring function
@@ -251,10 +315,10 @@ def data_restructure(
     To restructure data cleaned via the cleaning function into the format:
     '''
         Parameter,1900,1901,1902,...
-        Food production rate[Africa,PasMeat],x,x,x,...
-        Food production rate[AsiaPacific,PasMeat],x,x,x,...
+        Annual Caloric Demand by Region[Africa,PasMeat],x,x,x,...
+        Annual Caloric Demand by Region[AsiaPacific,PasMeat],x,x,x,...
         ...
-        Food production rate[WestEu,OtherCrops],x,x,x,...
+        Annual Caloric Demand by Region[WestEu,OtherCrops],x,x,x,...
     '''
     The restructured data will be used as historic data for data calibration
 
@@ -280,26 +344,46 @@ def data_restructure(
     structured_data = []
     for region in regions:
         for food_category in food_categories:
-            entry = {
-                "parameter (in tonnes)": f"Food production rate[{region},{food_category}]",
+            entry_kcal = {
+                "parameter": f"Annual Caloric Demand by Region[{region},{food_category}]",
+            }
+            entry_tonnes = {
+                "parameter": f"Food Demand excl Waste in tonnes[{region},{food_category}]",
+            }
+            entry_daily_per_capita = {
+                "parameter": f"Average Kcal Intake per Person[{region},{food_category}]",
             }
             for year in range(1900, 2101):
                 if year in years:
                     try:
-                        cleaned_food_production_ = clean_data_groups.get_group(
+                        cleaned_food_demand_ = clean_data_groups.get_group(
                             (region, year, food_category)
                         )
 
-                        entry[year] = cleaned_food_production_["value"].values[0]
+                        entry_kcal[year] = cleaned_food_demand_[
+                            "food_demand_Mkcal"
+                        ].values[0]
+                        entry_tonnes[year] = cleaned_food_demand_[
+                            "food_demand_tonnes"
+                        ].values[0]
+                        entry_daily_per_capita[year] = cleaned_food_demand_[
+                            "daily_food_demand_per_capita_kcal"
+                        ].values[0]
                     except KeyError:
-                        entry[year] = np.nan
+                        entry_kcal[year] = np.nan
+                        entry_tonnes[year] = np.nan
+                        entry_daily_per_capita[year] = np.nan
                 else:
-                    entry[year] = np.nan
+                    entry_kcal[year] = np.nan
+                    entry_tonnes[year] = np.nan
+                    entry_daily_per_capita[year] = np.nan
 
                 del year
 
-            structured_data.append(entry)
-            del entry
+            structured_data.append(entry_kcal)
+            structured_data.append(entry_tonnes)
+            structured_data.append(entry_daily_per_capita)
+            del entry_kcal, entry_tonnes, entry_daily_per_capita
 
     structured_data = pd.DataFrame(structured_data)
     return structured_data
@@ -307,14 +391,14 @@ def data_restructure(
 
 # Start cleaning the raw data
 logging.info(f"Start cleaning the raw data")
-cleaned_food_production = data_cleaning(raw_food_production, concordance_table)
+cleaned_food_demand = data_cleaning(raw_food_demand, concordance_table)
 
 logging.info(f"Start restructuring the cleaned data")
-restructured_food_production = data_restructure(cleaned_food_production)
+restructured_food_demand = data_restructure(cleaned_food_demand)
 logging.info("Finish data cleaning")
 
 logging.info("Write clean data into a .csv file")
-restructured_food_production.to_csv(
+restructured_food_demand.to_csv(
     path_data_clean / f"{data_variable}_time_series_{data_source}.csv",
     encoding="utf-8",
     index=False,

@@ -1,5 +1,23 @@
 ## CHANGELOG for the regionalized version of FeliX
 
+## Version 19.1.2 (FeliX_R5_V3.4)
+- Based on version 19.1.1
+- Share of vegetarian fit the facebook data
+
+## Version 19.1.1
+- Based on version 19.1.0
+- Update the historic data for food demand and production
+
+## Version 19.1.0
+- Based on version 19.0.0
+- Calorie shares of [other crop] is adjusted to around 20-30%, by including vegetable oils, etc
+- For CHOICE D3.4
+
+## Version 19.1.0
+- Based on version 19.0.0
+- Calorie shares of [other crop] is adjusted to around 20-30%, by including vegetable oils, etc
+- For CHOICE D3.4
+
 ## Version 19.0.0 (FeliX_R5_V3.3)
 - Based on version 18.2.3
 - Fix the parameter inputs only from African States.

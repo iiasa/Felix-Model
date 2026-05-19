@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created: Thur 21 August 2025
-Description: Scripts to plot average daily calorie intake by diet, gender, age cohort
+Created: Fri 13 March 2026
+Description: Scripts to plot followers by diet, gender, age cohort, and by Region!!!
 Scope: FeliX model regionalization, module working_paper
 Author: Quanliang Ye
 Institution: IIASA
 Email: yequanliang@iiasa.ac.at
 """
+
 import matplotlib.pyplot as plt
 
 import datetime
@@ -50,11 +51,12 @@ path_data_output = (
 
 for output_data_file in path_data_output.glob("*.csv"):
     output_data_file_name = output_data_file.name
-    if "by_diet_scenario" not in output_data_file_name:
+    if "diet_followers_by_region_by_scenario" not in output_data_file_name:
         continue
 
     logging.info("Load outpout data")
     output_data = pd.read_csv(output_data_file)
+    output_data["age"] = output_data["age"].str.replace('"', "", regex=False)
 
     logging.info("Configure basic information")
     age_cohorts = [f"{i*5}-{i*5+4}" for i in range(20)] + ["100+"]
@@ -66,84 +68,99 @@ for output_data_file in path_data_output.glob("*.csv"):
     diets = list(reversed(np.unique(output_data["diet"])))
     genders = ["female", "male"]
     scenarios = list(np.unique(output_data.scenario))
+    regions = list(np.unique(output_data["region"]))
+
     logging.info("Configure plot years")
-    years = ["2050", "2100"]
-    output_data = output_data[["diet", "gender", "age", "scenario"] + years]
+    year = "2050"
+    output_data = output_data[["diet", "region", "gender", "age", "scenario", year]]
+    output_data = (
+        output_data.groupby(["diet", "region", "age", "scenario"])[year]
+        .sum()
+        .reset_index(name=year)
+    )
 
-    fig, axes = plt.subplots(1, 2, figsize=(6, 3), sharey=True)
-
+    fig, axes = plt.subplots(3, 2, figsize=(6, 5), sharey=True)
+    axes = axes.flatten()
     linewidth = 1.5
     font_size = 7
-    linestyles = ["-", "--", ":"]
+    linestyles = ["-", "--", ":", "-."]
     colors = ["blue", "red"]
 
     # Set global font size to 7
     plt.rcParams.update({"font.size": font_size})
+    all_plot_data = pd.DataFrame()
 
-    for i, year in enumerate(years):
-        # for j, diet in enumerate(diets):
-        diet = "Conventional"
-        ax = axes[i]
+    for j, region in enumerate(regions):
+        ax = axes[j]
 
         for scenario, linestyle in zip(scenarios, linestyles):
             output_data_tot_diet = output_data.loc[
-                (output_data["diet"] == diet) & (output_data["scenario"] == scenario)
-            ][["gender", "age", year]]
+                (output_data["scenario"] == scenario)
+                & (output_data["region"] == region)
+            ][["diet", "age", year]]
 
-            for gender in genders:
-                # Male values negated for left side
-                gender_vals = output_data_tot_diet[
-                    output_data_tot_diet["gender"] == gender
-                ][year].values
+            for diet in diets:
+                # Diet values negated for left side
+                diet_vals = (
+                    output_data_tot_diet[output_data_tot_diet["diet"] == diet][
+                        year
+                    ].values
+                    / 1000000
+                )  # unit in million people
 
-                if gender == "male":
+                if diet == "Conventional":
                     ax.plot(
-                        -gender_vals,
+                        -diet_vals,
                         age_cohorts,
                         linestyle,
                         color="blue",
                     )
-                elif gender == "female":
+                elif diet == "Alternative":
                     ax.plot(
-                        gender_vals * 100,
+                        diet_vals * 1000000,
                         age_cohorts,
                         linestyle,
                         color="black",
                         label=scenario,
                     )
                     ax.plot(
-                        gender_vals,
+                        diet_vals,
                         age_cohorts,
                         linestyle,
                         color="red",
                     )
+                all_plot_data[f"{year}_{diet}_{scenario}_{region}"] = diet_vals
 
         # Formatting
         ax.axvline(0, color="black", linewidth=linewidth)
-
-        ax.set_xlabel("kcal per person", fontsize=font_size)
+        if j in [3, 4]:
+            ax.set_xlabel("Million persons", fontsize=font_size)
 
         ax.set_title(
-            f"{year}",
+            f"{region}, {year}",
             fontsize=font_size,
             fontweight="bold",
         )
-        ax.set_ylabel("Age Cohort", fontsize=font_size)
+        ax.set_ylabel("Age cohorts", fontsize=font_size)
         ax.tick_params(axis="y", labelsize=7)
 
+        yticks = [i for i in range(0, 21, 2)]
+        ax.set_yticks(yticks)
+        ax.set_xticklabels([age_cohorts[pos] for pos in yticks], fontsize=font_size)
+
         # Relabel x-axis ticks as positive values
-        xticks = [i for i in range(-4000, 4001, 1000)]
+        max_val = 300
+        xticks = [i for i in range(-max_val, max_val + 1, 100)]
         ax.set_xticks(xticks)
         ax.set_xticklabels([abs(int(x)) for x in xticks], fontsize=font_size)
 
-        max_val = 4000
         ax.set_xlim(-max_val, max_val)
 
         # --- Add "Male" and "Female" text labels ---
         ax.text(
-            -max_val * 0.3,
-            age_cohorts[-2],
-            "Male",
+            -max_val * 0.4,
+            age_cohorts[-3],
+            "Conventional",
             fontsize=font_size,
             ha="center",
             va="bottom",
@@ -151,9 +168,9 @@ for output_data_file in path_data_output.glob("*.csv"):
             # fontweight="bold",
         )
         ax.text(
-            max_val * 0.3,
-            age_cohorts[-2],
-            "Female",
+            max_val * 0.4,
+            age_cohorts[-3],
+            "Alternative",
             fontsize=font_size,
             ha="center",
             va="bottom",
@@ -164,30 +181,34 @@ for output_data_file in path_data_output.glob("*.csv"):
         # --- Add horizontal lines at ages 25-29 and 65-69 ---
         for target_age in ["25-29", "65-69"]:
             ax.axhline(y=target_age, color="gray", linestyle="--", alpha=0.7)
-
-        # ax.legend(
-        #     loc="upper right",
-        #     fontsize=font_size,
-        #     facecolor="none",
-        #     edgecolor="none",
-        # )
+        # if region == "WestEu":
+        #     ax.legend(
+        #         bbox_to_anchor=(1.02, 1),
+        #         loc="upper left",
+        #         fontsize=font_size,
+        #         facecolor="none",
+        #         edgecolor="none",
+        #     )
         del output_data_tot_diet
+    # remove last axis
+    fig.delaxes(axes[5])
     # Global legend outside bottom
     handles, labels = ax.get_legend_handles_labels()
-    labels = ["FeliX-Reference", "FeliX-Optimistic", "FeliX-Pessimistic"]
+    labels = scenarios
     fig.legend(
         handles,
         labels,
+        title="Diet composition scenarios",
         loc="lower center",
-        ncol=3,
-        bbox_to_anchor=(0.5, -0.03),
+        ncol=1,
+        bbox_to_anchor=(0.7, 0.15),
         fontsize=font_size,
         facecolor="none",
         edgecolor="none",
     )
 
+    all_plot_data.to_csv(f"{output_data_file_name.split('.')[0]}.csv")
     plt.tight_layout()
-
     plt.savefig(
         path_data_output / f"{output_data_file_name.split('.')[0]}.svg",
         dpi=1200,
