@@ -1,0 +1,99 @@
+Annual Change in Oil Reserves Variation,36750000000
+Annual Growth in Gas Reserves Variation,6750
+Birth Gender Fraction Variation,0.517369
+CCS Scenario Variation,0
+CLIMATE MORTALITY SWITCH,0
+Capital Elasticity Output Variation,0.553084
+Carbon Price Slope,0
+Climate Action Year,2040
+Climate Damage Function SWITCH,4
+Climate Policy Scenario,0
+Desired Total C Emission from Fossil Fuels Variation,10000000000
+Effect of GDP on Urban Land Requirement l Variation,1.875
+Effect of GDP on Urban Land Requirement x0 Variation,2.5
+Effectiveness of Investment in Coal Recovery Technology Variation,1.95E-12
+Effectiveness of Investment in Gas Recovery Technology Variation,4.05E-11
+Effectiveness of Investment in Oil Recovery Technology Variation,3.36E-11
+FWL Fraction Variation[CropMeat],1.1
+FWL Fraction Variation[Dairy],1.1
+FWL Fraction Variation[Eggs],1.1
+FWL Fraction Variation[Grains],1.1
+FWL Fraction Variation[OtherCrops],1.1
+FWL Fraction Variation[PasMeat],1.1
+FWL Fraction Variation[Pulses],1.1
+FWL Fraction Variation[VegFruits],1.1
+Feed Share of Grains Variation,0.8
+Forest to Agriculture Land Allocation Time Variation,5.25
+Fraction for Wind and Solar Learning Curve Strength Variation,0.2
+Fraction of Agricultural Land Conversion from Forest Variation,0.931
+Fraction of Coal Revenues Invested in Technology Variation,0.525
+Fraction of Gas Revenues Invested in Technology Variation,0.048
+Fraction of Oil Revenues Invested in Technology Variation,0.048
+Investment in Fossil Fuel Exploration and Production Delay Variation,2.5
+Land Mitigation Policy Multiplier,0
+Life Expectancy Variation,57.8904
+Max Energy Demand per Capita Variation,0.00000768
+Meat Diet Composition Switch,0
+Normal Fertility Variation,3.33784
+Normal Fraction Intended to Change Diet Variation,0.042
+Normal Shift Fraction from Meat to Vegetarianism Variation,0.00225
+Normal Shift Fraction from Vegetarianism to Meat Variation,0.0125
+Persistence Tertiary Variation[female],0.789236
+Persistence Tertiary Variation[male],0.695741
+Price Elasticity of Demand Biomass Variation,0.84
+Price Elasticity of Demand Coal Variation,1.1125
+Price Elasticity of Demand Gas Variation,0.648
+Price Elasticity of Demand Oil Variation,0.63
+Price Elasticity of Demand Wind and Solar Variation,1
+RCP Scenario,5
+Reference CO2 Removal Rate,0
+Reference Change in Fossil Fuel Market Share Variation,1.3
+Reference Change in Market Share Biomass Variation,4.0625
+Reference Change in Market Share Solar Variation,9.6
+Reference Change in Market Share Wind Variation,5.7
+Reference Cost of Biomass Energy Production Final Change Rate Variation,27000000
+Reference Cost of Solar Energy Production Final Change Rate Variation,10
+Reference Daily Caloric Intake Variation,1806.408
+Reference Input Neutral TC in Agriculture Variation,0.345
+Reference Other Technology Variation,0.5
+Reference meat yield Variation,0.0805
+Relative Productivity of Investment in Coal Exploration Variation,0.225
+Relative Productivity of Investment in Fossil Fuel Production Compared to Exploration Variation,10
+Relative Productivity of Investment in Gas Exploration Variation,1.875
+Relative Productivity of Investment in Oil Exploration Variation,1.2
+Renewable Cost Reduction and Technology Improvement Ramp Period Variation,50
+SSP Demographic Variation Time,10
+SSP Economic Variation Time,10
+SSP Energy Demand Variation Time,10
+SSP Energy Production Variation Time,10
+SSP Energy Technology Variation Time,10
+SSP Food and Diet Variation Time,10
+SSP Land Use Change Variation Time,10
+"Secondary education enrollment Variation[female,""10-14""]",0.504506
+"Secondary education enrollment Variation[female,""15-19""]",0.4
+"Secondary education enrollment Variation[male,""10-14""]",0.5
+"Secondary education enrollment Variation[male,""15-19""]",0.4
+Self Efficacy Multiplier Female Variation,1.08
+Solar Conversion Efficiency Factor Final Change Rate Variation,2
+Tertiary education enrollment Variation[female],0.19459
+Tertiary education enrollment Variation[male],0.269765
+Undiscovered Coal Resources Variation,1350000
+Vegetarian Diet Composition Switch,0
+N2O Agriculture Abatement Maximum Fraction,0.05
+CH4 Agriculture Abatement Maximum Fraction,0.05
+N2O IW Abatement Maximum Fraction,0.8
+CH4 Waste Abatement Maximum Fraction,0.2
+CH4 Energy Abatement Maximum Fraction,0.2
+Max Residential Activity per Capita Variation,60
+RA Inflection Variation,1.4
+RA Steepness Variation,1.25
+Max Passenger Activity per Capita Variation,18000
+PA Inflection Variation,1.6
+PA Steepness Variation,1.45
+L R Variation,800
+k R Variation ,0.05
+CS Demand Multiplier Variation,1.08
+L PT Variation,1.55
+k PT Variation,0.06
+FT Demand Multiplier Variation,1.08
+Industry Energy Multiplier Variation,1.05
